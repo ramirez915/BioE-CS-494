@@ -77,3 +77,20 @@ void loop() {
   //Wait for a bit to keep serial data from saturating
   delay(15);
 }
+
+/*fitness function
+ * stress
+ * meditation
+ * 
+ * levels function(state, signla)
+ *{switch
+ * 
+ * baseline fuction
+ * 
+ * 
+ * heart rate signal processing function--->
+ * respiratory signal processing funciton
+ * 
+ * buzzer calling f
+ * 
+ */
