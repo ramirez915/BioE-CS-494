@@ -87,4 +87,22 @@ void loop() {
 
 
 
+/*fitness function
+ * stress
+ * meditation
+ * 
+ * levels function(state, signla)
+ *{switch
+ * 
+ * baseline fuction
+ * 
+ * 
+ * heart rate signal processing function--->
+ * respiratory signal processing funciton
+ * 
+ * buzzer calling f
+ * 
+ */
+
+
 //priyanka
