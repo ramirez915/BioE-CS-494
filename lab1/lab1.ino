@@ -78,15 +78,6 @@ void loop() {
   delay(15);
 }
 
-
-
-{
-}
-}
-
-
-
-
 /*fitness function
  * stress
  * meditation
@@ -103,6 +94,3 @@ void loop() {
  * buzzer calling f
  * 
  */
-
-
-//priyanka
