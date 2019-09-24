@@ -78,6 +78,8 @@ void loop() {
   delay(15);
 }
 
+
+
 /*fitness function
  * stress
  * meditation
