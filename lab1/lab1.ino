@@ -44,7 +44,12 @@ void loop() {
     char val = Serial.read();
 
     if(val == 'f'){       //if y received
-      Serial.println("fitness Mode");
+      for(int i=0; i<100;i++){
+        Serial.print(i+10);
+        Serial.print("-");
+        Serial.println(i+50);
+        delay(50);
+      }
     }
     if(val == 's'){       //if s received
       Serial.println("stress Mode");
