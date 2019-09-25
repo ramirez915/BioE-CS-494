@@ -52,7 +52,7 @@ void setup(){ //same as arduino program
   ;
   
   // box that will contain the graphs
-  rect(300,0,1700,500);
+  rect(300,0,1700,500);    // x,y,width,height
   fill(255,255,255);
   
   rect(300,600,1700,500);
@@ -72,14 +72,17 @@ void draw(){  //same as loop in arduino
 
 void Fitness(){
   myPort.write('f');
-  stroke(0,250,0);
-  line(x1,height,x1,height-heartRateVar);
+  stroke(0,255,0);
+  println("heart rate val: "+ heartRateVar);
+  line(300+x1,height,300+x1,height-heartRateVar);    // x1,y1,x2,y2 of line
+                                                     // (end points of line)
   
   if(x1 >= 250){
     // resetting box for graph
+    println("x>250");
     x1 =0;
-    fill(255,255,255);
-    rect(300,0,1700,500);
+    //fill(255,255,255);
+    //rect(300,0,1700,500);
   }
   x1++;    // continuously moves to plot values
   
