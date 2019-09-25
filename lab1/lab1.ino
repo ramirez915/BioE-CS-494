@@ -44,10 +44,15 @@ void loop() {
     char val = Serial.read();
 
     if(val == 'f'){       //if y received
-      Serial.println("fitness Mode");
+      for(int i=0; i<100;i++){
+        Serial.print(i+10);
+        Serial.print("-");
+        Serial.println(i+50);
+        delay(50);  // sending in this format to processing 10-20\n
+      }
     }
     if(val == 's'){       //if s received
-      Serial.println("stress Mode");
+      
     }
     if(val == 'm'){       //if m received
       Serial.println("meditation Mode");
