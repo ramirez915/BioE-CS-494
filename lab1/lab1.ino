@@ -1,4 +1,7 @@
 #include <StopWatch.h>
+// ALWAYS CHANGE BEFORE STARTING PROGRAM
+const int AGE = 50;
+
 
 StopWatch watch(StopWatch::SECONDS);    // count time in seconds
 long watchTime = 0;
@@ -7,6 +10,8 @@ int heartRateTotal = 0;
 int avgHeartRate = 0;
 
 int count = 0;
+
+// will be setting 5,6,7,8,9 as color flags for gui to interpret
 
 
 int getBaseLine(){
@@ -35,6 +40,8 @@ void setup() {
   pinMode(10, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
 
+  // send the age to gui in setup
+  Serial.println(AGE);
 }
 
 void loop() {
@@ -45,6 +52,7 @@ void loop() {
 
     if(val == 'f'){       //if y received
       for(int i=0; i<100;i++){
+        Serial.print("1-");   // signals gui that this is fitness
         Serial.print(i+10);
         Serial.print("-");
         Serial.println(i+50);
@@ -58,7 +66,9 @@ void loop() {
       Serial.println("meditation Mode");
     }
     if(val == 'a'){       //if a received
-      Serial.println("extra Mode");
+      Serial.print("0-");
+      Serial.print("0-");
+      Serial.println(0);
     }
   }
 
