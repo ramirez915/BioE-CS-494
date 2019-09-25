@@ -5,12 +5,13 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object
 PFont font;
 int x1 = 0;    // starting position of the graph
-float heartRateVar;    // will store the values from readings
+int y1 = 250;
+float heartRateVar;    // will store the values from readings for heart rate
+float respRateVar;
 float dataArr[];      // array that will store the data
 String valueFromArduino;  // value from the analog device
 
 void setup(){ //same as arduino program
-
   size(2000, 1000);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
@@ -51,7 +52,7 @@ void setup(){ //same as arduino program
   ;
   
   // box that will contain the graphs
-  rect(300,0,1700,500);
+  rect(300,0,1700,500);    // x,y,width,height
   fill(255,255,255);
   
   rect(300,600,1700,500);
@@ -71,6 +72,20 @@ void draw(){  //same as loop in arduino
 
 void Fitness(){
   myPort.write('f');
+  stroke(0,255,0);
+  println("heart rate val: "+ heartRateVar);
+  line(300+x1,height,300+x1,height-heartRateVar);    // x1,y1,x2,y2 of line
+                                                     // (end points of line)
+  
+  if(x1 >= 250){
+    // resetting box for graph
+    println("x>250");
+    x1 =0;
+    //fill(255,255,255);
+    //rect(300,0,1700,500);
+  }
+  x1++;    // continuously moves to plot values
+  
 }
 
 void Stress(){
@@ -89,12 +104,12 @@ void alloff(){
 void serialEvent (Serial myPort) {
   println("waitin");
   // check for incoming numbers on the serial monitor
-  if (myPort.available() >= 0) {
+  if (myPort.available() > 0) {                        // i had >= 0...
     valueFromArduino = myPort.readStringUntil('\n');
     dataArr = float(split(valueFromArduino,"-"));
     println(valueFromArduino);
     // store values from the analog devices to the a and b values used for height in graph
-    //a = map(dataArr[0], 0, 1023, 0, 255);
+    heartRateVar = map(dataArr[0], 0, 1023, 0, 255);
     //b = map(dataArr[1], 0, 1023, 0, 255);
     
   }
