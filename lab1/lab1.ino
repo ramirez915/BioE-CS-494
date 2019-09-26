@@ -153,21 +153,23 @@ void loop() {
   
   Serial.println(average);
 
+
+//INSERT MAX AND MIN FUNCTION TO RECOGNIZE THE INHALATION AND EXHALATION MOMENTS
+//RETURN THE RESPIRATION RATE IN PLACE OF THE RESPIRATORY SIGNAL ALONE
+
  
  //respiraotyr signal acquired
  
- 
- 
-
- //heart rate acquisition
+  //heart rate acquisition
  
  // analogRead
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
 
-  int seg
+  double seg
 
+  int bpm
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
     
@@ -184,17 +186,23 @@ void loop() {
 
       //R-peak detected, save time instant
       //t must be current time
-      R_R=
+      R_R=t/1000
+      
+      //compute bpm as a frequency
+      bpm=R_R/60
       
       
     }
-      //Serial.println(analogRead(A0));
-
-
+      //Serial.println(analogRead(A0))
       
-      //getBaseLine();
   }
- }
+
+//save values in an array
+
+double output[] = {average,bpm};
+
+return output
+  
  }
 
 
@@ -202,10 +210,8 @@ void loop() {
 
 
  void fitness {
-
-
-
-baseline()
+  
+  baseline()
 
 //
 
