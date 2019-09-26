@@ -77,3 +77,310 @@ void loop() {
   //Wait for a bit to keep serial data from saturating
   delay(15);
 }
+<<<<<<< Updated upstream
+=======
+
+
+
+/*fitness function
+ * stress
+ * meditation
+ * 
+ * levels function(state, signla)
+ *{switch
+ * 
+ * baseline fuction
+ * 
+ * 
+ * heart rate signal processing function--->
+ * respiratory signal processing funciton
+ * 
+ * buzzer calling f
+ * 
+ */
+
+
+
+
+
+ 
+ 
+ int acquire_signals() {
+
+  const int numReadings = 10;
+
+  int readings[numReadings];      // the readings from the analog input
+  int readIndex = 0;              // the index of the current reading
+  int total = 0;                  // the running total
+  int average = 0;                // the average
+
+  //A3 is the respiratory signal input
+  int inputPin = A3;
+
+  //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+  }
+
+  
+  while(i<5){
+     // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(inputPin);
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  
+  
+  Serial.println(average);
+
+ 
+ //respiraotyr signal acquired
+ 
+ 
+ 
+
+ //heart rate acquisition
+ 
+ // analogRead
+  //check for signal acquisition
+  //pins are D11=LO- and D09=LO+
+
+
+  int seg
+
+  
+  if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
+    
+      Serial.println('!');
+  }
+
+  //if everything ok acquire the signal and check for treshold
+  else{
+
+    seg=analogRead(A0)
+
+    //check for threshold
+    if(seg>thr){
+
+      //R-peak detected, save time instant
+      //t must be current time
+      R_R=
+      
+      
+    }
+      //Serial.println(analogRead(A0));
+
+
+      
+      //getBaseLine();
+  }
+ }
+ }
+
+
+
+
+
+ void fitness {
+
+  /*  In this function:
+   *  
+   *  plot baseline heart rate and respiratory (inhalation/exhalation) rates
+   *  plot color-coded activity graphs and display activity zones
+   *  user performs activity:
+   *  display updated graphs, activity zones, respiratory rates
+   */
+  
+  //declaring the fitness level variables
+  int colorFlag;
+  String activity_zone;
+  
+  //call acquire_Signal
+  respir,bpm=acquire_Signal(time)
+  
+  //finding the activity zone for current bpm
+    while(!esc) {
+    
+      time=stopwatch()
+    
+      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
+  
+      //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+      
+      if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+        activity_zone = "very light";
+        colorFlag = 5;
+        Serial.println("activity zone is:" + activity_zone);
+        
+        } 
+      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+        activity_zone = "light";
+        colorFlag = 6;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+        activity_zone = "moderate";
+        colorFlag = 7;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+        activity_zone = "hard";
+        colorFlag = 8;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+        activity_zone = "maximum";
+        colorFlag = 9;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+    }
+    
+ }
+ 
+
+
+
+ void stress {
+
+
+
+baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+  respir,bpm=acquire_Signal(time)
+
+
+
+
+
+//stress
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+  
+
+  
+ }
+ 
+ }
+
+
+
+ void meditation {
+
+
+
+baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+  respir,bpm=acquire_Signal(time)
+
+
+
+
+
+//fmedit
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+
+
+
+  //if
+  buzzer
+
+  
+ }
+ 
+ }
+ 
+ 
+
+
+
+ void buzzer () {
+  
+  
+  
+  }
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ int heart rate() {
+
+
+ // analogRead
+  //check for signal acquisition
+  
+  if((digitalRead(10) == 1)||(digitalRead(11) == 1)){
+    
+      Serial.println('!');
+  }
+  
+  else{
+      Serial.println(analogRead(A0));
+      getBaseLine();
+  }
+
+
+
+
+ }
+>>>>>>> Stashed changes
