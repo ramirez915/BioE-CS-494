@@ -186,35 +186,26 @@ void loop() {
 
  void fitness {
   baseline()
-
-//
-
-
+  
   while(!esc) {
-  
   time=stopwatch()
+  int bpmbase;
+  int respbase;
+  int bpm;
+  int r_rate;
+  int ex_t, in_t;
+  int c_r;
 
 
-  
-
-  respir,bpm=acquire_Signal(time)
-
-//plotter
-
-
-
-//fitness
-
+  //Acquire BPM from Aquresignal function
+  //Display graph
+  //fitness
 
   //keep track of last records and decide the fitness level
-
-
   //compare baseline with current sgnals
-  
 
   
- }
- 
+  }
  }
 
 
@@ -225,35 +216,33 @@ void loop() {
  void stress {
 
 
-
-baseline()
-
-//
-
-
-  while(!esc) {
+  int currentBpm;
+  int seconds;
   
+  while(!esc) {
+  acquire_signals();
   time=stopwatch()
+  baseline()
+  
+  //Acquire heart rate and respitory signal from Aqure_signals
+  //display on processing - this is our resting heart rate
 
-  respir,bpm=acquire_Signal(time)
-
-
-
-
-
-//stress
-
-
+  // Now play relaxing music and see if there is a change in BPM
+  for ( int i = 0, i < seconds, i ++){
+  tmp = currentBpm;
+  if (tmp > currentBpm){
+    // BPM lowered, so the music worked
+  }
+  
+    
+  //stress
   //keep track of last records and decide the fitness level
-
-
   //compare baseline with current sgnals
   
-
   
  }
  
- }
+}
 
 
 
@@ -262,7 +251,8 @@ baseline()
   
   while(!esc) {
   time=stopwatch()
-  respir,bpm=acquire_Signal(time)
+  // Get BPM and Resp signal from Acquire_signals, and display in processing
+  //respir,bpm=acquire_Signal(time)
   
   breathPattern();
 
@@ -273,8 +263,7 @@ baseline()
     int count = 0;
     int topValue; // Max value taken from ECG reader
     int bottomValue; // Min value taken from ECG
-    
-    while(!esc){
+
     int dif = topValue - bottomValue;
     if ( dif < 3.0 ){
       count++
@@ -287,10 +276,9 @@ baseline()
       break;
     }
    }
- }
 
 void buzzer(){
-  cout<<"Buzz";
+  //Print buzz on processing
 }
 
  
