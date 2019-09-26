@@ -1,4 +1,7 @@
 #include <StopWatch.h>
+// ALWAYS CHANGE BEFORE STARTING PROGRAM
+const int AGE = 50;
+
 
 StopWatch watch(StopWatch::SECONDS);    // count time in seconds
 long watchTime = 0;
@@ -7,6 +10,8 @@ int heartRateTotal = 0;
 int avgHeartRate = 0;
 
 int count = 0;
+
+// will be setting 5,6,7,8,9 as color flags for gui to interpret
 
 
 int getBaseLine(){
@@ -35,6 +40,8 @@ void setup() {
   pinMode(10, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
 
+  // send the age to gui in setup
+  Serial.println(AGE);
 }
 
 void loop() {
@@ -44,16 +51,25 @@ void loop() {
     char val = Serial.read();
 
     if(val == 'f'){       //if y received
-      Serial.println("fitness Mode");
+
+      for(int i=0; i<100;i++){
+        Serial.print("1-");   // signals gui that this is fitness
+        Serial.print(i+10);
+        Serial.print("-");
+        Serial.println(i+50);
+        delay(50);  // sending in this format to processing 10-20\n
+      }
     }
     if(val == 's'){       //if s received
-      Serial.println("stress Mode");
+      
     }
     if(val == 'm'){       //if m received
       Serial.println("meditation Mode");
     }
     if(val == 'a'){       //if a received
-      Serial.println("extra Mode");
+      Serial.print("0-");
+      Serial.print("0-");
+      Serial.println(0);
     }
   }
 
@@ -77,8 +93,7 @@ void loop() {
   //Wait for a bit to keep serial data from saturating
   delay(15);
 }
-<<<<<<< Updated upstream
-=======
+
 
 
 
@@ -146,6 +161,7 @@ void loop() {
   
   Serial.println(average);
 
+
  
  //respiraotyr signal acquired
  
@@ -153,13 +169,29 @@ void loop() {
  
 
  //heart rate acquisition
+
+
+//INSERT MAX AND MIN FUNCTION TO RECOGNIZE THE INHALATION AND EXHALATION MOMENTS
+//RETURN THE RESPIRATION RATE IN PLACE OF THE RESPIRATORY SIGNAL ALONE
+
+ 
+ //respiraotyr signal acquired
+ 
+  //heart rate acquisition
+
  
  // analogRead
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
 
-  int seg
+
+  //int seg
+
+
+  double seg
+
+  int bpm
 
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
@@ -177,6 +209,7 @@ void loop() {
 
       //R-peak detected, save time instant
       //t must be current time
+
       R_R=
       
       
@@ -188,6 +221,24 @@ void loop() {
       //getBaseLine();
   }
  }
+
+      R_R=t/1000
+      
+      //compute bpm as a frequency
+      bpm=R_R/60
+      
+      
+    }
+      //Serial.println(analogRead(A0))
+      
+  }
+
+//save values in an array
+
+double output[] = {average,bpm};
+
+return output
+  
  }
 
 
@@ -254,6 +305,41 @@ void loop() {
     
  }
  
+
+  
+  baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+
+  
+
+  respir,bpm=acquire_Signal(time)
+
+//plotter
+
+
+
+//fitness
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+  
+
+  
+ }
+ 
+ }
+
+
 
 
 
@@ -383,4 +469,4 @@ baseline()
 
 
  }
->>>>>>> Stashed changes
+
