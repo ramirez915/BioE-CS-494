@@ -51,6 +51,7 @@ void loop() {
     char val = Serial.read();
 
     if(val == 'f'){       //if y received
+
       for(int i=0; i<100;i++){
         Serial.print("1-");   // signals gui that this is fitness
         Serial.print(i+10);
@@ -111,3 +112,266 @@ void loop() {
  * buzzer calling f
  * 
  */
+
+
+
+
+
+ 
+ 
+ int acquire_signals() {
+
+  const int numReadings = 10;
+
+  int readings[numReadings];      // the readings from the analog input
+  int readIndex = 0;              // the index of the current reading
+  int total = 0;                  // the running total
+  int average = 0;                // the average
+
+  //A3 is the respiratory signal input
+  int inputPin = A3;
+
+  //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+  }
+
+  
+  while(i<5){
+     // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(inputPin);
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  
+  
+  Serial.println(average);
+
+ 
+ //respiraotyr signal acquired
+ 
+ 
+ 
+
+ //heart rate acquisition
+ 
+ // analogRead
+  //check for signal acquisition
+  //pins are D11=LO- and D09=LO+
+
+
+  int seg
+
+  
+  if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
+    
+      Serial.println('!');
+  }
+
+  //if everything ok acquire the signal and check for treshold
+  else{
+
+    seg=analogRead(A0)
+
+    //check for threshold
+    if(seg>thr){
+
+      //R-peak detected, save time instant
+      //t must be current time
+      R_R=
+      
+      
+    }
+      //Serial.println(analogRead(A0));
+
+
+      
+      //getBaseLine();
+  }
+ }
+ }
+
+
+
+
+
+ void fitness {
+
+
+
+baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+
+  
+
+  respir,bpm=acquire_Signal(time)
+
+//plotter
+
+
+
+//fitness
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+  
+
+  
+ }
+ 
+ }
+
+
+
+
+
+
+ void stress {
+
+
+
+baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+  respir,bpm=acquire_Signal(time)
+
+
+
+
+
+//stress
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+  
+
+  
+ }
+ 
+ }
+
+
+
+ void meditation {
+
+
+
+baseline()
+
+//
+
+
+  while(!esc) {
+  
+  time=stopwatch()
+
+  respir,bpm=acquire_Signal(time)
+
+
+
+
+
+//fmedit
+
+
+  //keep track of last records and decide the fitness level
+
+
+  //compare baseline with current sgnals
+
+
+
+  //if
+  buzzer
+
+  
+ }
+ 
+ }
+ 
+ 
+
+
+
+ void buzzer () {
+  
+  
+  
+  }
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ int heart rate() {
+
+
+ // analogRead
+  //check for signal acquisition
+  
+  if((digitalRead(10) == 1)||(digitalRead(11) == 1)){
+    
+      Serial.println('!');
+  }
+  
+  else{
+      Serial.println(analogRead(A0));
+      getBaseLine();
+  }
+
+
+
+
+ }
