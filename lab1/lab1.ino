@@ -96,6 +96,7 @@ void loop() {
 
 
 
+
 /*fitness function
  * stress
  * meditation
@@ -161,6 +162,15 @@ void loop() {
   Serial.println(average);
 
 
+ 
+ //respiraotyr signal acquired
+ 
+ 
+ 
+
+ //heart rate acquisition
+
+
 //INSERT MAX AND MIN FUNCTION TO RECOGNIZE THE INHALATION AND EXHALATION MOMENTS
 //RETURN THE RESPIRATION RATE IN PLACE OF THE RESPIRATORY SIGNAL ALONE
 
@@ -168,15 +178,21 @@ void loop() {
  //respiraotyr signal acquired
  
   //heart rate acquisition
+
  
  // analogRead
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
 
+
+  //int seg
+
+
   double seg
 
   int bpm
+
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
     
@@ -193,6 +209,19 @@ void loop() {
 
       //R-peak detected, save time instant
       //t must be current time
+
+      R_R=
+      
+      
+    }
+      //Serial.println(analogRead(A0));
+
+
+      
+      //getBaseLine();
+  }
+ }
+
       R_R=t/1000
       
       //compute bpm as a frequency
@@ -217,6 +246,66 @@ return output
 
 
  void fitness {
+
+  /*  In this function:
+   *  
+   *  plot baseline heart rate and respiratory (inhalation/exhalation) rates
+   *  plot color-coded activity graphs and display activity zones
+   *  user performs activity:
+   *  display updated graphs, activity zones, respiratory rates
+   */
+  
+  //declaring the fitness level variables
+  int colorFlag;
+  String activity_zone;
+  
+  //call acquire_Signal
+  respir,bpm=acquire_Signal(time)
+  
+  //finding the activity zone for current bpm
+    while(!esc) {
+    
+      time=stopwatch()
+    
+      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
+  
+      //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+      
+      if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+        activity_zone = "very light";
+        colorFlag = 5;
+        Serial.println("activity zone is:" + activity_zone);
+        
+        } 
+      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+        activity_zone = "light";
+        colorFlag = 6;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+        activity_zone = "moderate";
+        colorFlag = 7;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+        activity_zone = "hard";
+        colorFlag = 8;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+        activity_zone = "maximum";
+        colorFlag = 9;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+    }
+    
+ }
+ 
+
   
   baseline()
 
@@ -249,7 +338,6 @@ return output
  }
  
  }
-
 
 
 
@@ -381,3 +469,4 @@ baseline()
 
 
  }
+
