@@ -323,14 +323,43 @@ if (baseline==1){
 
 //else it's fitness state
 else{
-//fitness
 
+      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
 
-  //keep track of last records and decide the fitness level
-
-
-  //compare baseline with current sgnals
+     //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+     
+     if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+        activity_zone = "very light";
+       colorFlag = 5;
+       Serial.println("activity zone is:" + activity_zone);
+       
+       } 
+      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+        activity_zone = "light";
+        colorFlag = 6;
   
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+        activity_zone = "moderate";
+        colorFlag = 7;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+        activity_zone = "hard";
+        colorFlag = 8;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+        activity_zone = "maximum";
+        colorFlag = 9;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+    }
+}
 
   
  }
