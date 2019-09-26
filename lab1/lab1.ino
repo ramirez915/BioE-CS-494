@@ -86,10 +86,13 @@ void loop() {
 
     char val = Serial.read();
 
+    int i = 0;      // counter for made up numbers
+
     if(val == 'f'){       //if y received
 
       fitness();
       baseline=1
+
     }
     if(val == 's'){       //if s received
       stress();
@@ -124,6 +127,7 @@ void loop() {
 //      Serial.println(analogRead(A0));
 //      getBaseLine();
 //  }
+
   //Wait for a bit to keep serial data from saturating
   delay(15);
 }
@@ -355,42 +359,14 @@ else{
 
 baseline()
 
+// int acquire_signals() {
 //
-
-
-  while(!esc) {
-  
-  time=stopwatch()
-
-  respir,bpm=acquire_Signal(time)
-
-
-
-
-
-//stress
-
-
-  //keep track of last records and decide the fitness level
-
-
-  //compare baseline with current sgnals
-  
-
-  
- }
- 
- }
-
-
-
- void meditation {
-
-
-
-baseline()
-
+//  const int numReadings = 10;
 //
+//  int readings[numReadings];      // the readings from the analog input
+//  int readIndex = 0;              // the index of the current reading
+//  int total = 0;                  // the running total
+//  int average = 0;                // the average
 
 
   while(!esc) {
@@ -425,8 +401,188 @@ baseline()
 
 
 
- void buzzer () {
-  
-  
-  
-  }
+
+//
+//
+//
+//
+//
+// void fitness {
+//
+//  /*  In this function:
+//   *  
+//   *  plot baseline heart rate and respiratory (inhalation/exhalation) rates
+//   *  plot color-coded activity graphs and display activity zones
+//   *  user performs activity:
+//   *  display updated graphs, activity zones, respiratory rates
+//   */
+//  
+//  //declaring the fitness level variables
+//  int colorFlag;
+//  String activity_zone;
+//  
+//  //call acquire_Signal
+//  respir,bpm=acquire_Signal(time)
+//  
+//  //finding the activity zone for current bpm
+//    while(!esc) {
+//    
+//      time=stopwatch()
+//    
+//      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
+//  
+//      //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+//      
+//      if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+//        activity_zone = "very light";
+//        colorFlag = 5;
+//        Serial.println("activity zone is:" + activity_zone);
+//        
+//        } 
+//      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+//        activity_zone = "light";
+//        colorFlag = 6;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+//        activity_zone = "moderate";
+//        colorFlag = 7;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+//        activity_zone = "hard";
+//        colorFlag = 8;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+//        activity_zone = "maximum";
+//        colorFlag = 9;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//    }
+//    
+// }
+// 
+//
+//  
+//  baseline()
+//
+////
+//
+//
+//  while(!esc) {
+//  
+//  time=stopwatch()
+//
+//
+//  
+//
+//  respir,bpm=acquire_Signal(time)
+//
+////plotter
+//
+//
+//
+////fitness
+//
+//
+//  //keep track of last records and decide the fitness level
+//
+//
+//  //compare baseline with current sgnals
+//  
+//
+//  
+// }
+// 
+// }
+//
+//
+//
+//
+//
+// void stress {
+//
+//
+//
+//baseline()
+//
+////
+//
+//
+//  while(!esc) {
+//  
+//  time=stopwatch()
+//
+//  respir,bpm=acquire_Signal(time)
+//
+//
+//
+//
+//
+////stress
+//
+//
+//  //keep track of last records and decide the fitness level
+//
+//
+//  //compare baseline with current sgnals
+//  
+//
+//  
+// }
+// 
+// }
+//
+//
+//
+// void meditation {
+//
+//
+//
+//baseline()
+//
+////
+//
+//
+//  while(!esc) {
+//  
+//  time=stopwatch()
+//
+//  respir,bpm=acquire_Signal(time)
+//
+//
+//
+//
+//
+////fmedit
+//
+//
+//  //keep track of last records and decide the fitness level
+//
+//
+//  //compare baseline with current sgnals
+//
+//
+//
+//  //if
+//  buzzer
+//
+//  
+// }
+// 
+// }
+// 
+// 
+//
+//
+//
+// void buzzer () {
+//  
+//  
+//  
+//  }
