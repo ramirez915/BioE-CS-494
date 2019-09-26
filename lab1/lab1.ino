@@ -1,37 +1,75 @@
+
 #include <StopWatch.h>
-// ALWAYS CHANGE BEFORE STARTING PROGRAM
-const int AGE = 50;
 
 
-StopWatch watch(StopWatch::SECONDS);    // count time in seconds
+//declare global variables:
+
+StopWatch resp_timer; // default millis, timer for respiration
+StopWatch bpm_timer; //timer for bpm
+Stopwatch 30sec(StopWatch::SECONDS); //timer for 30 sec of baseline
 long watchTime = 0;
 
-int heartRateTotal = 0;
-int avgHeartRate = 0;
+int bpmbase = 0;
+int respbase=0;
+int bpm=0;
+int r_rate;
+long ex_t,in_t;
+int c_r;
 
-int count = 0;
+//update 3 data
+int x0,x1,x2
 
-// will be setting 5,6,7,8,9 as color flags for gui to interpret
+bool max_fp=false
+bool min_fp=true
+bool max_f=false
+bool min_f=false
+int baseline=0
+
+int it=0
+
+const int numReadings = 10;
+
+
+
+////////////////////////////////////////////////
 
 
 int getBaseLine(){
-    watch.start();
+
+     
+    if(watch.elapsed()< 30){
     
-    while(watch.elapsed()!= 30){
       Serial.println("NOT 30 YET");
-      Serial.println(watch.elapsed());
       // keep adding to total heart rate to later get avg
-//      heartRateTotal = heartRateTotal + // reading from sensor
-      if(watch.elapsed() == 30){
-        Serial.println("30!");
-        break;
-        // get avg heart rate here
-//        avgHeartRate = avgHeartRate / 
-      }
+
+      acquire_signal();
+      
+      it=it+1;
+      bpmbase = bpmbase + bpm;
+      respbase = respbase + r_rate;
+
     }
+      
+      if(watch.elapsed() == 30){
+
+        // get avg heart rate here
+        
+       bpmbase = bpmbase / it;
+       respbase=respbase/it;
+
+       //set baseline=0
+
+       it=0;
+       baseline=0;
+       
+        Serial.println("30! baseline computed");
+ 
+      }
+      
 }
 
 
+//////////////////////////////////////////////
 
 
 void setup() {
@@ -40,8 +78,6 @@ void setup() {
   pinMode(10, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
 
-  // send the age to gui in setup
-  Serial.println(AGE);
 }
 
 void loop() {
@@ -52,24 +88,22 @@ void loop() {
 
     if(val == 'f'){       //if y received
 
-      for(int i=0; i<100;i++){
-        Serial.print("1-");   // signals gui that this is fitness
-        Serial.print(i+10);
-        Serial.print("-");
-        Serial.println(i+50);
-        delay(50);  // sending in this format to processing 10-20\n
-      }
+      fitness();
+      baseline=1
     }
     if(val == 's'){       //if s received
-      
+      stress();
+      baseline=1
     }
     if(val == 'm'){       //if m received
       Serial.println("meditation Mode");
+      meditation();
+      baseline=1
     }
     if(val == 'a'){       //if a received
-      Serial.print("0-");
-      Serial.print("0-");
-      Serial.println(0);
+      Serial.println("extra Mode");
+      extra();
+      baseline=1
     }
   }
 
@@ -95,34 +129,13 @@ void loop() {
 }
 
 
-
-
-/*fitness function
- * stress
- * meditation
- * 
- * levels function(state, signla)
- *{switch
- * 
- * baseline fuction
- * 
- * 
- * heart rate signal processing function--->
- * respiratory signal processing funciton
- * 
- * buzzer calling f
- * 
- */
-
-
-
-
-
  
  
- int acquire_signals() {
+ //////////////////////////////////////////////////////////////////////////////////////////////
 
-  const int numReadings = 10;
+
+
+int acquire_signals() {
 
   int readings[numReadings];      // the readings from the analog input
   int readIndex = 0;              // the index of the current reading
@@ -157,42 +170,25 @@ void loop() {
   // calculate the average:
   average = total / numReadings;
   // send it to the computer as ASCII digits
-  
-  
-  Serial.println(average);
 
 
- 
- //respiraotyr signal acquired
- 
- 
- 
+x2=x1;
+x1=x0;
 
- //heart rate acquisition
+x0=average;
 
+max_min();
 
-//INSERT MAX AND MIN FUNCTION TO RECOGNIZE THE INHALATION AND EXHALATION MOMENTS
-//RETURN THE RESPIRATION RATE IN PLACE OF THE RESPIRATORY SIGNAL ALONE
+ex_in();
 
- 
- //respiraotyr signal acquired
- 
+ //t_inhal, t_exhal acquired
+ //r_rate computed
+
   //heart rate acquisition
-
- 
- // analogRead
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
-
-
-  //int seg
-
-
   double seg
-
-  int bpm
-
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
     
@@ -210,121 +206,119 @@ void loop() {
       //R-peak detected, save time instant
       //t must be current time
 
-      R_R=
-      
-      
-    }
-      //Serial.println(analogRead(A0));
-
-
-      
-      //getBaseLine();
-  }
- }
-
-      R_R=t/1000
-      
+      R_R=bpm_timer.elapsed()/1000
+      bpm_timer.reset()
+      bpm_timer.start()
       //compute bpm as a frequency
       bpm=R_R/60
-      
-      
+
     }
-      //Serial.println(analogRead(A0))
       
   }
 
-//save values in an array
-
-double output[] = {average,bpm};
-
-return output
-  
  }
 
 
+///////////////////////////////////////////////////////////////////
+
+
+
+
+void max_min (){
+
+  
+//if max
+if(x0<x1 && x2<x1){
+  max_f=true
+  max_f=false
+}
+  
+if(x0>x1 && x2>x1) {
+  min_f=true
+  max_f=false
+}
+
+}
+
+
+////////////////////////////////////////////////////////
+
+
+
+void ex_in (){
+
+  if(max_f && min_fp){
+    //found inhalation peak, record inhalation time
+    in_t=resp_time.elapsed();
+    resp_time.reset()
+    resp_time.start()
+    min_fp=0
+    max_fp=1
+  }
+
+  if(!max_f && min_f && max_fp){
+    //found exhalation min peak, record exhalation time
+    ex_t=resp_time.elapsed();
+    resp_time.reset()
+    resp_time.start()
+    min_fp=1
+    max_fp=0
+
+    //when found an exhalation peak it means a full breath is finished
+    c_r=c_r+1
+
+    r_rate= 60/r_rate
+
+    
+    
+  }
+  
+}
+ 
+
+
+
+//////////////////////////////////////////////////////
 
 
 
  void fitness {
+//start a general timer to keep track of the time
+//stopwatch resolution is millis as default
 
-  /*  In this function:
-   *  
-   *  plot baseline heart rate and respiratory (inhalation/exhalation) rates
-   *  plot color-coded activity graphs and display activity zones
-   *  user performs activity:
-   *  display updated graphs, activity zones, respiratory rates
-   */
-  
-  //declaring the fitness level variables
-  int colorFlag;
-  String activity_zone;
-  
-  //call acquire_Signal
-  respir,bpm=acquire_Signal(time)
-  
-  //finding the activity zone for current bpm
-    while(!esc) {
-    
-      time=stopwatch()
-    
-      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
-  
-      //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
-      
-      if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
-        activity_zone = "very light";
-        colorFlag = 5;
-        Serial.println("activity zone is:" + activity_zone);
-        
-        } 
-      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
-        activity_zone = "light";
-        colorFlag = 6;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
-        activity_zone = "moderate";
-        colorFlag = 7;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
-        activity_zone = "hard";
-        colorFlag = 8;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
-        activity_zone = "maximum";
-        colorFlag = 9;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-    }
-    
- }
- 
+ 30sec.start();
+ resp_timer.start();
+ bpm_timer.start();
 
-  
-  baseline()
 
-//
-
+//initialiaze variable of fitness function:
 
   while(!esc) {
-  
-  time=stopwatch()
 
 
-  
-
-  respir,bpm=acquire_Signal(time)
+ acquire_Signal()
 
 //plotter
+  //practice code to send to processing
+      for(
+        int i=0; i<100;i++){
+        Serial.print(i+10);
+        Serial.print("-");
+        Serial.println(i+50);
+        delay(50);  // sending in this format to processing 10-20\n
+      }
 
 
 
+//if baseline state
+if (baseline==1){
+  
+  baseline()
+ }
+
+
+//else it's fitness state
+else{
 //fitness
 
 
@@ -336,8 +330,20 @@ return output
 
   
  }
+
+ 30sec.reset();
+ resp_timer.reset();
+ bpm_timer.reset();
+ 
  
  }
+
+
+
+
+
+///////////////////////////////////////////////////////////////
+
 
 
 
@@ -424,49 +430,3 @@ baseline()
   
   
   }
-
- 
- 
- 
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
- int heart rate() {
-
-
- // analogRead
-  //check for signal acquisition
-  
-  if((digitalRead(10) == 1)||(digitalRead(11) == 1)){
-    
-      Serial.println('!');
-  }
-  
-  else{
-      Serial.println(analogRead(A0));
-      getBaseLine();
-  }
-
-
-
-
- }
-
