@@ -1,9 +1,8 @@
-
 #include <StopWatch.h>
 
 
 //declare global variables:
-
+const int age = 50;
 StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
 StopWatch thirtySec(StopWatch::SECONDS); //timer for 30 sec of baseline
@@ -95,26 +94,27 @@ void loop() {
         if(i+50 >= 300){
           i = 0;
         }
-        Serial.print(i+10);
+        Serial.print("1-");   // flag for processing to know this data is for fitness mode 
+        Serial.print(i+10); // heart rate value
         Serial.print("-");
-        Serial.println(i+50);
+        Serial.println(i+50); // respi
         i++;
-        delay(50);  // sending in this format to processing 10-20\n
+        delay(50);  // sending in this format to processing 1-10-20\n
       }
       
 //      fitness();
       baseline=1;
 
     }
-    if(val == 's'){       //if s received
+    else if(val == 's'){       //if s received
 //      stress();
       baseline=1;
     }
-    if(val == 'm'){       //if m received
+    else if(val == 'm'){       //if m received
 //      meditation();
       baseline=1;
     }
-    if(val == 'a'){       //if a received
+    else if(val == 'a'){       //if a received
 //      extra();
       baseline=1;
     }
@@ -293,91 +293,88 @@ void ex_in (){
 //////////////////////////////////////////////////////
 
 
-
-void fitness() {
-//start a general timer to keep track of the time
-//stopwatch resolution is millis as default
-
- thirtySec.start();
- resp_timer.start();
- bpm_timer.start();
-
-
-//initialiaze variable of fitness function:
-
-  // a character is the escape button from the gui
-  while(Serial.read() != 'a') {
-
-
-    acquire_signal();
-
-    //plotter
-    //practice code to send to processing
-    for(int i=0; i<100;i++){
-      Serial.print(i+10);
-      Serial.print("-");
-      Serial.println(i+50);
-      delay(50);  // sending in this format to processing 10-20\n
-    }
-
-
-
-    //if baseline state
-    if (baseline==1){
-      getBaseLine();
-    }
-
-    int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
-
-    //else it's fitness state
-    else{
-    //keep track of last records and decide the fitness level
-  
-     //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
-     
-     if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
-        activity_zone = "very light";
-       colorFlag = 5;
-       Serial.println("activity zone is:" + activity_zone);
-       
-       } 
-      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
-        activity_zone = "light";
-        colorFlag = 6;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
-        activity_zone = "moderate";
-        colorFlag = 7;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
-        activity_zone = "hard";
-        colorFlag = 8;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
-        activity_zone = "maximum";
-        colorFlag = 9;
-  
-        Serial.println("activity zone is:" + activity_zone);
-      }
-    }
-}
-  
-    //compare baseline with current sgnals
-    }
-
-   thirtySec.reset();
-   resp_timer.reset();
-   bpm_timer.reset();
- 
- 
- }
-}
+// UNCOMMENT WHEN READY WHAT IS ACTIVITY ZONE?
+//void fitness() {
+////start a general timer to keep track of the time
+////stopwatch resolution is millis as default
+//
+// thirtySec.start();
+// resp_timer.start();
+// bpm_timer.start();
+//
+//
+////initialiaze variable of fitness function:
+//
+//  // a character is the escape button from the gui
+//  while(Serial.read() != 'a') {
+//
+//
+//    acquire_signal();
+//
+//    //plotter
+//    //practice code to send to processing
+//    for(int i=0; i<100;i++){
+//      Serial.print(i+10);
+//      Serial.print("-");
+//      Serial.println(i+50);
+//      delay(50);  // sending in this format to processing 10-20\n
+//    }
+//
+//    int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
+//
+//    //if baseline state
+//    if (baseline==1){
+//      getBaseLine();
+//    }
+//    //else it's fitness state
+//    else{
+//    //keep track of last records and decide the fitness level
+//  
+//     //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+//     
+//     if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+//        activity_zone = "very light";
+//       colorFlag = 5;
+//       Serial.println("activity zone is:" + activity_zone);
+//       
+//       } 
+//      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+//        activity_zone = "light";
+//        colorFlag = 6;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+//        activity_zone = "moderate";
+//        colorFlag = 7;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+//        activity_zone = "hard";
+//        colorFlag = 8;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+//        activity_zone = "maximum";
+//        colorFlag = 9;
+//  
+//        Serial.println("activity zone is:" + activity_zone);
+//      }
+//    }
+//}
+//  
+//    //compare baseline with current sgnals
+//    }
+//
+//   thirtySec.reset();
+//   resp_timer.reset();
+//   bpm_timer.reset();
+// 
+// 
+// }
+//}
 
 
 
