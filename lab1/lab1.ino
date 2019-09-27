@@ -155,7 +155,7 @@ int acquire_signals() {
   }
 
   
-  while(i<5){
+  while(i<numReadings){
      // subtract the last reading:
   total = total - readings[readIndex];
   // read from the sensor:
