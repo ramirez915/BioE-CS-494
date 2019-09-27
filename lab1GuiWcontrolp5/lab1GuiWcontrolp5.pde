@@ -6,7 +6,7 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object
 PFont font;
 int x1 = 0;    // starting position of the graph
-int x2 = 300;
+int x2 = 0;
 float heartRateVal;    // will store the values from readings for heart rate
 float respRateVal;
 float modeType = -1;      // used to determine which mode the data is coming from
@@ -25,7 +25,7 @@ int fitnessColor = 0;    // keep track of the color that is to display while in 
 float age = 0.0;          // age of the user
 
 void setup(){ //same as arduino program
-  size(2000, 1500);    //window size, (width, height)
+  size(2000, 1100);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
   String portName = Serial.list()[0];    // gets port number of arduino
@@ -126,7 +126,8 @@ void draw(){  //same as loop in arduino
     //heartPlot.setPoints(respPoints);
     
     x1++;  // move on to the next x coordinate
-    println("x val " + x1);
+    x2++;
+    println("x1 val " + x1 + " x2 val: " + x2);
     
     //draw both graphs
     heartPlot.defaultDraw();
@@ -137,7 +138,6 @@ void draw(){  //same as loop in arduino
       x1 = 0;
       heartPoints.removeRange(0,300);
       //respPoints.removeRange(0,300);
-      
     }
     
     //if (x2 >= 300){
@@ -158,9 +158,14 @@ void draw(){  //same as loop in arduino
     heartPlot.setPoints(heartPoints);
     
     heartPlot.defaultDraw();
-    println("done");
     
-    //respPoints.removeRange(0,300);
+    respPoints.removeRange(0,x2);
+    respPoints.add(x2,respRateVal);
+    respPlot.setPoints(respPoints);
+    
+    respPlot.defaultDraw();
+    
+    println("done");
     //fill(255,255,255);
     //rect(300, 600, 1700, 500);
     
