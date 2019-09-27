@@ -28,7 +28,14 @@ int it=0;
 
 const int numReadings = 10;
 
+
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
+
 const double thr = 700;
+
 
 
 
@@ -78,7 +85,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(10, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
-
+ for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
 }
 
 void loop() {
@@ -106,18 +114,53 @@ void loop() {
       baseline=1;
 
     }
+
+    if(val == 's'){       //if s received
+      stress();
+      baseline=1;
+       //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+    }
+    if(val == 'm'){       //if m received
+      Serial.println("meditation Mode");
+      meditation();
+      baseline=1;
+      //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+    }
+   }
+    if(val == 'a'){       //if a received
+      Serial.println("extra Mode");
+      extra();
+      baseline=1;
+      //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+    }
+   }
     else if(val == 's'){       //if s received
 //      stress();
       baseline=1;
+    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
+   }
     else if(val == 'm'){       //if m received
 //      meditation();
       baseline=1;
+      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
+   }
     else if(val == 'a'){       //if a received
 //      extra();
       baseline=1;
+      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
+   }
   }
 
 
@@ -156,34 +199,31 @@ int acquire_signal() {
   int total = 0;                  // the running total
   int average = 0;                // the average
 
+
   //A3 is the respiratory signal input
   int respPin = A3;
 
-  //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-  }
 
-  int i = 0;
-  while(i<5){
-    // subtract the last reading:
-    total = total - readings[readIndex];
-    // read from the sensor:
-    readings[readIndex] = analogRead(respPin);
-    // add the reading to the total:
-    total = total + readings[readIndex];
-    // advance to the next position in the array:
-    readIndex = readIndex + 1;
   
-    // if we're at the end of the array...
-    if (readIndex >= numReadings) {
+  // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(inputPin);
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
     // ...wrap around to the beginning:
     readIndex = 0;
   }
 
   // calculate the average:
   average = total / numReadings;
-  // send it to the computer as ASCII digits
+//wait 10ms to smooth
+  delay(10);
 
 
   x2=x1;
@@ -293,6 +333,96 @@ void ex_in (){
 //////////////////////////////////////////////////////
 
 
+
+
+ void fitness {
+//start a general timer to keep track of the time
+//stopwatch resolution is millis as default
+
+ 30sec.start();
+ resp_timer.start();
+ bpm_timer.start();
+
+
+//initialiaze variable of fitness function:
+
+  while(!esc) {
+
+
+ acquire_Signal()
+
+Serial.println(bpm);
+Serial.println(r_rate);
+
+//plotter
+  //practice code to send to processing
+      for(
+        int i=0; i<100;i++){
+        Serial.print(i+10);
+        Serial.print("-");
+        Serial.println(i+50);
+        delay(50);  // sending in this format to processing 10-20\n
+      }
+
+
+
+//if baseline state
+if (baseline==1){
+  
+  baseline()
+ }
+
+
+//else it's fitness state
+else{
+
+      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
+
+     //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+     
+     if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
+        activity_zone = "very light";
+       colorFlag = 5;
+       Serial.println("activity zone is:" + activity_zone);
+       
+       } 
+      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
+        activity_zone = "light";
+        colorFlag = 6;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
+        activity_zone = "moderate";
+        colorFlag = 7;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
+        activity_zone = "hard";
+        colorFlag = 8;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
+        activity_zone = "maximum";
+        colorFlag = 9;
+  
+        Serial.println("activity zone is:" + activity_zone);
+      }
+    }
+}
+
+  
+ }
+
+ 30sec.reset();
+ resp_timer.reset();
+ bpm_timer.reset();
+ 
+ 
+ }
+=======
 // UNCOMMENT WHEN READY WHAT IS ACTIVITY ZONE?
 //void fitness() {
 ////start a general timer to keep track of the time
