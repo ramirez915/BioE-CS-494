@@ -1,4 +1,3 @@
-
 #include <StopWatch.h>
 
 
@@ -28,6 +27,12 @@ int baseline=0
 int it=0
 
 const int numReadings = 10;
+
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
+
 
 
 
@@ -77,7 +82,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(10, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
-
+ for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
 }
 
 void loop() {
@@ -96,17 +102,26 @@ void loop() {
     }
     if(val == 's'){       //if s received
       stress();
-      baseline=1
+      baseline=1;
+       //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
     if(val == 'm'){       //if m received
       Serial.println("meditation Mode");
       meditation();
-      baseline=1
+      baseline=1;
+      //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
     if(val == 'a'){       //if a received
       Serial.println("extra Mode");
       extra();
-      baseline=1
+      baseline=1;
+      //initialize readings to 0
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
     }
   }
 
@@ -140,23 +155,12 @@ void loop() {
 
 
 int acquire_signals() {
-
-  int readings[numReadings];      // the readings from the analog input
-  int readIndex = 0;              // the index of the current reading
-  int total = 0;                  // the running total
-  int average = 0;                // the average
-
+  
   //A3 is the respiratory signal input
   int inputPin = A3;
 
-  //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-  }
-
   
-  while(i<numReadings){
-     // subtract the last reading:
+  // subtract the last reading:
   total = total - readings[readIndex];
   // read from the sensor:
   readings[readIndex] = analogRead(inputPin);
@@ -173,7 +177,8 @@ int acquire_signals() {
 
   // calculate the average:
   average = total / numReadings;
-  // send it to the computer as ASCII digits
+
+  delay(10);
 
 
 x2=x1;
@@ -301,6 +306,9 @@ void ex_in (){
 
 
  acquire_Signal()
+
+Serial.println(bpm);
+Serial.println(r_rate);
 
 //plotter
   //practice code to send to processing
