@@ -36,9 +36,9 @@ int average = 0;                // the average
 
 const double thr = 700;
 
+int colorFlag;
 
-
-
+int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
 ////////////////////////////////////////////////
 
 
@@ -88,17 +88,23 @@ void setup() {
  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
     readings[thisReading] = 0;
 }
+}
+
 
 void loop() {
   // TESTING FOR PROCESSING GUI
-  if(Serial.available()){  //id data is available to read
+  if(Serial.available()) {  //id data is available to read
 
     char val = Serial.read();
 
     int i = 0;      // counter for made up numbers
 
+
+
     if(val == 'f'){       //if y received
+      
       while(Serial.read() != 'a'){
+        
         if(i+50 >= 300){
           i = 0;
         }
@@ -115,6 +121,7 @@ void loop() {
 
     }
 
+/*
     if(val == 's'){       //if s received
       stress();
       baseline=1;
@@ -122,6 +129,8 @@ void loop() {
   for (int thisReading = 0; thisReading < numReadings; thisReading++) {
     readings[thisReading] = 0;
     }
+    }
+    
     if(val == 'm'){       //if m received
       Serial.println("meditation Mode");
       meditation();
@@ -140,59 +149,73 @@ void loop() {
     readings[thisReading] = 0;
     }
    }
-    else if(val == 's'){       //if s received
-//      stress();
-      baseline=1;
-    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
-   }
-    else if(val == 'm'){       //if m received
-//      meditation();
-      baseline=1;
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
-   }
-    else if(val == 'a'){       //if a received
-//      extra();
-      baseline=1;
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
-   }
   }
-
-
   
-  // TESTING FOR BASELINE FUNCTION
-//    if(count != 1){
-//      getBaseLine();
-//      count++;
-//    }
+*/
 
-    //DEFAULT CODE FOR HEART RATE MONITOR
-//  if((digitalRead(10) == 1)||(digitalRead(11) == 1)){
-//    Serial.println('!');
-//  }
-//  else{
-////     send the value of analog input 0:
-//      Serial.println(analogRead(A0));
-//      getBaseLine();
-//  }
+}
+ 
+}
 
-  //Wait for a bit to keep serial data from saturating
-  delay(15);
+ //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+void max_min (){
+  //if max
+  if(x0<x1 && x2<x1){
+    max_f=true;
+    max_f=false;
+  }
+    
+  if(x0>x1 && x2>x1) {
+    min_f=true;
+    max_f=false;
+  }
 }
 
 
- 
+
+ //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void ex_in (){
+
+  if(max_f && min_fp){
+    //found inhalation peak, record inhalation time
+    in_t=resp_timer.elapsed();
+    resp_timer.reset();
+    resp_timer.start();
+    min_fp=false;
+    max_fp=true;
+  }
+
+  if(!max_f && min_f && max_fp){
+    //found exhalation min peak, record exhalation time
+    ex_t=resp_timer.elapsed();
+    resp_timer.reset();
+//    resp_timer.start();
+    min_fp=true;
+    max_fp=false;
+
+    //when found an exhalation peak it means a full breath is finished
+//    c_r=c_r+1;
+
+    r_rate= 60/(ex_t + in_t);
+    
+    
+  }
+  
+}
+
+
  
  //////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-int acquire_signal() {
+void acquire_signal() {
 
   int readings[numReadings];      // the readings from the analog input
   int readIndex = 0;              // the index of the current reading
@@ -208,7 +231,7 @@ int acquire_signal() {
   // subtract the last reading:
   total = total - readings[readIndex];
   // read from the sensor:
-  readings[readIndex] = analogRead(inputPin);
+  readings[readIndex] = analogRead(respPin);
   // add the reading to the total:
   total = total + readings[readIndex];
   // advance to the next position in the array:
@@ -267,118 +290,62 @@ int acquire_signal() {
       //compute bpm as a frequency
       bpm=R_R/float(60);
 
+  //Wait for a bit to keep serial data from saturating
+ // delay(15);
     }
       
   }
 
  }
-}
-
-
-///////////////////////////////////////////////////////////////////
-
-
-
-
-void max_min (){
-  //if max
-  if(x0<x1 && x2<x1){
-    max_f=true;
-    max_f=false;
-  }
-    
-  if(x0>x1 && x2>x1) {
-    min_f=true;
-    max_f=false;
-  }
-}
-
-
-////////////////////////////////////////////////////////
-
-
-
-void ex_in (){
-
-  if(max_f && min_fp){
-    //found inhalation peak, record inhalation time
-    in_t=resp_timer.elapsed();
-    resp_timer.reset();
-    resp_timer.start();
-    min_fp=false;
-    max_fp=true;
-  }
-
-  if(!max_f && min_f && max_fp){
-    //found exhalation min peak, record exhalation time
-    ex_t=resp_timer.elapsed();
-    resp_timer.reset();
-//    resp_timer.start();
-    min_fp=true;
-    max_fp=false;
-
-    //when found an exhalation peak it means a full breath is finished
-//    c_r=c_r+1;
-
-    r_rate= 60/(ex_t + in_t);
-    
-    
-  }
-  
-}
- 
 
 
 
 //////////////////////////////////////////////////////
 
 
-
-
- void fitness {
+ //UNCOMMENT WHEN READY WHAT IS ACTIVITY ZONE?
+void fitness() {
 //start a general timer to keep track of the time
 //stopwatch resolution is millis as default
 
- 30sec.start();
+ thirtySec.start();
  resp_timer.start();
  bpm_timer.start();
 
 
 //initialiaze variable of fitness function:
 
-  while(!esc) {
+  // a character is the escape button from the gui
+  while(Serial.read() != 'a') {
 
 
- acquire_Signal()
+    acquire_signal();
 
-Serial.println(bpm);
-Serial.println(r_rate);
+    Serial.println(bpm);
+    Serial.println(r_rate);
 
-//plotter
-  //practice code to send to processing
-      for(
-        int i=0; i<100;i++){
-        Serial.print(i+10);
-        Serial.print("-");
-        Serial.println(i+50);
-        delay(50);  // sending in this format to processing 10-20\n
-      }
+    //plotter
+    //practice code to send to processing
+    
+    for(int i=0; i<100;i++){
+      Serial.print(i+10);
+      Serial.print("-");
+      Serial.println(i+50);
+      delay(50);  // sending in this format to processing 10-20\n
+    }
 
 
-
-//if baseline state
-if (baseline==1){
+    //if baseline state
+    if (baseline==1){
+      getBaseLine();
+    }
+    //else it's fitness state
+    else{
+    //keep track of last records and decide the fitness level
   
-  baseline()
- }
-
-
-//else it's fitness state
-else{
-
-      int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
-
      //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
+     
+     String activity_zone = "";
      
      if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
         activity_zone = "very light";
@@ -413,98 +380,14 @@ else{
     }
 }
 
-  
- }
+//compare baseline and signal
 
- 30sec.reset();
- resp_timer.reset();
- bpm_timer.reset();
+   thirtySec.reset();
+   resp_timer.reset();
+   bpm_timer.reset();
  
  
  }
-=======
-// UNCOMMENT WHEN READY WHAT IS ACTIVITY ZONE?
-//void fitness() {
-////start a general timer to keep track of the time
-////stopwatch resolution is millis as default
-//
-// thirtySec.start();
-// resp_timer.start();
-// bpm_timer.start();
-//
-//
-////initialiaze variable of fitness function:
-//
-//  // a character is the escape button from the gui
-//  while(Serial.read() != 'a') {
-//
-//
-//    acquire_signal();
-//
-//    //plotter
-//    //practice code to send to processing
-//    for(int i=0; i<100;i++){
-//      Serial.print(i+10);
-//      Serial.print("-");
-//      Serial.println(i+50);
-//      delay(50);  // sending in this format to processing 10-20\n
-//    }
-//
-//    int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
-//
-//    //if baseline state
-//    if (baseline==1){
-//      getBaseLine();
-//    }
-//    //else it's fitness state
-//    else{
-//    //keep track of last records and decide the fitness level
-//  
-//     //to display the activity zone and an activity graph on the GUI using the variables activity_zone and colorFlag
-//     
-//     if (bpm >= 0.5 * max_hrt_rate && bpm < 0.6 * max_hrt_rate){
-//        activity_zone = "very light";
-//       colorFlag = 5;
-//       Serial.println("activity zone is:" + activity_zone);
-//       
-//       } 
-//      else if (bpm >= 0.6 * max_hrt_rate && bpm < 0.7 * max_hrt_rate){
-//        activity_zone = "light";
-//        colorFlag = 6;
-//  
-//        Serial.println("activity zone is:" + activity_zone);
-//      }
-//      else if (bpm >= 0.7 * max_hrt_rate && bpm < 0.8 * max_hrt_rate){
-//        activity_zone = "moderate";
-//        colorFlag = 7;
-//  
-//        Serial.println("activity zone is:" + activity_zone);
-//      }
-//      else if (bpm >= 0.8 * max_hrt_rate && bpm < 0.9 * max_hrt_rate){
-//        activity_zone = "hard";
-//        colorFlag = 8;
-//  
-//        Serial.println("activity zone is:" + activity_zone);
-//      }
-//      else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
-//        activity_zone = "maximum";
-//        colorFlag = 9;
-//  
-//        Serial.println("activity zone is:" + activity_zone);
-//      }
-//    }
-//}
-//  
-//    //compare baseline with current sgnals
-//    }
-//
-//   thirtySec.reset();
-//   resp_timer.reset();
-//   bpm_timer.reset();
-// 
-// 
-// }
-//}
 
 
 
