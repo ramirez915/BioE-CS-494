@@ -61,6 +61,10 @@ int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on a
 //A3 is the respiratory signal input
 int respPin = A3;
 
+// for finding the max and min for respiration
+int absMax = -1000000;
+int absMin = 1000000;
+
 
 
 ////////////////////////////////////////////////
@@ -236,6 +240,31 @@ Serial.print(" ");
   delay(wait);
 
 //Serial.println(resp_timer.elapsed());
+
+  // finding max
+  if(average > absMax){
+    absMax = average;
+    Serial.println("found new max***********");
+  }
+  // find min
+  else if(average < absMin){
+    absMin = average;
+    Serial.println("********** found new min");
+  }
+
+  // check if we are exhaling
+  if(absMax > average){
+    Serial.println("EXHALING");
+    // stop inhaling timer
+    // start exhaling timer    
+  }
+  // else we are inhaling
+  else if(absMin < average){
+    Serial.println("INHALING");
+    // stop exhaling timer
+    // start inhaling timer
+    delay(500);
+  }
 
   x2=x1;
   x1=x0;
