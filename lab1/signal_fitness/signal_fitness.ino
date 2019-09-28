@@ -17,7 +17,9 @@ long ex_t,in_t;
 int c_r;
 
 //update 3 data
-double x0,x1,x2;
+double x0=0;
+double x1=0;
+double x2=0;
 
 bool max_fp=false;
 bool min_fp=true;
@@ -27,7 +29,19 @@ int baseline=0;
 
 int it=0;
 
-const int numReadings = 25;
+
+
+
+
+//numreading 40 is the best
+const int numReadings = 40;
+//10 ms is the best waiting time
+int wait=10; //millis for delay in 
+//gain 10 is the best
+int gain=10;
+int gap=150;
+
+
 
 
 int readings[numReadings];      // the readings from the analog input
@@ -118,20 +132,18 @@ void loop() {
 
 void max_min (){
   //if max
-  if(x0<x1 && x2<x1){
+  if(x1-x2>gap && x1-x0>gap){
     max_f=true;
     min_f=false;
-    //Serial.println("max found");
+    Serial.println("max found");
     ex_in();
-    break;
   }
     
-  else if(x0>x1 && x2>x1) {
+  if(x0-x1>gap && x2-x1>gap) {
     min_f=true;
     max_f=false;
-    //Serial.println("min found");
+    Serial.println("min found");
     ex_in();
-    break;
   }
 }
 
@@ -145,23 +157,23 @@ void ex_in (){
   if(max_f && min_fp){
     //found inhalation peak, record inhalation time
     in_t=resp_timer.elapsed();
-    Serial.println("inhalation t:");
-    Serial.println(in_t);
+    //Serial.println("inhalation t:");
+    //Serial.println(in_t);
     resp_timer.reset();
-    resp_timer.start();
+ //   resp_timer.start();
     min_fp=false;
     max_fp=true;
     max_f=false;
     min_f=false;
   }
   
-  else if(min_f && max_fp){
+  if(min_f && max_fp){
     //found exhalation min peak, record exhalation time
     ex_t=resp_timer.elapsed();
-    Serial.println("inhalation t:");
-    Serial.println(ex_t);
+   // Serial.println("inhalation t:");
+    //Serial.println(ex_t);
     resp_timer.reset();
-//    resp_timer.start();
+  //  resp_timer.start();
     min_fp=true;
     max_fp=false;
     max_f=false;
@@ -171,7 +183,7 @@ void ex_in (){
 //    c_r=c_r+1;
 
     r_rate= 60/(ex_t/1000 + in_t/1000);
-    Serial.println("r_rate");
+   // Serial.println("r_rate");
     Serial.println(r_rate);
     
   }
@@ -183,14 +195,13 @@ void ex_in (){
  //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
 void acquire_signal() {
 
   
   // subtract the last reading:
   total = total - readings[readIndex];
   // read from the sensor:
-  readings[readIndex] = analogRead(respPin)*10;
+  readings[readIndex] = analogRead(respPin)*gain;
   /*Serial.print("analogueR: ");
   Serial.println(analogRead(respPin));
   Serial.print("READS: ");
@@ -210,11 +221,19 @@ void acquire_signal() {
   // calculate the average:
   average = total / numReadings;
   //Serial.print("AVG ");
-  //Serial.println(average);
+//
+ //Serial.print(2600);  // To freeze the lower limit
+Serial.print(" ");
+Serial.print(0);  // To freeze the upper limit
+Serial.print(" ");
+ //To send all three 'data' points to the plotter
+ Serial.println(average*gain);
+ //Serial.print(" ");
+ 
 
 
 //wait 10ms to smooth
-  delay();
+  delay(wait);
 
 //Serial.println(resp_timer.elapsed());
 
