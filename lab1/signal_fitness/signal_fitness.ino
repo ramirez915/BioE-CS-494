@@ -158,7 +158,7 @@ void ex_in (){
     //found inhalation peak, record inhalation time
     in_t=resp_timer.elapsed();
     //Serial.println("inhalation t:");
-    //Serial.println(in_t);
+    //Serial.println(in_t); 
     resp_timer.reset();
  //   resp_timer.start();
     min_fp=false;
@@ -184,7 +184,7 @@ void ex_in (){
 
     r_rate= 60/(ex_t/1000 + in_t/1000);
    // Serial.println("r_rate");
-    Serial.println(r_rate);
+    //Serial.println(r_rate);
     
   }
   
@@ -236,6 +236,14 @@ Serial.print(" ");
   delay(wait);
 
 //Serial.println(resp_timer.elapsed());
+
+
+
+
+
+
+
+
 
   x2=x1;
   x1=x0;
