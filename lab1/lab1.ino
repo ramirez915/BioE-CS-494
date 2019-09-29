@@ -18,18 +18,16 @@ double respbase=0;
 float bpm;
 
 double r_rate;
-long ex_t,in_t;
-int c_r;
+float ex_t,in_t;
+//int c_r;
 
 
-bool max_f=false;
-bool min_f=false;
+bool maxf=false;
+bool minf=true;
 
 
-double s1=0;
-double s2=0;
-
-float R_R;
+float s1=0;
+float s2=0;
 
 //rr:
 //numreading 40 is the best
@@ -190,11 +188,6 @@ void loop() {
 
  //////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-    r_rate= 60/(ex_t + in_t);
-
-
 void acquire_signal() {
   
 //acquire respiration rate:
@@ -216,26 +209,43 @@ void acquire_signal() {
   // if we're at the end of the array...
   if (readIndex_rr >= numReadings_rr) {
     // ...wrap around to the beginning:
-    readIndex = 0;
+    readIndex_rr = 0;
   }
 
   // calculate the average:
-  average = total / numReadings;
+  average_rr = total_rr / numReadings_rr;
 //wait 10ms to smooth
   delay(10);
 
+    s2=s1;
+    //sec.elapsed()*
+    s1=average_rr;
+    //Serial.println(s1);
+   // Serial.print(" ");
+    if(s1-s2<0 && minf==true) {
+      
+      maxf=true;
+      minf=false;
+      in_t=timer.elapsed();
+      //Serial.println(in_t);
+      //Serial.print(" ");
+      resp_timer.reset();
+      resp_timer.start();
+      }
+      
+     if(s1-s2>0 && maxf==true) {
+      minf=true;
+      maxf=false;
+      ex_t=resp_timer.elapsed();
+      //Serial.println(ex_t);
+     // Serial.print(" ");
+      resp_timer.reset();
+      resp_timer.start();
+      float breath=(ex_t+in_t)/1000.00;
+      r_rate=60.00/breath;
+      //Serial.println(R_R);
+     }
 
-  x2=x1;
-  x1=x0;
-  
-  x0=average;
-  
-  max_min();
-  
-  ex_in();
-
- //t_inhal, t_exhal acquired
- //r_rate computed
 
   //heart rate acquisition
   //check for signal acquisition
@@ -250,30 +260,70 @@ void acquire_signal() {
   }
 
   //if everything ok acquire the signal and check for treshold
+  
   else{
+  
+  // subtract the last reading:
+  total_bpm = total_bpm - readings_bpm[readIndex_bpm];
+  // read from the sensor:
+  readings_bpm[readIndex_bpm] = analogRead(A0);
+  /*Serial.print("analogueR: ");
+  Serial.println(analogRead(A0));
+  Serial.print("READS: ");
+  Serial.println(readings[readIndex_bpm]);
+  */
+  // add the reading to the total:
+  total_bpm = total_bpm + readings_bpm[readIndex_bpm];
+  // advance to the next position in the array:
+  readIndex_bpm = readIndex_bpm + 1;
 
-    seg=analogRead(A0);
+  // if we're at the end of the array...
+  if (readIndex_bpm >= numReadings_bpm) {
+    // ...wrap around to the beginning:
+    readIndex_bpm = 0;
+  }
 
+  // calculate the average:
+  average_bpm = total_bpm / numReadings_bpm;
+  //Serial.print("AVG ");
+   //Serial.println(average);
+
+seg=average_bpm;
+
+//Serial.print("Segnal:");
+//Serial.println(seg);
+//Serial.print(" ");
+
+   // seg=analogRead(A0);
+//
+ //Serial.println(seg);
     //check for threshold
+   
     if(seg>thr){
-
+//
       //R-peak detected, save time instant
       //t must be current time
-      
-      R_R=float(bpm_timer.elapsed()/1000);
+      bpm_timer.stop();
+      long bpmTimer = bpm_timer.value();
+       R_R=bpmTimer;
+     // R_R= (bpmTimer/float(10));
+      //Serial.print("R_R:");
+     //Serial.println(R_R);
+      //Serial.print(" ");
       bpm_timer.reset();
       bpm_timer.start();
       //compute bpm as a frequency
-      bpm=R_R/float(60);
+      bpm=float(60)/(R_R/1000);
+     // Serial.print("b                                                         m                                                                pm:");
+      -//Serial.println(bpm);    //*2 gives a more reasonable bpm
+//Wait for a bit to keep serial data from saturating
 
-  //Wait for a bit to keep serial data from saturating
- // delay(15);
+      delay(30);
     }
       
-  }
-
  }
 
+}
 
 
 //////////////////////////////////////////////////////
@@ -308,8 +358,8 @@ void fitness() {
 
     acquire_signal();
 
-    Serial.println(bpm);
-    Serial.println(r_rate);
+    //Serial.println(bpm);
+    //Serial.println(r_rate);
 
     //plotter
     //practice code to send to processing
@@ -386,7 +436,7 @@ void fitness() {
 
 
 
-/*
+
 //void stress {
 
 //start a general timer to keep track of the time
@@ -423,7 +473,7 @@ void fitness() {
     if (baseline==1){
       getBaseLine();
     }
-    //else it's fitness state
+    //else it's stress state
     else{
 //
 //
