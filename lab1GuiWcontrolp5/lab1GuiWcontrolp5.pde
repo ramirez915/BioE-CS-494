@@ -6,7 +6,6 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object
 PFont font;
 int x1 = 0;    // starting position of the graph
-int x2 = 0;
 float heartRateVal;    // will store the values from readings for heart rate
 float respRateVal;
 float modeType = -1;      // used to determine which mode the data is coming from
@@ -15,11 +14,6 @@ String valueFromArduino;  // value from the analog device
 
 // grafica 
 GPlot heartPlot, respPlot;
-int npoints = 300;
-GPointsArray heartPoints = new GPointsArray(npoints);
-GPointsArray respPoints = new GPointsArray(npoints);
-
-
 
 int fitnessColor = 0;    // keep track of the color that is to display while in fitness mode
 float age = 0.0;          // age of the user
@@ -28,20 +22,13 @@ void setup(){ //same as arduino program
   size(2000, 1100);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino
+  String portName = Serial.list()[2];    // gets port number of arduino
   myPort = new Serial(this, portName, 115200);
   
   // starts serialEvent function when a newline character is read
   myPort.bufferUntil('\n');
   
   background(0, 0 , 200); // background color of window (r, g, b) or (0 to 255)
-  
-  //// setting made up values to plot
-  //for(int i =0; i< npoints;i++){
-  //  heartPoints.add(i,10*noise(0.1*i));
-  //  respPoints.add(i,10*noise(0.1*i));
-  //}
-  
   
   // Create a new plot and set its position on the screen
   heartPlot = new GPlot(this,300,0);        //graph positioned at 300,0
@@ -59,14 +46,7 @@ void setup(){ //same as arduino program
   respPlot.getYAxis().setAxisLabelText("y axis");
   respPlot.setDim(1500,500);
   respPlot.setXLim(0,300);
-  respPlot.setYLim(0,100);
-  
-  //// this draws out the made up plots
-  //respPlot.setPoints(respPoints);
-  //respPlot.defaultDraw();
-  //// this draws out the made up plots
-  //heartPlot.setPoints(heartPoints);
-  //heartPlot.defaultDraw();
+  respPlot.setYLim(0,100);  
   
   
   //lets add buton to empty window
@@ -96,13 +76,6 @@ void setup(){ //same as arduino program
     .setSize(120, 70)      //(width, height)
     .setFont(font)
   ;
-  
-  //// box that will contain the graphs
-  //rect(300,0,1700,500);    // x,y,width,height
-  //fill(255,255,255);
-  
-  //rect(300,600,1700,500);  // x,y,width,height
-  //fill(255,255,255);
 }
 
 void draw(){  //same as loop in arduino
@@ -117,60 +90,53 @@ void draw(){  //same as loop in arduino
     //graph for heart
     println("heart rate val: "+ heartRateVal);
     println("resp rate val: " + respRateVal);
-    // add points to heart graph
-    heartPoints.add(x1,heartRateVal);
-    heartPlot.setPoints(heartPoints);
     
-    // add points to respiratory graph
-    //respPoints.add(x1,respRateVal);
-    //heartPlot.setPoints(respPoints);
+    // ADDING POINT WITHOUT ARRAY
+    heartPlot.addPoint(new GPoint(x1,heartRateVal));
+    heartPlot.setPoint(x1, new GPoint(x1,heartRateVal));
+    
+    respPlot.addPoint(new GPoint(x1,respRateVal));
+    respPlot.setPoint(x1, new GPoint(x1,respRateVal));
     
     x1++;  // move on to the next x coordinate
-    x2++;
-    println("x1 val " + x1 + " x2 val: " + x2);
+    //println("x1 val " + x1);
     
     //draw both graphs
     heartPlot.defaultDraw();
-    //respPlot.defaultDraw();
-    
-    //at the max value for the plot so reset
-    if(x1 >= 300){
-      x1 = 0;
-      heartPoints.removeRange(0,300);
-      //respPoints.removeRange(0,300);
-    }
-    
-    //if (x2 >= 300){
-    //  x2 = 0;
-    //  respPoints.removeRange(0,300);
-    //}
-    
-    
-  }
-  
-  // exiting from any mode
-  else if(modeType == 0.0){
-    println("exiting");
-    // clear graphs
-    heartPoints.removeRange(0,x1);
-    x1 = 0;
-    heartPoints.add(x1,heartRateVal);
-    heartPlot.setPoints(heartPoints);
-    
-    heartPlot.defaultDraw();
-    
-    respPoints.removeRange(0,x2);
-    respPoints.add(x2,respRateVal);
-    respPlot.setPoints(respPoints);
-    
     respPlot.defaultDraw();
     
-    println("done");
-    //fill(255,255,255);
-    //rect(300, 600, 1700, 500);
+    // at the max so scroll to the side
+    if(x1 >= 300){
+      heartPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
+      respPlot.moveHorizontalAxesLim(3.0);
+    }
+  }
+  
+  // exiting from any mode so clear graphs
+  else if(modeType == 0.0){
+    println("exiting");
     
-    //fill(255,255,255);
-    //rect(300,0,1700,500);
+    // removes all the points from the graph
+    for(int i = 0; i < x1; i++){
+      heartPlot.removePoint(0);
+      respPlot.removePoint(0);
+    }
+    
+    // reset limits
+    heartPlot.setXLim(0,300);
+    heartPlot.setYLim(0,100);
+    heartPlot.updateLimits();
+    
+    respPlot.setXLim(0,300);
+    respPlot.setYLim(0,100);
+    respPlot.updateLimits();
+    x1 = 0;
+    
+    heartPlot.defaultDraw();    
+    respPlot.defaultDraw();
+    
+    modeType = -1.0;
+    println("done");
   }
 }
 
@@ -207,7 +173,7 @@ void serialEvent (Serial myPort) {
     }
     else{
       dataArr = float(split(valueFromArduino,"-"));
-      println(valueFromArduino);
+      //println(valueFromArduino);
       // store values from the analog devices to the a and b values used for height in graph
       modeType = dataArr[0];
       heartRateVal = map(dataArr[1], 0, 1023, 0, 255);
