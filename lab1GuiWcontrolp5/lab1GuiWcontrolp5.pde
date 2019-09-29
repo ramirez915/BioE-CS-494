@@ -34,7 +34,7 @@ void setup(){ //same as arduino program
   
   background(0, 0 , 200); // background color of window (r, g, b) or (0 to 255)
   
-  // setting song variable
+  // setting song variable    ***make sure song is in the same folder as this file
   //song = new SoundFile(this,sketchPath("Careless Whisper.mp3"));
   
   // Create a new plot and set its position on the screen
