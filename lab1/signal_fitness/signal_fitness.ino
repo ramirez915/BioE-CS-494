@@ -21,10 +21,13 @@ double x0=0;
 double x1=0;
 double x2=0;
 
+double s1=0;
+double s2=0;
+
 bool max_fp=false;
 bool min_fp=true;
-bool max_f=false;
-bool min_f=false;
+bool maxf=false;
+bool minf=false;
 int baseline=0;
 
 int it=0;
@@ -34,12 +37,12 @@ float R_R;
 
 
 //numreading 40 is the best
-const int numReadings = 40;
+const int numReadings = 50;
 const int numReadings_bpm = 5;
 //10 ms is the best waiting time
 int wait=10; //millis for delay in 
 //gain 10 is the best
-int gain=20;
+int gain=100;
 int gap=150;
 
 
@@ -137,65 +140,65 @@ void loop() {
 
 
 
-void max_min (){
-  //if max
-  if(x1-x2>gap && x1-x0>gap){
-    max_f=true;
-    min_f=false;
-    Serial.println("max found");
-    ex_in();
-  }
-    
-  if(x0-x1>gap && x2-x1>gap) {
-    min_f=true;
-    max_f=false;
-    Serial.println("min found");
-    ex_in();
-  }
-}
+//void max_min (){
+//  //if max
+//  if(x1-x2>gap && x1-x0>gap){
+//    max_f=true;
+//    min_f=false;
+//    Serial.println("max found");
+//    ex_in();
+//  }
+//    
+//  if(x0-x1>gap && x2-x1>gap) {
+//    min_f=true;
+//    max_f=false;
+//    Serial.println("min found");
+//    ex_in();
+//  }
+//}
 
 
 
  //////////////////////////////////////////////////////////////////////////////////////////////
 
-
-void ex_in (){
-
-  if(max_f && min_fp){
-    //found inhalation peak, record inhalation time
-    in_t=resp_timer.elapsed();
-    //Serial.println("inhalation t:");
-    //Serial.println(in_t);
-    resp_timer.reset();
- //   resp_timer.start();
-    min_fp=false;
-    max_fp=true;
-    max_f=false;
-    min_f=false;
-  }
-  
-  if(min_f && max_fp){
-    //found exhalation min peak, record exhalation time
-    ex_t=resp_timer.elapsed();
-   // Serial.println("inhalation t:");
-    //Serial.println(ex_t);
-    resp_timer.reset();
-  //  resp_timer.start();
-    min_fp=true;
-    max_fp=false;
-    max_f=false;
-    min_f=false;
-
-    //when found an exhalation peak it means a full breath is finished
-//    c_r=c_r+1;
-
-    r_rate= 60/(ex_t/1000 + in_t/1000);
-   // Serial.println("r_rate");
-    Serial.println(r_rate);
-    
-  }
-  
-}
+//
+//void ex_in (){
+//
+//  if(max_f && min_fp){
+//    //found inhalation peak, record inhalation time
+//    in_t=resp_timer.elapsed();
+//    //Serial.println("inhalation t:");
+//    //Serial.println(in_t);
+//    resp_timer.reset();
+// //   resp_timer.start();
+//    min_fp=false;
+//    max_fp=true;
+//    max_f=false;
+//    min_f=false;
+//  }
+//  
+//  if(min_f && max_fp){
+//    //found exhalation min peak, record exhalation time
+//    ex_t=resp_timer.elapsed();
+//   // Serial.println("inhalation t:");
+//    //Serial.println(ex_t);
+//    resp_timer.reset();
+//  //  resp_timer.start();
+//    min_fp=true;
+//    max_fp=false;
+//    max_f=false;
+//    min_f=false;
+//
+//    //when found an exhalation peak it means a full breath is finished
+////    c_r=c_r+1;
+//
+//    r_rate= 60/(ex_t/1000 + in_t/1000);
+//   // Serial.println("r_rate");
+//    Serial.println(r_rate);
+//    
+//  }
+//  
+//}
 
 
  
@@ -228,13 +231,13 @@ void acquire_signal() {
   // calculate the average:
   average = total / numReadings;
   
-Serial.print(2600);  // To freeze the lower limit
-Serial.print(" ");
+//Serial.print();  // To freeze the lower limit
+//Serial.print(" ");
 Serial.print(0);  // To freeze the upper limit
 Serial.print(" ");
  //To send all three 'data' points to the plotter
- Serial.println(average*gain);
- //Serial.print(" ");
+ Serial.println(average);
+ Serial.print(" ");
  
 
 
@@ -273,6 +276,43 @@ Serial.print(" ");
 //  
 //  x0=average;
 //  
+
+
+     s2=s1;
+    //sec.elapsed()*
+    s1=average;
+    //Serial.println(s1);
+   // Serial.print(" ");
+    if(s1-s2<0 && minf==true) {
+      
+      maxf=true;
+      minf=false;
+      float in_t=resp_timer.elapsed();
+      //Serial.println(in_t);
+      //Serial.print(" ");
+      resp_timer.reset();
+      resp_timer.start();
+      }
+      
+     if(s1-s2>0 && maxf==true) {
+      minf=true;
+      maxf=false;
+      float ex_t=resp_timer.elapsed();
+      //Serial.println(ex_t);
+     // Serial.print(" ");
+      resp_timer.reset();
+      resp_timer.start();
+      float breath=(ex_t+in_t)/1000.00;
+      float rr=60.00/breath;
+      Serial.println(rr);
+
+     }
+
+
+
+
+
+
 //  max_min();
 //  
 //x_in();
@@ -283,6 +323,14 @@ Serial.print(" ");
 // //t_inhal, t_exhal acquired
 // //r_rate computed
 //
+
+
+
+
+
+
+
+
 
 
   //heart rate acquisition
