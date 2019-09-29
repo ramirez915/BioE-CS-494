@@ -28,7 +28,7 @@ void setup(){ //same as arduino program
   size(2000, 1100);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino
+  String portName = Serial.list()[2];    // gets port number of arduino
   myPort = new Serial(this, portName, 115200);
   
   // starts serialEvent function when a newline character is read
@@ -96,13 +96,6 @@ void setup(){ //same as arduino program
     .setSize(120, 70)      //(width, height)
     .setFont(font)
   ;
-  
-  //// box that will contain the graphs
-  //rect(300,0,1700,500);    // x,y,width,height
-  //fill(255,255,255);
-  
-  //rect(300,600,1700,500);  // x,y,width,height
-  //fill(255,255,255);
 }
 
 void draw(){  //same as loop in arduino
@@ -122,8 +115,8 @@ void draw(){  //same as loop in arduino
     heartPlot.setPoints(heartPoints);
     
     // add points to respiratory graph
-    //respPoints.add(x1,respRateVal);
-    //heartPlot.setPoints(respPoints);
+    respPoints.add(x2,respRateVal);
+    respPlot.setPoints(respPoints);
     
     x1++;  // move on to the next x coordinate
     x2++;
@@ -131,7 +124,7 @@ void draw(){  //same as loop in arduino
     
     //draw both graphs
     heartPlot.defaultDraw();
-    //respPlot.defaultDraw();
+    respPlot.defaultDraw();
     
     //at the max value for the plot so reset
     if(x1 >= 300){
@@ -140,10 +133,10 @@ void draw(){  //same as loop in arduino
       //respPoints.removeRange(0,300);
     }
     
-    //if (x2 >= 300){
-    //  x2 = 0;
-    //  respPoints.removeRange(0,300);
-    //}
+    if (x2 >= 300){
+      x2 = 0;
+      respPoints.removeRange(0,300);
+    }
     
     
   }
@@ -160,17 +153,14 @@ void draw(){  //same as loop in arduino
     heartPlot.defaultDraw();
     
     respPoints.removeRange(0,x2);
+    x2= 0;
     respPoints.add(x2,respRateVal);
     respPlot.setPoints(respPoints);
     
     respPlot.defaultDraw();
     
     println("done");
-    //fill(255,255,255);
-    //rect(300, 600, 1700, 500);
-    
-    //fill(255,255,255);
-    //rect(300,0,1700,500);
+    modeType = -1.0;
   }
 }
 
@@ -207,7 +197,7 @@ void serialEvent (Serial myPort) {
     }
     else{
       dataArr = float(split(valueFromArduino,"-"));
-      println(valueFromArduino);
+      //println(valueFromArduino);
       // store values from the analog devices to the a and b values used for height in graph
       modeType = dataArr[0];
       heartRateVal = map(dataArr[1], 0, 1023, 0, 255);
