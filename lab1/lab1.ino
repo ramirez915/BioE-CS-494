@@ -2,44 +2,68 @@
 
 
 //declare global variables:
-const int age = 50;
 StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
 StopWatch thirtySec(StopWatch::SECONDS); //timer for 30 sec of baseline
 long watchTime = 0;
 
-int bpmbase = 0;
-int respbase=0;
-int bpm=0;
-int r_rate;
+int baseline=0;
+int it=0;
+
+const int age = 50;
+
+double bpmbase = 0;
+double respbase=0;
+
+float bpm;
+
+double r_rate;
 long ex_t,in_t;
 int c_r;
 
-//update 3 data
-int x0,x1,x2;
 
-bool max_fp=false;
-bool min_fp=true;
 bool max_f=false;
 bool min_f=false;
-int baseline=0;
-
-int it=0;
-
-const int numReadings = 10;
 
 
-int readings[numReadings];      // the readings from the analog input
-int readIndex = 0;              // the index of the current reading
-int total = 0;                  // the running total
-int average = 0;                // the average
+double s1=0;
+double s2=0;
+
+float R_R;
+
+//rr:
+//numreading 40 is the best
+const int numReadings_rr= 50;
+int readings_rr[numReadings_rr]; 
+int readIndex_rr= 0;  
+int total_rr = 0;                  // the running total
+float average_rr = 0;                // the average
+//10 ms is the best waiting time
+int wait_rr=10; //millis for delay in 
+//gain 10 is the best
+int gain_rr=100;
+//int gap=150;
+
+
+//bpm:
+const int numReadings_bpm = 5;
+int readings_bpm[numReadings_bpm];      // the readings from the analog input
+                              // the index of the current reading
+int readIndex_bpm = 0;
+int total_bpm = 0;                  // the running total
+float average_bpm=0;             // the average
 
 const double thr = 700;
+
 
 int colorFlag;
 
 int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
 
+
+//PINS:
+//A3 is the respiratory signal input
+int respPin = A3;
 
 
 
@@ -54,7 +78,7 @@ int getBaseLine(){
       Serial.println("NOT 30 YET");
       // keep adding to total heart rate to later get avg
 
-//      acquire_signals();
+      acquire_signals();
       
       it=it+1;
       bpmbase = bpmbase + bpm;
@@ -103,11 +127,10 @@ void loop() {
 
     int i = 0;      // counter for made up numbers
 
-
-
     if(val == 'f'){       //if y received
-      
-      while(Serial.read() != 'a'){
+
+      Serial.println("Fitnes Mode");
+     /* while(Serial.read() != 'a'){
         
         if(i+50 >= 300){
           i = 0;
@@ -119,24 +142,29 @@ void loop() {
         i++;
         delay(50);  // sending in this format to processing 1-10-20\n
       }
-      
-//      fitness();
+
+      */
+
+      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+}
+      fitness();
       baseline=1;
 
     }
 
-/*
+
     if(val == 's'){       //if s received
+      Serial.println("Stress Mode");
+      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+}
       stress();
       baseline=1;
-       //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
     }
     
     if(val == 'm'){       //if m received
-      Serial.println("meditation Mode");
+      Serial.println("Meditation Mode");
       meditation();
       baseline=1;
       //initialize readings to 0
@@ -144,8 +172,9 @@ void loop() {
     readings[thisReading] = 0;
     }
    }
+
     if(val == 'a'){       //if a received
-      Serial.println("extra Mode");
+      Serial.println("Extra Mode");
       extra();
       baseline=1;
       //initialize readings to 0
@@ -155,94 +184,37 @@ void loop() {
    }
   }
   
-*/
 
 }
- 
-}
-
- //////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-void max_min (){
-  //if max
-  if(x0<x1 && x2<x1){
-    max_f=true;
-    max_f=false;
-  }
-    
-  if(x0>x1 && x2>x1) {
-    min_f=true;
-    max_f=false;
-  }
-}
-
 
 
  //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void ex_in (){
-
-  if(max_f && min_fp){
-    //found inhalation peak, record inhalation time
-    in_t=resp_timer.elapsed();
-    resp_timer.reset();
-    resp_timer.start();
-    min_fp=false;
-    max_fp=true;
-  }
-
-  if(!max_f && min_f && max_fp){
-    //found exhalation min peak, record exhalation time
-    ex_t=resp_timer.elapsed();
-    resp_timer.reset();
-//    resp_timer.start();
-    min_fp=true;
-    max_fp=false;
-
-    //when found an exhalation peak it means a full breath is finished
-//    c_r=c_r+1;
 
     r_rate= 60/(ex_t + in_t);
-    
-    
-  }
-  
-}
-
-
- 
- //////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 void acquire_signal() {
-
-  int readings[numReadings];      // the readings from the analog input
-  int readIndex = 0;              // the index of the current reading
-  int total = 0;                  // the running total
-  int average = 0;                // the average
-
-
-  //A3 is the respiratory signal input
-  int respPin = A3;
-
+  
+//acquire respiration rate:
+  int readings_rr[numReadings_rr];      // the readings from the analog input
+  int readIndex_rr = 0;              // the index of the current reading
+  int total_rr = 0;                  // the running total
+  int average_rr = 0;                // the average
 
   
   // subtract the last reading:
-  total = total - readings[readIndex];
+  total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
-  readings[readIndex] = analogRead(respPin);
+  readings_rr[readIndex_rr] = analogRead(respPin);
   // add the reading to the total:
-  total = total + readings[readIndex];
+  total_rr = total_rr + readings_rr[readIndex_rr];
   // advance to the next position in the array:
-  readIndex = readIndex + 1;
+  readIndex_rr = readIndex_rr + 1;
 
   // if we're at the end of the array...
-  if (readIndex >= numReadings) {
+  if (readIndex_rr >= numReadings_rr) {
     // ...wrap around to the beginning:
     readIndex = 0;
   }
