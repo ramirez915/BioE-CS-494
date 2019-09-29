@@ -161,47 +161,46 @@ void loop() {
 
  //////////////////////////////////////////////////////////////////////////////////////////////
 
-//
-//void ex_in (){
-//
-//  if(max_f && min_fp){
-//    //found inhalation peak, record inhalation time
-//    in_t=resp_timer.elapsed();
-//    //Serial.println("inhalation t:");
-//    //Serial.println(in_t);
-//    resp_timer.reset();
-// //   resp_timer.start();
-//    min_fp=false;
-//    max_fp=true;
-//    max_f=false;
-//    min_f=false;
-//  }
-//  
-//  if(min_f && max_fp){
-//    //found exhalation min peak, record exhalation time
-//    ex_t=resp_timer.elapsed();
-//   // Serial.println("inhalation t:");
-//    //Serial.println(ex_t);
-//    resp_timer.reset();
-//  //  resp_timer.start();
-//    min_fp=true;
-//    max_fp=false;
-//    max_f=false;
-//    min_f=false;
-//
-//    //when found an exhalation peak it means a full breath is finished
-////    c_r=c_r+1;
-//
-//    r_rate= 60/(ex_t/1000 + in_t/1000);
-//   // Serial.println("r_rate");
-//    Serial.println(r_rate);
-//    
-//  }
-//  
-//}
 
 
- 
+void ex_in (){
+
+  if(max_f && min_fp){
+    //found inhalation peak, record inhalation time
+    in_t=resp_timer.elapsed();
+    //Serial.println("inhalation t:");
+    //Serial.println(in_t); 
+    resp_timer.reset();
+ //   resp_timer.start();
+    min_fp=false;
+    max_fp=true;
+    max_f=false;
+    min_f=false;
+  }
+  
+  if(min_f && max_fp){
+    //found exhalation min peak, record exhalation time
+    ex_t=resp_timer.elapsed();
+   // Serial.println("inhalation t:");
+    //Serial.println(ex_t);
+    resp_timer.reset();
+  //  resp_timer.start();
+    min_fp=true;
+    max_fp=false;
+    max_f=false;
+    min_f=false;
+
+    //when found an exhalation peak it means a full breath is finished
+//    c_r=c_r+1;
+
+    r_rate= 60/(ex_t/1000 + in_t/1000);
+   // Serial.println("r_rate");
+    //Serial.println(r_rate);
+    
+  }
+  
+}
+
  //////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -313,9 +312,16 @@ Serial.print(" ");
 
 
 
-//  max_min();
-//  
-//x_in();
+
+
+
+  x2=x1;
+  x1=x0;
+  
+  x0=average;
+  
+  max_min();
+  
 
 //Serial.print("r_rate");
 
