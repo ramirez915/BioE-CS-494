@@ -30,7 +30,7 @@ int baseline=0;
 int it=0;
 
 
-
+float R_R;
 
 
 //numreading 40 is the best
@@ -39,7 +39,7 @@ const int numReadings_bpm = 5;
 //10 ms is the best waiting time
 int wait=10; //millis for delay in 
 //gain 10 is the best
-int gain=10;
+int gain=20;
 int gap=150;
 
 
@@ -47,11 +47,12 @@ int gap=150;
 
 int readings[numReadings];      // the readings from the analog input
 int readIndex = 0;              // the index of the current reading
+int readIndex_bpm = 0;
 int total = 0;                  // the running total
 int average = 0;                // the average
 
 float average_bpm;
-const float thr = 550;
+const float thr = 800;
 
 int colorFlag;
 
@@ -203,45 +204,44 @@ void ex_in (){
 
 void acquire_signal() {
 
-//  
-// c// subtract the last reading:
-//  total = total - readings[readIndex];
-//  // read from the sensor:
-//  readings[readIndex] = analogRead(respPin)*gain;
-//  /*Serial.print("analogueR: ");
-//  Serial.println(analogRead(respPin));
-//  Serial.print("READS: ");
-//  Serial.println(readings[readIndex]);
-//  */
-//  // add the reading to the total:
-//  total = total + readings[readIndex];
-//  // advance to the next position in the array:
-//  readIndex = readIndex + 1;
-//
-//  // if we're at the end of the array...
-//  if (readIndex >= numReadings) {
-//    // ...wrap around to the beginning:
-//    readIndex = 0;
-//  }
-//
-//  // calculate the average:
-//  average = total / numReadings;
-//  //Serial.print("AVG ");
-////
-// //Serial.print(2600);  // To freeze the lower limit
-//Serial.print(" ");
-//Serial.print(0);  // To freeze the upper limit
-//Serial.print(" ");
-// //To send all three 'data' points to the plotter
-// Serial.println(average*gain);
-// //Serial.print(" ");
-// 
-//
-//
-////wait 10ms to smooth
-//  delay(wait);
-//
-////Serial.println(resp_timer.elapsed());
+  
+ // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(respPin)*gain;
+  /*Serial.print("analogueR: ");
+  Serial.println(analogRead(respPin));
+  Serial.print("READS: ");
+  Serial.println(readings[readIndex]);
+  */
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  
+Serial.print(2600);  // To freeze the lower limit
+Serial.print(" ");
+Serial.print(0);  // To freeze the upper limit
+Serial.print(" ");
+ //To send all three 'data' points to the plotter
+ Serial.println(average*gain);
+ //Serial.print(" ");
+ 
+
+
+//wait 10ms to smooth
+  delay(wait);
+
+//Serial.println(resp_timer.elapsed());
 //
 //  // finding max
 //  if(average > absMax){
@@ -275,7 +275,7 @@ void acquire_signal() {
 //  
 //  max_min();
 //  
-  //x_in();
+//x_in();
 
 //Serial.print("r_rate");
 
@@ -289,36 +289,36 @@ void acquire_signal() {
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
-  float seg;
-  float R_R;
-  
-  if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-    
-      Serial.println('!');
-  }
+//  float seg;
+//  float R_R;
+//  
+//  if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
+//    
+//      Serial.println('!');
+//  }
 
   //if everything ok acquire the signal and check for treshold
   
-  else{
-  
+//  else{
+//  
 //  // subtract the last reading:
-//  total = total - readings[readIndex];
+//  total = total - readings[readIndex_bpm];
 //  // read from the sensor:
-//  readings[readIndex] = analogRead(A0);
+//  readings[readIndex_bpm] = analogRead(A0);
 //  /*Serial.print("analogueR: ");
-//  Serial.println(analogRead(respPin));
+//  Serial.println(analogRead(A0));
 //  Serial.print("READS: ");
-//  Serial.println(readings[readIndex]);
+//  Serial.println(readings[readIndex_bpm]);
 //  */
 //  // add the reading to the total:
-//  total = total + readings[readIndex];
+//  total = total + readings[readIndex_bpm];
 //  // advance to the next position in the array:
-//  readIndex = readIndex + 1;
+//  readIndex_bpm = readIndex_bpm + 1;
 //
 //  // if we're at the end of the array...
-//  if (readIndex >= numReadings_bpm) {
+//  if (readIndex_bpm >= numReadings_bpm) {
 //    // ...wrap around to the beginning:
-//    readIndex = 0;
+//    readIndex_bpm = 0;
 //  }
 //
 //  // calculate the average:
@@ -331,32 +331,32 @@ void acquire_signal() {
 //Serial.println(seg);
 ////Serial.print(" ");
 //
-    seg=analogRead(A0);
+//    seg=analogRead(A0);
+////
+// //Serial.println(seg);
+//    //check for threshold
+//    if(seg>thr){
 //
- Serial.println(seg);
-    //check for threshold
-    if(seg>thr){
-
-      //R-peak detected, save time instant
-      //t must be current time
-      bpm_timer.stop();
-      float bpmTimer = bpm_timer.value();
-      
-      R_R=(bpmTimer/float(10));
-      Serial.print("R_R:");
-      Serial.println(R_R);
-      //Serial.print(" ");
-      bpm_timer.reset();
-      bpm_timer.start();
-      //compute bpm as a frequency
-      bpm=float(60)/R_R;
-      Serial.print("bpm:");
-      Serial.println(bpm);
-  //Wait for a bit to keep serial data from saturating
-      delay(15);
-    }
+//      //R-peak detected, save time instant
+//      //t must be current time
+//      bpm_timer.stop();
+//      long bpmTimer = bpm_timer.value();
+//       R_R=bpmTimer;
+//     // R_R= (bpmTimer/float(10));
+//      //Serial.print("R_R:");
+//     //Serial.println(R_R);
+//      //Serial.print(" ");
+//      bpm_timer.reset();
+//      bpm_timer.start();
+//      //compute bpm as a frequency
+//      bpm=float(60)/(R_R/1000);
+//     // Serial.print("bpm:");
+//      Serial.println(bpm);    //*2 gives a more reasonable bpm
+////Wait for a bit to keep serial data from saturating
+//      delay(30);
+//    }
 //      
- }
+// }
 
 }
 
