@@ -20,7 +20,7 @@ float fitnessColor = 0.0;    // keep track of the color that is to display while
 float age = 0.0;          // age of the user
 
 // music variable
-SoundFile song;
+//SoundFile song;
 
 void setup(){ //same as arduino program
   size(2000, 1200);    //window size, (width, height)
@@ -34,8 +34,8 @@ void setup(){ //same as arduino program
   
   background(0, 0 , 200); // background color of window (r, g, b) or (0 to 255)
   
-  // setting song variable
-  song = new SoundFile(this,sketchPath("Careless Whisper.mp3"));
+  // setting song variable    ***make sure song is in the same folder as this file
+  //song = new SoundFile(this,sketchPath("Careless Whisper.mp3"));
   
   // Create a new plot and set its position on the screen
   heartPlot = new GPlot(this,300,0);        //graph positioned at 300,0
@@ -157,7 +157,7 @@ void draw(){  //same as loop in arduino
 
 void Fitness(){
   myPort.write('f');
-  song.play();
+  //song.play();
 }
 
 void Stress(){
@@ -170,7 +170,7 @@ void Meditation(){
 
 void MainMenu(){
   myPort.write('a');
-  song.stop();
+  //song.stop();
 }
 
 
