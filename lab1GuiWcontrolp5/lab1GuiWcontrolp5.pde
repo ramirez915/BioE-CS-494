@@ -1,5 +1,6 @@
 import controlP5.*; // import ControlP5 library
 import grafica.*;    // for graphing
+import processing.sound.*;    // for music
 import processing.serial.*;
 
 Serial myPort;
@@ -15,11 +16,14 @@ String valueFromArduino;  // value from the analog device
 // grafica 
 GPlot heartPlot, respPlot;
 
-int fitnessColor = 0;    // keep track of the color that is to display while in fitness mode
+float fitnessColor = 0.0;    // keep track of the color that is to display while in fitness mode
 float age = 0.0;          // age of the user
 
+// music variable
+SoundFile song;
+
 void setup(){ //same as arduino program
-  size(2000, 1100);    //window size, (width, height)
+  size(2000, 1200);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
   String portName = Serial.list()[2];    // gets port number of arduino
@@ -30,14 +34,17 @@ void setup(){ //same as arduino program
   
   background(0, 0 , 200); // background color of window (r, g, b) or (0 to 255)
   
+  // setting song variable
+  song = new SoundFile(this,sketchPath("Careless Whisper.mp3"));
+  
   // Create a new plot and set its position on the screen
   heartPlot = new GPlot(this,300,0);        //graph positioned at 300,0
   heartPlot.setTitleText("Heart Monitor");
   heartPlot.getXAxis().setAxisLabelText("x axis");
   heartPlot.getYAxis().setAxisLabelText("y axis");
   heartPlot.setDim(1500,500);
-  heartPlot.setXLim(0,300);
-  heartPlot.setYLim(0,100);
+  heartPlot.setXLim(0,300);    // x axis must stay the same
+  heartPlot.setYLim(0,255);    // y axis
   
   // resp 
   respPlot = new GPlot(this,300,600);        //graph positioned at 300,600
@@ -45,8 +52,8 @@ void setup(){ //same as arduino program
   respPlot.getXAxis().setAxisLabelText("x axis");
   respPlot.getYAxis().setAxisLabelText("y axis");
   respPlot.setDim(1500,500);
-  respPlot.setXLim(0,300);
-  respPlot.setYLim(0,100);  
+  respPlot.setXLim(0,300);    // x axis must stay the same
+  respPlot.setYLim(0,255);    // y axis
   
   
   //lets add buton to empty window
@@ -88,8 +95,11 @@ void draw(){  //same as loop in arduino
   // fitness mode
   if(modeType == 1.0){
     //graph for heart
-    println("heart rate val: "+ heartRateVal);
-    println("resp rate val: " + respRateVal);
+    //println("heart rate val: "+ heartRateVal);
+    //println("resp rate val: " + respRateVal);
+    
+    //interpret color
+    interpretColor(fitnessColor);
     
     // ADDING POINT WITHOUT ARRAY
     heartPlot.addPoint(new GPoint(x1,heartRateVal));
@@ -105,10 +115,10 @@ void draw(){  //same as loop in arduino
     heartPlot.defaultDraw();
     respPlot.defaultDraw();
     
-    // at the max so scroll to the side
+    // at the max so scroll to the side    x axis
     if(x1 >= 300){
-      heartPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
-      respPlot.moveHorizontalAxesLim(3.0);
+      heartPlot.moveHorizontalAxesLim(5.0);    // if want faster scroll increase this value
+      respPlot.moveHorizontalAxesLim(5.0);     // 5 seems to be a good value
     }
   }
   
@@ -123,12 +133,12 @@ void draw(){  //same as loop in arduino
     }
     
     // reset limits
-    heartPlot.setXLim(0,300);
-    heartPlot.setYLim(0,100);
+    heartPlot.setXLim(0,300);    // x axis must stay the same
+    heartPlot.setYLim(0,255);    // y axis
     heartPlot.updateLimits();
     
-    respPlot.setXLim(0,300);
-    respPlot.setYLim(0,100);
+    respPlot.setXLim(0,300);    // x axis must stay the same
+    respPlot.setYLim(0,255);    // y axis
     respPlot.updateLimits();
     x1 = 0;
     
@@ -136,6 +146,8 @@ void draw(){  //same as loop in arduino
     respPlot.defaultDraw();
     
     modeType = -1.0;
+    fitnessColor = -1.0;
+    interpretColor(fitnessColor);
     println("done");
   }
 }
@@ -145,6 +157,7 @@ void draw(){  //same as loop in arduino
 
 void Fitness(){
   myPort.write('f');
+  song.play();
 }
 
 void Stress(){
@@ -157,36 +170,55 @@ void Meditation(){
 
 void MainMenu(){
   myPort.write('a');
+  song.stop();
 }
 
 
 void serialEvent (Serial myPort) {
-  //println("waitin");
   // check for incoming numbers on the serial monitor
   if (myPort.available() >= 0) {
     valueFromArduino = myPort.readStringUntil('\n');
     
-    //get age of the user
-    if(age == 0){
-      age = float(valueFromArduino);
-      println(age);
+    try{
+      //get age of the user
+      if(age == 0){
+        age = float(valueFromArduino);
+        println(age);
+      }
+      else{
+        dataArr = float(split(valueFromArduino,"-"));
+        println(valueFromArduino);
+        // store values from the analog devices to the a and b values used for height in graph
+        modeType = dataArr[0];
+        // adding fitness color
+        fitnessColor = dataArr[1];
+        heartRateVal = map(dataArr[2], 0, 1023, 0, 255);    // this gets plotted on y axis
+        respRateVal = map(dataArr[3], 0, 1023, 0, 255);    // this gets plotted on y axis
+        
+        // get raw values
+        //heartRateVal = dataArr[1];      // gets plotted on y axis
+        //respRateVal = dataArr[2];      // gets plotted on y axis
+      }
+    }catch(RuntimeException e){
+      e.printStackTrace();
     }
-    else{
-      dataArr = float(split(valueFromArduino,"-"));
-      //println(valueFromArduino);
-      // store values from the analog devices to the a and b values used for height in graph
-      modeType = dataArr[0];
-      heartRateVal = map(dataArr[1], 0, 1023, 0, 255);
-      respRateVal = map(dataArr[2], 0, 1023, 0, 255);
-      
-      // get raw values
-      //heartRateVal = dataArr[1];
-      //respRateVal = dataArr[2];
-    }
-    
   }
 }
 
-//void interpretColor(double colorFlag){
-  
-//}
+// will interpret the color flag to set up the color in GUI
+void interpretColor(float colorFlag){
+  print("activity zone: ");
+  if(colorFlag == 5.0){
+    println("very light");
+    background(255,0,0);
+  }
+  else if(colorFlag == 6.0){
+    println("light");
+    background(0,255,0);
+  }
+  // resetting                    ***** CHANGE STOCK COLOR IF NEEDED
+  else if(colorFlag == -1.0){
+    println("resetting color");
+    background(0,0,255);
+  }
+}
