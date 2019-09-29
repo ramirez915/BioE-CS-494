@@ -532,8 +532,8 @@ void fitness() {
 //*/
 //
 //
-// void buzzer () {
-//  
-//  
-//  
-//  }
+ void buzzer (){
+  tone(2,1000);
+  delay(10);
+  noTone(2);
+}
