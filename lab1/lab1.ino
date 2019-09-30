@@ -269,6 +269,33 @@ void set_readings () {
   noTone(2);
 }
 
+//////////////////////////////////////////////////////
+
+// function that sends over the data to processing once it is all collected
+void sendData(int mode, int colorFlag, float heartReading, float respReading){
+  Serial.print(mode);
+  Serial.print("-");
+  Serial.print(colorFlag);
+  Serial.print("-");
+  Serial.print(heartReading);
+  Serial.print("-");
+  Serial.println(respReading);
+}
+
+//////////////////////////////////////////////////////
+
+
+// exits the current mode so sends that information to processing
+// may need to add in here any other additional things we need to reset
+void exitMode(){
+  Serial.println("0-0-0-0");
+
+  // STOP WATCHES HERE
+  thirtySec.stop();
+  resp_timer.stop();
+  bpm_timer.stop();
+}
+
  //////////////////////////////////////////////////////
 
 void meditation() {
@@ -314,86 +341,6 @@ void meditation() {
  }
 
  }
-
-
-///////////////////////////////////////////////////////
-
-void setup() {
-  // initialize the serial communication:
-  Serial.begin(115200);
-  pinMode(10, INPUT); // Setup for leads off detection LO +
-  pinMode(11, INPUT); // Setup for leads off detection LO -
-  for (int thisReading = 0; thisReading < numReadings_rr; thisReading++){
-    readings_rr[thisReading] = 0;
-  }
-  for(int thisReading = 0; thisReading < numReadings_bpm; thisReading++){
-    readings_bpm[thisReading] = 0;
-  }
-}
-
-
-//////////////////////////////////////////
-
-
-void loop() {
-  //*************************
-  // sending data to processing in format
-  // "mode-colorFlag-heartRate-respRate\n"
-  
-  while(Serial.read() != 'a'){
-    char val = Serial.read();
-
-    // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
-    // fitness mode
-    if(val == 'f'){
-      while(Serial.read() != 'a'){
-        for (int thisReading = 0; thisReading < numReadings_rr; thisReading++){
-          readings_rr[thisReading] = 0;
-        }
-        for(int thisReading = 0; thisReading < numReadings_bpm; thisReading++){
-          readings_bpm[thisReading] = 0;
-        }
-        fitness();
-        baseline=1;
-      }
-      // exited the mode so send that to processing
-      exitMode();
-    } //---------------------------------------------------- end of fitness mode
-
-    // stress mode
-    // MAYBE HAVE SOMETHING TO CHANGE THE COLOR DEPENDING ON HOW LESS STRESS USER IS
-    // SOMETHING SIMILAR TO THE FITNESS MODE COLOR CHANGES BUT FOR STRESS
-    else if(val == 's'){
-      while(Serial.read() != 'a'){
-        for (int thisReading = 0; thisReading < numReadings_rr; thisReading++){
-          readings_rr[thisReading] = 0;
-        }
-        for(int thisReading = 0; thisReading < numReadings_bpm; thisReading++){
-          readings_bpm[thisReading] = 0;
-        }
-        stress();
-        baseline=1;
-      }
-      exitMode();
-    } //----------------------------------------------------   end of stress mode
-
-    // meditation mode
-    if(val == 'm'){
-      while(Serial.read() != 'a'){
-        meditation();
-        baseline=1;
-        //initialize readings to 0
-        for (int thisReading = 0; thisReading < numReadings_rr; thisReading++){
-          readings_rr[thisReading] = 0;
-        }
-        for(int thisReading = 0; thisReading < numReadings_bpm; thisReading++){
-          readings_bpm[thisReading] = 0;
-        }
-      }
-      exitMode();
-   }  //------------------------------------------------- end of meditation mode
-  }
-}       // end of loop()
 
 
 /////////////////////////////////////////////////////
@@ -474,53 +421,9 @@ void fitness() {
  
  }
 
-}
 
 
-//////////////////////////////////////////////
-void meditation() {
 
-////start a general timer to keep track of the time
-//stopwatch resolution is millis as default
-
- thirtySec.start();
- resp_timer.start();
- bpm_timer.start();
-
-
-//initialiaze variable of fitness function:
-
-  // a character is the escape button from the gui
-  while(Serial.read() != 'a') {
-
-
-    acquire_signal();
-
-   // Serial.println(bpm);
-    //Serial.println(r_rate);
-
-    //plotter
-    //practice code to send to processing
-    
-    for(int i=0; i<100;i++){
-      Serial.print(i+10);
-      Serial.print("-");
-      Serial.println(i+50);
-      delay(50);  // sending in this format to processing 10-20\n
-    }
-
-
-    //if baseline state
-    if (baseline==1){
-      getBaseLine();
-    }
-    //else it's meditation state
-    else{
-      breathPattern();   
-    }
- }
-
- }
 
 ///////////////////////////////////////////////////////////////
 
@@ -548,24 +451,24 @@ void stress () {
     if (baseline==1){
       getBaseLine();
     }
-    //else it's stress state
 
+
+//STRESS STILL TO DO
+    /*
+    //else it's stress state
     else{
      for ( int i = 0; i < seconds; i ++){                       //------------------------------------------------ what is seconds??????????
         tmp = currentBpm;
+        
         if (tmp > currentBpm){
         // BPM lowered, so the music worked
         }
      }
     }
   }
+  */
 }   // end of stress mode
-
- }
-// 
-// }
-
-
+}
 
 ///////////////////////////////////////////////////////////////
 
@@ -612,37 +515,13 @@ void loop() {
       meditation();
       baseline=1;
    }
-
+//EXTRA STILL TO WRITE
     if(val == 'a'){       //if a received
       Serial.println("Extra Mode");
       set_readings();
-      extra();
+      //extra();
       baseline=1;
    }
   }
   
  }
-
-
-
-// function that sends over the data to processing once it is all collected
-void sendData(int mode, int colorFlag, float heartReading, float respReading){
-  Serial.print(mode);
-  Serial.print("-");
-  Serial.print(colorFlag);
-  Serial.print("-");
-  Serial.print(heartReading);
-  Serial.print("-");
-  Serial.println(respReading);
-}
-
-// exits the current mode so sends that information to processing
-// may need to add in here any other additional things we need to reset
-void exitMode(){
-  Serial.println("0-0-0-0");
-
-  // STOP WATCHES HERE
-  thirtySec.stop();
-  resp_timer.stop();
-  bpm_timer.stop();
-}
