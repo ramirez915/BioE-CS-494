@@ -437,7 +437,7 @@ void fitness() {
 
 
 
-//void stress {
+void stress () {
 
 //start a general timer to keep track of the time
 //stopwatch resolution is millis as default
@@ -475,34 +475,22 @@ void fitness() {
     }
     //else it's stress state
     else{
-//
-//
-//
-//
-////fmedit
-//
-//
-//  //keep track of last records and decide the fitness level
-//
-//
-//  //compare baseline with current sgnals
-//
-//
-//
-//  //if
-//  buzzer
-//
-//  
-// }
+
+     for ( int i = 0, i < seconds, i ++){
+  tmp = currentBpm;
+  if (tmp > currentBpm){
+    // BPM lowered, so the music worked
+  }
+
+ }
 // 
 // }
  
- */
 
-/*
 
-//
-// void meditation {
+
+
+ void meditation() {
 
 ////start a general timer to keep track of the time
 //stopwatch resolution is millis as default
@@ -520,8 +508,8 @@ void fitness() {
 
     acquire_signal();
 
-    Serial.println(bpm);
-    Serial.println(r_rate);
+   // Serial.println(bpm);
+    //Serial.println(r_rate);
 
     //plotter
     //practice code to send to processing
@@ -538,22 +526,34 @@ void fitness() {
     if (baseline==1){
       getBaseLine();
     }
-    //else it's fitness state
+    //else it's meditation state
     else{
-//
-//
-//  //if
-//  buzzer
-//
-//  
-// }
-// 
-// }
-// 
-// 
-//*/
-//
-//
+      breathPattern();   
+    }
+ }
+
+ }
+
+
+ void breathPattern(){
+    int count = 0;
+    int topValue; // Max value taken from ECG reader
+    int bottomValue; // Min value taken from ECG
+
+    int dif = topValue - bottomValue;
+    if ( dif < 3.0 ){
+      count++
+      if (count = 3){
+        buzzer();
+      }
+    }
+    else{
+      count = 0;
+      break;
+    }
+   }
+
+   
  void buzzer (){
   tone(2,1000);
   delay(10);
