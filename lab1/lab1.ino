@@ -65,128 +65,7 @@ int respPin = A3;
 
 
 
-////////////////////////////////////////////////
-
-
-int getBaseLine(){
-
-     
-    if(thirtySec.elapsed()< 30){
-    
-      Serial.println("NOT 30 YET");
-      // keep adding to total heart rate to later get avg
-
-      acquire_signals();
-      
-      it=it+1;
-      bpmbase = bpmbase + bpm;
-      respbase = respbase + r_rate;
-
-    }
-      
-      if(thirtySec.elapsed() == 30){
-
-        // get avg heart rate here
-        
-       bpmbase = bpmbase / it;
-       respbase=respbase/it;
-
-       //set baseline=0
-
-       it=0;
-       baseline=0;
-       
-        Serial.println("30! baseline computed");
- 
-      }
-      
-}
-
-
-//////////////////////////////////////////////
-
-
-void setup() {
-  // initialize the serial communication:
-  Serial.begin(115200);
-  pinMode(10, INPUT); // Setup for leads off detection LO +
-  pinMode(11, INPUT); // Setup for leads off detection LO -
- for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-}
-}
-
-
-void loop() {
-  // TESTING FOR PROCESSING GUI
-  if(Serial.available()) {  //id data is available to read
-
-    char val = Serial.read();
-
-    int i = 0;      // counter for made up numbers
-
-    if(val == 'f'){       //if y received
-
-      Serial.println("Fitnes Mode");
-     /* while(Serial.read() != 'a'){
-        
-        if(i+50 >= 300){
-          i = 0;
-        }
-        Serial.print("1-");   // flag for processing to know this data is for fitness mode 
-        Serial.print(i+10); // heart rate value
-        Serial.print("-");
-        Serial.println(i+50); // respi
-        i++;
-        delay(50);  // sending in this format to processing 1-10-20\n
-      }
-
-      */
-
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-}
-      fitness();
-      baseline=1;
-
-    }
-
-
-    if(val == 's'){       //if s received
-      Serial.println("Stress Mode");
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-}
-      stress();
-      baseline=1;
-    }
-    
-    if(val == 'm'){       //if m received
-      Serial.println("Meditation Mode");
-      meditation();
-      baseline=1;
-      //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
-   }
-
-    if(val == 'a'){       //if a received
-      Serial.println("Extra Mode");
-      extra();
-      baseline=1;
-      //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
-   }
-  }
-  
-
-}
-
-
- //////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 void acquire_signal() {
   
@@ -226,7 +105,7 @@ void acquire_signal() {
       
       maxf=true;
       minf=false;
-      in_t=timer.elapsed();
+      in_t=resp_timer.elapsed();
       //Serial.println(in_t);
       //Serial.print(" ");
       resp_timer.reset();
@@ -314,10 +193,7 @@ seg=average_bpm;
       bpm_timer.start();
       //compute bpm as a frequency
       bpm=float(60)/(R_R/1000);
-     // Serial.print("b                                                         m                                                                pm:");
-      -//Serial.println(bpm);    //*2 gives a more reasonable bpm
-//Wait for a bit to keep serial data from saturating
-
+    
       delay(30);
     }
       
@@ -325,11 +201,131 @@ seg=average_bpm;
 
 }
 
+//////////////////////////////////////////////////////
+
+int getBaseLine(){
+
+     
+    if(thirtySec.elapsed()< 30){
+    
+      Serial.println("NOT 30 YET");
+      // keep adding to total heart rate to later get avg
+
+      acquire_signal();
+      
+      it=it+1;
+      bpmbase = bpmbase + bpm;
+      respbase = respbase + r_rate;
+
+    }
+      
+      if(thirtySec.elapsed() == 30){
+
+        // get avg heart rate here
+        
+       bpmbase = bpmbase / it;
+       respbase=respbase/it;
+
+       //set baseline=0
+
+       it=0;
+       baseline=0;
+       
+        Serial.println("30! baseline computed");
+ 
+      }
+      
+}
+
+
+//////////////////////////////////////////////
+void set_readings () {
+  
+
+    for (int thisReading = 0; thisReading < numReadings_rr; thisReading++) {
+    readings_rr[thisReading] = 0;
+    }
+    
+    for (int thisReading = 0; thisReading < numReadings_bpm; thisReading++) {
+    readings_bpm[thisReading] = 0;
+    }
+
+}
 
 //////////////////////////////////////////////////////
 
+ void breathPattern(){
+    int count = 0;
+    int topValue; // Max value taken from ECG reader
+    int bottomValue; // Min value taken from ECG
 
- //UNCOMMENT WHEN READY WHAT IS ACTIVITY ZONE?
+    int dif = topValue - bottomValue;
+    if ( dif < 3.0 ){
+      count++;
+      if (count = 3){
+        buzzer();
+      }
+    }
+    else{
+      count = 0;
+    }
+   }
+
+//////////////////////////////////////////////////////
+   
+ void buzzer (){
+  tone(2,1000);
+  delay(10);
+  noTone(2);
+}
+
+
+//////////////////////////////////////////////
+void meditation() {
+
+////start a general timer to keep track of the time
+//stopwatch resolution is millis as default
+
+ thirtySec.start();
+ resp_timer.start();
+ bpm_timer.start();
+
+
+//initialiaze variable of fitness function:
+
+  // a character is the escape button from the gui
+  while(Serial.read() != 'a') {
+
+
+    acquire_signal();
+
+   // Serial.println(bpm);
+    //Serial.println(r_rate);
+
+    //plotter
+    //practice code to send to processing
+    
+    for(int i=0; i<100;i++){
+      Serial.print(i+10);
+      Serial.print("-");
+      Serial.println(i+50);
+      delay(50);  // sending in this format to processing 10-20\n
+    }
+
+
+    //if baseline state
+    if (baseline==1){
+      getBaseLine();
+    }
+    //else it's meditation state
+    else{
+      breathPattern();   
+    }
+ }
+
+ }
+
+//////////////////////////////////////////////
 void fitness() {
 
 
@@ -426,16 +422,7 @@ void fitness() {
  
  }
 
-
-
-
-
 ///////////////////////////////////////////////////////////////
-
-
-
-
-
 
 void stress () {
 
@@ -485,77 +472,73 @@ void stress () {
  }
 // 
 // }
- 
 
 
 
+///////////////////////////////////////////////////////////////
 
- void meditation() {
-
-////start a general timer to keep track of the time
-//stopwatch resolution is millis as default
-
- thirtySec.start();
- resp_timer.start();
- bpm_timer.start();
-
-
-//initialiaze variable of fitness function:
-
-  // a character is the escape button from the gui
-  while(Serial.read() != 'a') {
+void setup() {
+  // initialize the serial communication:
+  Serial.begin(115200);
+  pinMode(10, INPUT); // Setup for leads off detection LO +
+  pinMode(11, INPUT); // Setup for leads off detection LO -
+}
 
 
-    acquire_signal();
+void loop() {
+  // TESTING FOR PROCESSING GUI
+  if(Serial.available()) {  //id data is available to read
 
-   // Serial.println(bpm);
-    //Serial.println(r_rate);
+    char val = Serial.read();
 
-    //plotter
-    //practice code to send to processing
-    
-    for(int i=0; i<100;i++){
-      Serial.print(i+10);
-      Serial.print("-");
-      Serial.println(i+50);
-      delay(50);  // sending in this format to processing 10-20\n
-    }
+    int i = 0;      // counter for made up numbers
 
+    if(val == 'f'){       //if y received
 
-    //if baseline state
-    if (baseline==1){
-      getBaseLine();
-    }
-    //else it's meditation state
-    else{
-      breathPattern();   
-    }
- }
-
- }
-
-
- void breathPattern(){
-    int count = 0;
-    int topValue; // Max value taken from ECG reader
-    int bottomValue; // Min value taken from ECG
-
-    int dif = topValue - bottomValue;
-    if ( dif < 3.0 ){
-      count++
-      if (count = 3){
-        buzzer();
+      Serial.println("Fitness Mode");
+     /* while(Serial.read() != 'a'){
+        
+        if(i+50 >= 300){
+          i = 0;
+        }
+        Serial.print("1-");   // flag for processing to know this data is for fitness mode 
+        Serial.print(i+10); // heart rate value
+        Serial.print("-");
+        Serial.println(i+50); // respi
+        i++;
+        delay(50);  // sending in this format to processing 1-10-20\n
       }
+
+      */
+
+      set_readings();
+      fitness();
+      baseline=1;
+
     }
-    else{
-      count = 0;
-      break;
+
+
+    if(val == 's'){       //if s received
+      Serial.println("Stress Mode");
+      set_readings();
+      stress();
+      baseline=1;
     }
+    
+    if(val == 'm'){       //if m received
+      Serial.println("Meditation Mode");
+      set_readings();
+      meditation();
+      baseline=1;
    }
 
-   
- void buzzer (){
-  tone(2,1000);
-  delay(10);
-  noTone(2);
+    if(val == 'a'){       //if a received
+      Serial.println("Extra Mode");
+      set_readings();
+      extra();
+      baseline=1;
+   }
+  }
+  
+
 }

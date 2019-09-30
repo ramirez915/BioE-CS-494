@@ -64,47 +64,26 @@ int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on a
 int respPin = A3;
 
 
+//variables for testing with sinousoid:
+int j=0;
+float x=0;
 
 ////////////////////////////////////////////////
+void set_readings {
+  
 
-
-int getBaseLine(){
-
-     
-    if(thirtySec.elapsed()< 30){
-    
-      Serial.println("NOT 30 YET");
-      // keep adding to total heart rate to later get avg
-
-      acquire_signals();
-      
-      it=it+1;
-      bpmbase = bpmbase + bpm;
-      respbase = respbase + r_rate;
-
+    for (int thisReading = 0; thisReading < numReadings_rr; thisReading++) {
+    readings_rr[thisReading] = 0;
     }
-      
-      if(thirtySec.elapsed() == 30){
+    
+    for (int thisReading = 0; thisReading < numReadings_bpm; thisReading++) {
+    readings_bpm[thisReading] = 0;
+    }
 
-        // get avg heart rate here
-        
-       bpmbase = bpmbase / it;
-       respbase=respbase/it;
-
-       //set baseline=0
-
-       it=0;
-       baseline=0;
-       
-        Serial.println("30! baseline computed");
- 
-      }
-      
 }
 
 
-//////////////////////////////////////////////
-
+////////////////////////////////////////////////
 
 void setup() {
   // initialize the serial communication:
@@ -143,9 +122,7 @@ void loop() {
 
       */
 
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-}
+      set_readings();
       fitness();
       baseline=1;
 
@@ -154,35 +131,66 @@ void loop() {
 
     if(val == 's'){       //if s received
       Serial.println("Stress Mode");
-      for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-}
+      set_readings();
       stress();
       baseline=1;
     }
     
     if(val == 'm'){       //if m received
+      set_readings();
       Serial.println("Meditation Mode");
       meditation();
       baseline=1;
-      //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
    }
-
+/*
     if(val == 'a'){       //if a received
       Serial.println("Extra Mode");
+      set_readings();
       extra();
       baseline=1;
-      //initialize readings to 0
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-    }
    }
+   */
   }
   
 
+}
+
+
+//////////////////////////////////////////////
+
+
+int getBaseLine(){
+
+     
+    if(thirtySec.elapsed()< 30){
+    
+      Serial.println("NOT 30 YET");
+      // keep adding to total heart rate to later get avg
+
+      acquire_signals();
+      
+      it=it+1;
+      bpmbase = bpmbase + bpm;
+      respbase = respbase + r_rate;
+
+    }
+      
+      if(thirtySec.elapsed() == 30){
+
+        // get avg heart rate here
+        
+       bpmbase = bpmbase / it;
+       respbase=respbase/it;
+
+       //set baseline=0
+
+       it=0;
+       baseline=0;
+       
+        Serial.println("30! baseline computed");
+ 
+      }
+      
 }
 
 
@@ -200,7 +208,9 @@ void acquire_signal() {
   // subtract the last reading:
   total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
-  readings_rr[readIndex_rr] = analogRead(respPin);
+  //readings_rr[readIndex_rr] = analogRead(respPin);
+  //x is a sin wave to test;
+  readings_rr[readIndex_rr] = x
   // add the reading to the total:
   total_rr = total_rr + readings_rr[readIndex_rr];
   // advance to the next position in the array:
@@ -355,7 +365,7 @@ void fitness() {
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
 
-
+    gen_cos();
     acquire_signal();
 
     //Serial.println(bpm);
@@ -558,4 +568,19 @@ void stress () {
   tone(2,1000);
   delay(10);
   noTone(2);
+}
+
+
+void gen_sin () {
+
+  x=10*((sin(j*0.0174533)+1));
+  
+  j=j+1;
+  
+  if(j==360) {
+    j=0;
+  }
+  
+}
+  
 }
