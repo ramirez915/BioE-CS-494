@@ -64,8 +64,6 @@ int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on a
 int respPin = A3;
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 void acquire_signal() {
@@ -313,7 +311,6 @@ void meditation() {
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
 
-
     acquire_signal();
 
    // Serial.println(bpm);
@@ -365,6 +362,7 @@ void fitness() {
 
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
+
     acquire_signal();
 
     //Serial.println(bpm);
@@ -525,3 +523,4 @@ void loop() {
   }
   
  }
+ 
