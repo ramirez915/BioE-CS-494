@@ -141,7 +141,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-      Serial.println('!');
+//      //Serial.println('!');
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -324,16 +324,6 @@ void meditation() {
    // Serial.println(bpm);
     //Serial.println(r_rate);
 
-    //plotter
-    //practice code to send to processing
-    
-    for(int i=0; i<100;i++){
-      Serial.print(i+10);
-      Serial.print("-");
-      Serial.println(i+50);
-      delay(50);  // sending in this format to processing 10-20\n
-    }
-
 
     //if baseline state
     if (baseline==1){
@@ -374,10 +364,12 @@ void fitness() {
     gen_sin ();
     acquire_signal();
 
-    Serial.print(" ");
-    Serial.println(bpm);
-    Serial.print(" ");
-    Serial.println(r_rate);
+//    Serial.print(" ");
+//    Serial.println(bpm);
+//    Serial.print(" ");
+//    Serial.println(r_rate);
+
+
 
     //if baseline state
     if (baseline==1){
@@ -501,9 +493,11 @@ void loop() {
     
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
+
+    
     if(val == 'f'){       //if y received
 
-      Serial.println("Fitness Mode");
+      //Serial.println("Fitness Mode");
 
       set_readings();
       fitness();
@@ -513,7 +507,7 @@ void loop() {
 
 
     if(val == 's'){       //if s received
-      Serial.println("Stress Mode");
+      //Serial.println("Stress Mode");
       set_readings();
       stress();
       baseline=1;
@@ -521,14 +515,14 @@ void loop() {
 
     
     if(val == 'm'){       //if m received
-      Serial.println("Meditation Mode");
+      //Serial.println("Meditation Mode");
       set_readings();
       meditation();
       baseline=1;
    }
 //EXTRA STILL TO WRITE
     if(val == 'a'){       //if a received
-      Serial.println("Extra Mode");
+      //Serial.println("Extra Mode");
       set_readings();
       //extra();
       baseline=1;
@@ -551,6 +545,6 @@ void loop() {
     j=0;
   }
 
-  Serial.println(x);
-  Serial.print(" ");
+  //Serial.println(x);
+  //Serial.print(" ");
 }

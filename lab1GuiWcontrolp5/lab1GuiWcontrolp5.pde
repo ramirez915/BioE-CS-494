@@ -24,10 +24,10 @@ float age = 0.0;          // age of the user
 int songCounter = 0;      // used to play the song when starting the stress mode
 
 void setup(){
-  size(2000, 1200);    //window size, (width, height)
+  size(2000, 1000);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[13];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
@@ -52,7 +52,7 @@ void setup(){
   heartPlot.getYAxis().setAxisLabelText("y axis");
   heartPlot.setDim(1500,500);
   heartPlot.setXLim(0,300);    // x axis must stay the same
-  heartPlot.setYLim(0,255);    // y axis
+  heartPlot.setYLim(30,120);    // y axis
   
   // resp 
   respPlot = new GPlot(this,300,600);        //graph positioned at 300,600
@@ -61,7 +61,7 @@ void setup(){
   respPlot.getYAxis().setAxisLabelText("y axis");
   respPlot.setDim(1500,500);
   respPlot.setXLim(0,300);    // x axis must stay at 300
-  respPlot.setYLim(0,255);    // y axis
+  respPlot.setYLim(0,100);    // y axis
   
   
   // adds buttons to the window
@@ -103,8 +103,8 @@ void draw(){  //same as loop in arduino
   // fitness mode
   if(modeType == 1.0){
     // prints out data used for debugging
-    //println("heart rate val: "+ heartRateVal);
-    //println("resp rate val: " + respRateVal);
+    println("heart rate val: "+ heartRateVal);
+    println("resp rate val: " + respRateVal);
     
     //interpret color
     interpretColor(fitnessColor);
@@ -175,12 +175,12 @@ void serialEvent (Serial myPort) {
         fitnessColor = dataArr[1];
         
         // data is being mapped from 0- 255 given that the data is from 0-1023 max
-        heartRateVal = map(dataArr[2], 0, 1023, 0, 255);    // this gets plotted on y axis
-        respRateVal = map(dataArr[3], 0, 1023, 0, 255);    // this gets plotted on y axis
+        //heartRateVal = map(dataArr[2], 0, 1023, 0, 255);    // this gets plotted on y axis
+        //respRateVal = map(dataArr[3], 0, 1023, 0, 255);    // this gets plotted on y axis
         
         // get raw values (actual values)
-        //heartRateVal = dataArr[1];      // gets plotted on y axis
-        //respRateVal = dataArr[2];      // gets plotted on y axis
+        heartRateVal = dataArr[1];      // gets plotted on y axis
+        respRateVal = dataArr[2];      // gets plotted on y axis
       }
     }catch(RuntimeException e){
       e.printStackTrace();
