@@ -73,13 +73,6 @@ float x=0;
 
 void acquire_signal() {
   
-//acquire respiration rate:
-  int readings_rr[numReadings_rr];      // the readings from the analog input
-  int readIndex_rr = 0;              // the index of the current reading
-  int total_rr = 0;                  // the running total
-  int average_rr = 0;                // the average
-
-  
   // subtract the last reading:
   total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
@@ -199,10 +192,9 @@ seg=average_bpm;
       bpm_timer.start();
       //compute bpm as a frequency
       bpm=float(60)/(R_R/1000);
-
-      delay(30);
-    } 
+    }
  }
+ delay(30);
 }
 
 

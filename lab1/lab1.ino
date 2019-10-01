@@ -6,7 +6,7 @@ StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
 StopWatch thirtySec(StopWatch::SECONDS); //timer for 30 sec of baseline
 long watchTime = 0;
-
+int upper=0;
 int baseline=0;
 int it=0;
 
@@ -134,7 +134,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-      Serial.println('!');
+     // Serial.println('!');
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -167,7 +167,10 @@ void acquire_signal() {
    //Serial.println(average);
 
 seg=average_bpm;
+if(seg<thr) {
 
+  upper=0;
+}
 //Serial.print("Segnal:");
 //Serial.println(seg);
 //Serial.print(" ");
@@ -177,7 +180,7 @@ seg=average_bpm;
  //Serial.println(seg);
     //check for threshold
    
-    if(seg>thr){
+    if(seg>thr && upper==0){
 //
       //R-peak detected, save time instant
       //t must be current time
@@ -315,17 +318,6 @@ void meditation() {
 
    // Serial.println(bpm);
     //Serial.println(r_rate);
-
-    //plotter
-    //practice code to send to processing
-    
-    for(int i=0; i<100;i++){
-      Serial.print(i+10);
-      Serial.print("-");
-      Serial.println(i+50);
-      delay(50);  // sending in this format to processing 10-20\n
-    }
-
 
     //if baseline state
     if (baseline==1){
@@ -490,7 +482,7 @@ void loop() {
     // fitness mode
     if(val == 'f'){       //if y received
 
-      Serial.println("Fitness Mode");
+
 
       set_readings();
       fitness();
@@ -500,7 +492,7 @@ void loop() {
 
 
     if(val == 's'){       //if s received
-      Serial.println("Stress Mode");
+   
       set_readings();
       stress();
       baseline=1;
@@ -508,14 +500,14 @@ void loop() {
 
     
     if(val == 'm'){       //if m received
-      Serial.println("Meditation Mode");
+    
       set_readings();
       meditation();
       baseline=1;
    }
 //EXTRA STILL TO WRITE
     if(val == 'a'){       //if a received
-      Serial.println("Extra Mode");
+   
       set_readings();
       //extra();
       baseline=1;

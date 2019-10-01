@@ -24,7 +24,7 @@ float age = 0.0;          // age of the user
 int songCounter = 0;      // used to play the song when starting the stress mode
 
 void setup(){
-  size(2000, 1000);    //window size, (width, height)
+  size(1300, 800);    //window size, (width, height)
   
   printArray(Serial.list());   //prints all available serial ports
   String portName = Serial.list()[13];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
@@ -50,16 +50,16 @@ void setup(){
   heartPlot.setTitleText("Heart Monitor");
   heartPlot.getXAxis().setAxisLabelText("x axis");
   heartPlot.getYAxis().setAxisLabelText("y axis");
-  heartPlot.setDim(1500,500);
+  heartPlot.setDim(700,200);
   heartPlot.setXLim(0,300);    // x axis must stay the same
   heartPlot.setYLim(30,120);    // y axis
   
   // resp 
-  respPlot = new GPlot(this,300,600);        //graph positioned at 300,600
+  respPlot = new GPlot(this,300,300);        //graph positioned at 300,600
   respPlot.setTitleText("Respiration Monitor");
   respPlot.getXAxis().setAxisLabelText("x axis");
   respPlot.getYAxis().setAxisLabelText("y axis");
-  respPlot.setDim(1500,500);
+  respPlot.setDim(700,200);
   respPlot.setXLim(0,300);    // x axis must stay at 300
   respPlot.setYLim(0,100);    // y axis
   
@@ -251,11 +251,11 @@ void resetPlotsAndVars(){
   
   // reset limits
   heartPlot.setXLim(0,300);    // x axis must stay the same
-  heartPlot.setYLim(0,255);    // y axis
+  heartPlot.setYLim(0,140);    // y axis
   heartPlot.updateLimits();
   
   respPlot.setXLim(0,300);    // x axis must stay the same
-  respPlot.setYLim(0,255);    // y axis
+  respPlot.setYLim(0,100);    // y axis
   respPlot.updateLimits();
   x1 = 0;
   
