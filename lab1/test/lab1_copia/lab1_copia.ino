@@ -6,7 +6,7 @@ StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
 StopWatch thirtySec(StopWatch::SECONDS); //timer for 30 sec of baseline
 long watchTime = 0;
-int upper=0;
+
 int baseline=0;
 int it=0;
 
@@ -64,21 +64,21 @@ int max_hrt_rate = 220 - age; //to find the max hear rate of the user based on a
 int respPin = A3;
 
 
+//variables for testing with sinousoid:
+int j=0;
+float x=0;
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 void acquire_signal() {
   
-//acquire respiration rate:
-  int readings_rr[numReadings_rr];      // the readings from the analog input
-  int readIndex_rr = 0;              // the index of the current reading
-  int total_rr = 0;                  // the running total
-  int average_rr = 0;                // the average
-
-  
   // subtract the last reading:
   total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
-  readings_rr[readIndex_rr] = analogRead(respPin);
+  //readings_rr[readIndex_rr] = analogRead(respPin);
+    //x is a sin wave to test;
+  readings_rr[readIndex_rr] = x;
   // add the reading to the total:
   total_rr = total_rr + readings_rr[readIndex_rr];
   // advance to the next position in the array:
@@ -134,7 +134,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-     // Serial.println('!');
+//      //Serial.println('!');
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -167,10 +167,7 @@ void acquire_signal() {
    //Serial.println(average);
 
 seg=average_bpm;
-if(seg<thr) {
 
-  upper=0;
-}
 //Serial.print("Segnal:");
 //Serial.println(seg);
 //Serial.print(" ");
@@ -180,7 +177,7 @@ if(seg<thr) {
  //Serial.println(seg);
     //check for threshold
    
-    if(seg>thr && upper==0){
+    if(seg>thr){
 //
       //R-peak detected, save time instant
       //t must be current time
@@ -195,10 +192,9 @@ if(seg<thr) {
       bpm_timer.start();
       //compute bpm as a frequency
       bpm=float(60)/(R_R/1000);
-
-      delay(30);
-    } 
+    }
  }
+ delay(30);
 }
 
 
@@ -314,10 +310,12 @@ void meditation() {
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
 
+    gen_sin ();
     acquire_signal();
 
    // Serial.println(bpm);
     //Serial.println(r_rate);
+
 
     //if baseline state
     if (baseline==1){
@@ -355,10 +353,15 @@ void fitness() {
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
 
+    gen_sin ();
     acquire_signal();
 
-    //Serial.println(bpm);
-    //Serial.println(r_rate);
+//    Serial.print(" ");
+//    Serial.println(bpm);
+//    Serial.print(" ");
+//    Serial.println(r_rate);
+
+
 
     //if baseline state
     if (baseline==1){
@@ -430,6 +433,8 @@ void stress () {
   // a character is the escape button from the gui
   
   while(Serial.read() != 'a') {
+
+    gen_sin ();
     acquire_signal();
 
 //    Serial.println(bpm);                                        // are we to send bpm and r_rate here????????????????????????
@@ -477,12 +482,14 @@ void loop() {
   
   while(Serial.read() != 'a'){
     char val = Serial.read();
-
+    
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
+
+    
     if(val == 'f'){       //if y received
 
-
+      //Serial.println("Fitness Mode");
 
       set_readings();
       fitness();
@@ -492,7 +499,7 @@ void loop() {
 
 
     if(val == 's'){       //if s received
-   
+      //Serial.println("Stress Mode");
       set_readings();
       stress();
       baseline=1;
@@ -500,14 +507,14 @@ void loop() {
 
     
     if(val == 'm'){       //if m received
-    
+      //Serial.println("Meditation Mode");
       set_readings();
       meditation();
       baseline=1;
    }
 //EXTRA STILL TO WRITE
     if(val == 'a'){       //if a received
-   
+      //Serial.println("Extra Mode");
       set_readings();
       //extra();
       baseline=1;
@@ -515,4 +522,21 @@ void loop() {
   }
   
  }
- 
+
+
+
+///////////////////////////////////////
+
+ void gen_sin () {
+
+  x=10*((sin(j*0.0174533)+1));
+  
+  j=j+1;
+  
+  if(j==360) {
+    j=0;
+  }
+
+  //Serial.println(x);
+  //Serial.print(" ");
+}
