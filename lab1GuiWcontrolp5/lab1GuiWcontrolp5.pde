@@ -270,7 +270,7 @@ void resetPlotsAndVars(){
   
   println("done");
 }
-=======
+
 import controlP5.*; // import ControlP5 library
 import grafica.*;    // for graphing
 import processing.sound.*;    // for music
@@ -542,4 +542,3 @@ void resetPlotsAndVars(){
   
   println("done");
 }
-
