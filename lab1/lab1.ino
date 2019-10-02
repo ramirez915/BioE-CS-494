@@ -441,22 +441,13 @@ void stress () {
     if (baseline==1){
       getBaseLine();
     }
-
+    
+//baseline will be set to 0;
 
 //STRESS STILL TO DO
-    /*
-    //else it's stress state
-    else{
-     for ( int i = 0; i < seconds; i ++){                       //------------------------------------------------ what is seconds??????????
-        tmp = currentBpm;
-        
-        if (tmp > currentBpm){
-        // BPM lowered, so the music worked
-        }
-     }
-    }
-  }
-  */
+    
+
+  
 }   // end of stress mode
 }
 
