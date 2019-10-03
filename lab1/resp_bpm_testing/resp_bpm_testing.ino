@@ -9,7 +9,7 @@ long watchTime = 0;
 
 int baseline=0;
 int it=0;
-int interv=30;
+int interv=50;
 int upper=0;
 const int age = 50;
 
@@ -32,15 +32,15 @@ float s2=0;
 
 //rr:
 //numreading 40 is the best
-const int numReadings_rr= 50;
+const int numReadings_rr= 40;
 int readings_rr[numReadings_rr]; 
 int readIndex_rr= 0;  
 int total_rr = 0;                  // the running total
 float average_rr = 0;                // the average
 //10 ms is the best waiting time
-int wait_rr=10; //millis for delay in 
+//int wait_rr=10; //millis for delay in 
 //gain 10 is the best
-int gain_rr=1000;
+int gain_rr=10;
 //int gap=150;
 
 
