@@ -76,9 +76,9 @@ void acquire_signal() {
   // subtract the last reading:
   total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
-  //readings_rr[readIndex_rr] = analogRead(respPin);
+  readings_rr[readIndex_rr] = analogRead(respPin)*gain_rr;
     //x is a sin wave to test;
-  readings_rr[readIndex_rr] = x;
+ // readings_rr[readIndex_rr] = x;
   // add the reading to the total:
   total_rr = total_rr + readings_rr[readIndex_rr];
   // advance to the next position in the array:
@@ -359,10 +359,10 @@ void fitness() {
 
 //    Serial.print(" ");
 //    Serial.println(bpm);
- // Serial.println(average_rr);
+  Serial.println(average_rr);
     //Serial.print(" ");
     //Serial.println(in_t);
-    Serial.println(ex_t);
+  //  Serial.println(ex_t);
     //Serial.println(r_rate);
 
 
