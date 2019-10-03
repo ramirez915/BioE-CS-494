@@ -409,15 +409,11 @@ void fitness() {
 void stress () {
 //start a general timer to keep track of the time
 //stopwatch resolution is millis as default
-
  thirtySec.start();
  resp_timer.start();
  bpm_timer.start();
-
-//initialiaze variable of fitness function:
-
+ 
   // a character is the escape button from the gui
-  
   while(Serial.read() != 'a') {
     acquire_signal();
 
