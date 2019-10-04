@@ -1,6 +1,4 @@
 #include <StopWatch.h>
-char val = 'l';   // starting value for val
-
 
 //declare global variables:
 StopWatch resp_timer; // default millis, timer for respiration
@@ -203,11 +201,11 @@ if(seg<thr) {
       //compute bpm as a frequency
       bpm=float(60)/(R_R/1000);
       upper = 1;
-      delay(interv);
     }
-    sendData(1,1,bpm,analogRead(A0)); 
+    sendData(1,1,bpm,analogRead(A0));
  }
-}
+ delay(interv);
+} // end of function
 
 
 ///////////////////////////////////////////////////////
@@ -216,7 +214,6 @@ int getBaseLine(){
     if(thirtySec.elapsed()< 30){
 //      Serial.println("NOT 30 YET");
       // keep adding to total heart rate to later get avg
-      acquire_signal();
       
       it=it+1;
       bpmbase = bpmbase + bpm;
@@ -358,8 +355,8 @@ void fitness() {
 //initialiaze variable of fitness function:
 
   // a character is the escape button from the gui
-  while(val != 'a') {
-//    Serial.println("inside fitness");
+  while(Serial.read() != 'a') {
+    Serial.println("inside fitness");
 
     acquire_signal();
 
@@ -451,7 +448,7 @@ void loop() {
   // sending data to processing in format
   // "mode-colorFlag-heartRate-respRate\n"
 //  Serial.println("loop");
-    val = Serial.read();
+    char val = Serial.read();
 
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
