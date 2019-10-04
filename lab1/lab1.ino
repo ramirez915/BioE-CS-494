@@ -13,7 +13,7 @@ int baseline=0;
 int it=0;
 int interv = 30;
 
-const int age = 50;
+const int age = 23;
 
 float bpmbase = 0;
 float respbase=0;
@@ -57,7 +57,7 @@ float average_bpm=0;             // the average
 const float thr = 800;
 
 
-int colorFlag = -1;
+int colorFlag = 1;
 
 float max_hrt_rate = 220 - age; //to find the max hear rate of the user based on age
 
@@ -367,9 +367,6 @@ void fitness() {
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
 
-//    Serial.println("inside fitness");
-
-
     acquire_signal();
 
     //Serial.println(bpm);
@@ -398,16 +395,10 @@ void fitness() {
       else if (bpm >= 0.9 * max_hrt_rate && bpm <= max_hrt_rate){
         colorFlag = 9;  
       }
-
-     
     }
-     
  sendData(1,colorFlag,average_rr,analogRead(A0),bpm,r_rate);
  delay(interv); 
- 
   }
- 
- 
  }
 
 
@@ -463,8 +454,6 @@ void loop() {
 //  Serial.println("loop");
 
    char val = Serial.read();
-   Serial.println(val);
-
 
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
