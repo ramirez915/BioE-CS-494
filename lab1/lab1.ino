@@ -144,7 +144,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-    Serial.println('!');
+//    Serial.println('!');
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -206,19 +206,12 @@ if(seg<thr) {
       bpm_timer.start();
       //compute bpm as a frequency
       bpm=float(60)/(R_R/1000);
-<<<<<<< HEAD
-    }   // end of thr
- }    // end of else
- //30 bpm is good
-}
-=======
       upper = 1;
     }
-    sendData(1,1,bpm,analogRead(A0));
+//    sendData(1,1,average_rr,analogRead(A0),bpm,r_rate);
  }
  delay(interv);
 } // end of function
->>>>>>> a862ba540fc20f67a5a39c411542a93324f8382e
 
 ///////////////////////////////////////////////////////
 
@@ -287,14 +280,19 @@ void set_readings () {
 //////////////////////////////////////////////////////
 
 // function that sends over the data to processing once it is all collected
-void sendData(int mode, int colorFlag, float heartReading, float respReading){
+//----------------------------------------------------------------------------------------- mode-color-ecg-resp-bpm-rRate
+void sendData(int mode, int colorFlag, float ecgReading, float respReading, float bpmVal, float rRateVal){
   Serial.print(mode);
   Serial.print("-");
   Serial.print(colorFlag);
   Serial.print("-");
-  Serial.print(heartReading);
+  Serial.print(ecgReading);
   Serial.print("-");
   Serial.println(respReading);
+  Serial.print("-");
+  Serial.print(bpmVal);
+  Serial.print("-");
+  Serial.println(rRateVal);
 }
 
 //////////////////////////////////////////////////////
@@ -404,8 +402,7 @@ void fitness() {
      
     }
      
- sendData(1,colorflag,bpm,r_rate);
- 
+ sendData(1,colorFlag,average_rr,analogRead(A0),bpm,r_rate);
  delay(interv); 
  
   }
@@ -466,11 +463,12 @@ void loop() {
 //  Serial.println("loop");
 
    char val = Serial.read();
+   Serial.println(val);
 
 
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
-    if(val == 'f'){       //if y received
+    if(val == 'f'){       //if f received
 //      Serial.println("*************in f");
       set_readings();
       fitness();
