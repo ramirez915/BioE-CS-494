@@ -255,7 +255,7 @@ void setup() {
 void loop() {
 
       acquire_signal();
-     //   Serial.println(r_rate);
+        //Serial.println(r_rate);
 //      Serial.print(" ");
         //Serial.println("bpm");
         //Serial.println(bpm);
