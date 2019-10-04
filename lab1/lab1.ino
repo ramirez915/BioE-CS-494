@@ -1,5 +1,8 @@
 #include <StopWatch.h>
 
+//char val = 'l';   // starting value for val
+
+
 //declare global variables:
 StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
@@ -74,17 +77,12 @@ float oldRrate = 0;
 
 void acquire_signal() {
   
-//acquire respiration rate:
-  int readings_rr[numReadings_rr];      // the readings from the analog input
-  int readIndex_rr = 0;              // the index of the current reading
-  int total_rr = 0;                  // the running total
-  int average_rr = 0;                // the average
-
-  
   // subtract the last reading:
   total_rr = total_rr - readings_rr[readIndex_rr];
   // read from the sensor:
-  readings_rr[readIndex_rr] = analogRead(respPin);
+  readings_rr[readIndex_rr] = analogRead(respPin)*gain_rr;
+    //x is a sin wave to test;
+ // readings_rr[readIndex_rr] = x;
   // add the reading to the total:
   total_rr = total_rr + readings_rr[readIndex_rr];
   // advance to the next position in the array:
@@ -98,6 +96,8 @@ void acquire_signal() {
 
   // calculate the average:
   average_rr = total_rr / numReadings_rr;
+
+  //Serial.println(average_rr);
 
 
     s2=s1;
@@ -132,6 +132,10 @@ void acquire_signal() {
      }
 
 
+
+
+
+
   //heart rate acquisition
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
@@ -140,7 +144,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-     // Serial.println('!');
+//    Serial.println('!');
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -170,10 +174,12 @@ void acquire_signal() {
   // calculate the average:
   average_bpm = total_bpm / numReadings_bpm;
   //Serial.print("AVG ");
-   //Serial.println(average);
+   //Serial.println(average_bpm);
 
 seg=average_bpm;
+
 if(seg<thr) {
+
   upper=0;
 }
 //Serial.print("Segnal:");
@@ -184,17 +190,17 @@ if(seg<thr) {
 //
  //Serial.println(seg);
     //check for threshold
-   
+//   
     if(seg>thr && upper==0){
-//
+      upper=1;
       //R-peak detected, save time instant
       //t must be current time
       bpm_timer.stop();
-      long bpmTimer = bpm_timer.value();
-       R_R=bpmTimer;
+      float bpmTimer = bpm_timer.value();
+      R_R=bpmTimer;
      // R_R= (bpmTimer/float(10));
       //Serial.print("R_R:");
-     //Serial.println(R_R);
+      //Serial.println(R_R);
       //Serial.print(" ");
       bpm_timer.reset();
       bpm_timer.start();
@@ -202,11 +208,10 @@ if(seg<thr) {
       bpm=float(60)/(R_R/1000);
       upper = 1;
     }
-    sendData(1,1,bpm,analogRead(A0));
+//    sendData(1,1,average_rr,analogRead(A0),bpm,r_rate);
  }
  delay(interv);
 } // end of function
-
 
 ///////////////////////////////////////////////////////
 
@@ -275,14 +280,19 @@ void set_readings () {
 //////////////////////////////////////////////////////
 
 // function that sends over the data to processing once it is all collected
-void sendData(int mode, int colorFlag, float heartReading, float respReading){
+//----------------------------------------------------------------------------------------- mode-color-ecg-resp-bpm-rRate
+void sendData(int mode, int colorFlag, float ecgReading, float respReading, float bpmVal, float rRateVal){
   Serial.print(mode);
   Serial.print("-");
   Serial.print(colorFlag);
   Serial.print("-");
-  Serial.print(heartReading);
+  Serial.print(ecgReading);
   Serial.print("-");
   Serial.println(respReading);
+  Serial.print("-");
+  Serial.print(bpmVal);
+  Serial.print("-");
+  Serial.println(rRateVal);
 }
 
 //////////////////////////////////////////////////////
@@ -356,7 +366,9 @@ void fitness() {
 
   // a character is the escape button from the gui
   while(Serial.read() != 'a') {
-    Serial.println("inside fitness");
+
+//    Serial.println("inside fitness");
+
 
     acquire_signal();
 
@@ -387,11 +399,12 @@ void fitness() {
         colorFlag = 9;  
       }
 
-      // AT THE END OF THE ELSE SEND DATA
-      if(upper == 1){
-//        sendData(1,colorFlag,bpm,r_rate);
-      }
+     
     }
+     
+ sendData(1,colorFlag,average_rr,analogRead(A0),bpm,r_rate);
+ delay(interv); 
+ 
   }
  
  
@@ -417,7 +430,7 @@ void stress () {
 //    Serial.println(bpm);                                        // are we to send bpm and r_rate here????????????????????????
 //    Serial.println(r_rate);
 
-    sendData(2,9,bpm,r_rate);       // if we are supposed to send data here this is the code  (maybe need to change color)
+    //sendData(2,9,bpm,average);       // if we are supposed to send data here this is the code  (maybe need to change color)
     
     //if baseline state
     if (baseline==1){
@@ -448,22 +461,25 @@ void loop() {
   // sending data to processing in format
   // "mode-colorFlag-heartRate-respRate\n"
 //  Serial.println("loop");
-    char val = Serial.read();
+
+   char val = Serial.read();
+   Serial.println(val);
+
 
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
-    if(val == 'f'){       //if y received
+    if(val == 'f'){       //if f received
 //      Serial.println("*************in f");
       set_readings();
       fitness();
       baseline=1;
     }
-    if(val == 's'){       //if s received
+    else if(val == 's'){       //if s received
       set_readings();
       stress();
       baseline=1;
     }
-    if(val == 'm'){       //if m received
+   else if(val == 'm'){       //if m received
       set_readings();
       meditation();
       baseline=1;
