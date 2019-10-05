@@ -1,8 +1,5 @@
 #include <StopWatch.h>
 
-//char val = 'l';   // starting value for val
-
-
 //declare global variables:
 StopWatch resp_timer; // default millis, timer for respiration
 StopWatch bpm_timer; //timer for bpm
@@ -288,7 +285,7 @@ void sendData(int mode, int colorFlag, float ecgReading, float respReading, floa
   Serial.print("-");
   Serial.print(ecgReading);
   Serial.print("-");
-  Serial.println(respReading);
+  Serial.print(respReading);
   Serial.print("-");
   Serial.print(bpmVal);
   Serial.print("-");
@@ -301,7 +298,7 @@ void sendData(int mode, int colorFlag, float ecgReading, float respReading, floa
 // exits the current mode so sends that information to processing
 // may need to add in here any other additional things we need to reset
 void exitMode(){
-  Serial.println("0-0-0-0");
+  Serial.println("0-0-0-0-0-0");
 
   // STOP WATCHES HERE
   thirtySec.stop();
