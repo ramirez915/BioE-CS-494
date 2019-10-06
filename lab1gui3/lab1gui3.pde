@@ -7,8 +7,9 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object
 PFont font;
 int x1 = 0;    // starting position of the graph
-int xMid = 3;    // pos for histograms
+int xMid = 1;    // pos for histograms
 int histLim = 0;
+boolean bpmHasVal = false;    // flag to see if bpm has a value (used when resetting)
 float ecgRateVal;    // will store the values from readings for heart rate
 float respRateVal;
 float bpm;
@@ -30,7 +31,7 @@ void setup(){
   size(2000, 1200);    //window size, (width, height)  1200
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
@@ -64,7 +65,9 @@ void setup(){
   respPlot.getYAxis().setAxisLabelText("y axis");
   respPlot.setDim(900,500);
   respPlot.setXLim(0,300);    // x axis must stay at 300
-  respPlot.setYLim(0,500);    // y axis      ******************************************* change this?
+  respPlot.setYLim(0,500);    // values determined by tests 24000,30000
+  respPlot.activateZooming(2.0,CENTER,CENTER);
+  
   
   // bpm and rRate Plot
   bpmPlot = new GPlot(this,1300,0);
@@ -72,7 +75,7 @@ void setup(){
   bpmPlot.getXAxis().setAxisLabelText("x axis");
   bpmPlot.getYAxis().setAxisLabelText("AVERAGE BPM");
   bpmPlot.setDim(500,500);
-  bpmPlot.setXLim(0,5);      // want to have the changing bpm gauge in the middle
+  bpmPlot.setXLim(0,3);      // want to have the changing bpm gauge in the middle
   bpmPlot.setYLim(0,130);   // lim 0 - 130 bpm
   bpmPlot.startHistograms(GPlot.VERTICAL);
   bpmPlot.getHistogram().setBgColors(new color[]{ color(0,0,255,50)});
@@ -82,7 +85,7 @@ void setup(){
   rRatePlot.getXAxis().setAxisLabelText("x axis");
   rRatePlot.getYAxis().setAxisLabelText("RESP RATE");
   rRatePlot.setDim(500,500);
-  rRatePlot.setXLim(0,5);      // want to have the changing bpm gauge in the middle
+  rRatePlot.setXLim(0,3);      // want to have the changing bpm gauge in the middle
   rRatePlot.setYLim(0,30);   // lim 0- 30
   rRatePlot.startHistograms(GPlot.VERTICAL);
   rRatePlot.getHistogram().setBgColors(new color[]{ color(0,0,255,50)});
@@ -115,8 +118,8 @@ void draw(){  //same as loop in arduino
   // fitness mode
   if(modeType == 1.0){
     // prints out data used for debugging
-    //println("ecg val: "+ ecgRateVal);
-    //println("resp rate val: " + respRateVal);
+    println("ecg val: "+ ecgRateVal);
+    println("resp rate val: " + respRateVal);
     
     println("bpm val: " + bpm);
     println("rRate val: " + rRate);
@@ -199,23 +202,23 @@ void interpretColor(float colorFlag){
   //println("activity zone: ");
   if(colorFlag == 5.0){
     println("very light");
-    //background(169,169,169);
+    background(169,169,169);
   }
   else if(colorFlag == 6.0){
     println("light");
-    //background(0,0,255);
+    background(0,0,255);
   }
   else if(colorFlag == 7.0){
     println("moderate");
-    //background(0,255,0);
+    background(0,255,0);
   }
   else if(colorFlag == 8.0){
     println("hard");
-    //background(255,255,0);
+    background(255,255,0);
   }
   else if(colorFlag == 9.0){
     println("maximum");
-    //background(255,0,0);
+    background(255,0,0);
   }
   // resetting                    ***** CHANGE STOCK COLOR IF NEEDED
   else if(colorFlag == -1.0){
@@ -229,20 +232,26 @@ void plotData(){
   // ADDING POINT TO PLOT
   ecgPlot.addPoint(new GPoint(x1,ecgRateVal));
   ecgPlot.setPoint(x1, new GPoint(x1,ecgRateVal));
+  
+  // center and zoom for resp rate???
   respPlot.addPoint(new GPoint(x1,respRateVal));
   respPlot.setPoint(x1, new GPoint(x1,respRateVal));
+  //respPlot.zoom(2.0);
   
   // bpm and rRate
   // remove values from bpm and rRate plots
   if(x1 != 0){
-    //bpmPlot.removePoint(
+    bpmPlot.removePoint(0);    // remove current point from bpm
+    rRatePlot.removePoint(0);   // remove current point from r rate
+    bpmHasVal = true;
   }
   bpmPlot.addPoint(new GPoint(xMid,bpm));
   bpmPlot.setPoint(histLim,new GPoint(xMid,bpm));
+  bpmPlot.getTitle().setText("BPM Monitor     BPM: " + str(bpm));
   
   rRatePlot.addPoint(new GPoint(xMid,rRate));
   rRatePlot.setPoint(histLim,new GPoint(xMid,rRate));
-  
+  rRatePlot.getTitle().setText("R Rate Monitor     RRate: " + str(rRate));
   
   
   x1++;  // move on to the next x coordinate
@@ -288,20 +297,24 @@ void plotData(){
   
   // at the max so scroll to the side    x axis
   if(x1 >= 300){
-    ecgPlot.moveHorizontalAxesLim(2.0);    // if want faster scroll increase this value
-    respPlot.moveHorizontalAxesLim(2.0);     // 5.0 seems to be a good value
+    ecgPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
+    respPlot.moveHorizontalAxesLim(2.0);     // 3.0 seems to be a good value
   }
 }
 
 // resets the plots and the variables used thoughout
 void resetPlotsAndVars(){
   println("exiting");
-  // removes all the points from the graph
+  // removes all the points from the graphs
   for(int i = 0; i < x1; i++){
     ecgPlot.removePoint(0);
     respPlot.removePoint(0);
+  }
+  if(bpmHasVal){
     bpmPlot.removePoint(0);
     rRatePlot.removePoint(0);
+    bpmHasVal = false;
+    bpm = 0;
   }
   
   // reset limits
@@ -313,6 +326,14 @@ void resetPlotsAndVars(){
   respPlot.setYLim(0,500);    // y axis
   respPlot.updateLimits();
   x1 = 0;
+  
+  bpmPlot.setXLim(0,3);    // x axis must stay the same
+  bpmPlot.setYLim(0,130);    // y axis
+  bpmPlot.updateLimits();
+  
+  rRatePlot.setXLim(0,3);
+  rRatePlot.setYLim(0,30);
+  rRatePlot.updateLimits();
   
   ecgPlot.defaultDraw();    
   respPlot.defaultDraw();

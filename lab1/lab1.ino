@@ -10,7 +10,7 @@ int baseline=0;
 int it=0;
 int interv = 30;
 
-const int age = 23;
+const int age = 50;
 
 float bpmbase = 0;
 float respbase=0;
@@ -51,8 +51,7 @@ int readIndex_bpm = 0;
 float total_bpm = 0;                  // the running total
 float average_bpm=0;             // the average
 
-const float thr = 800;
-
+float thr = 0;    // was 800
 
 int colorFlag = 1;
 
@@ -66,9 +65,8 @@ int respPin = A3;
 
 
 // testing variables
-float oldBpm = 0;
-float oldRrate = 0;
-
+float ecgRead = 0;        // reading from ecg
+int maxBpmCounter = 0;      // will be used to determine the max bpm
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -151,12 +149,28 @@ void acquire_signal() {
   // subtract the last reading:
   total_bpm = total_bpm - readings_bpm[readIndex_bpm];
   // read from the sensor:
-  readings_bpm[readIndex_bpm] = analogRead(A0);
+  
+  ecgRead = analogRead(A0);          // added to send this value to processing********************
+  readings_bpm[readIndex_bpm] = ecgRead; //analogRead(A0);
   /*Serial.print("analogueR: ");
   Serial.println(analogRead(A0));
   Serial.print("READS: ");
   Serial.println(readings[readIndex_bpm]);
   */
+  // check for the higest peak to make threshold
+  // 250 seems like a good amount of reading to look through
+  if(maxBpmCounter < 250){
+    if(ecgRead > thr){
+      // filtering out outliers
+      if(ecgRead < 650){
+        thr = ecgRead;
+//        Serial.print("new thr ");
+//        Serial.println(thr);
+      }
+    }
+    maxBpmCounter++;
+  }
+  
   // add the reading to the total:
   total_bpm = total_bpm + readings_bpm[readIndex_bpm];
   // advance to the next position in the array:
@@ -173,22 +187,24 @@ void acquire_signal() {
   //Serial.print("AVG ");
    //Serial.println(average_bpm);
 
-seg=average_bpm;
+    seg=average_bpm;
+    
+    if(seg<thr) {
+    
+      upper=0;
+    }
+//    Serial.print("Segnal:");
+//    Serial.println(seg);
+//    Serial.print(" thr ");
+//    Serial.println(thr);
 
-if(seg<thr) {
-
-  upper=0;
-}
-//Serial.print("Segnal:");
-//Serial.println(seg);
-//Serial.print(" ");
-
-   // seg=analogRead(A0);
-//
- //Serial.println(seg);
     //check for threshold
-//   
     if(seg>thr && upper==0){
+//      Serial.println("********************************************* SEG > THR");
+//      Serial.print("seg ");
+//      Serial.print(seg);
+//      Serial.print(" thr ");
+//      Serial.println(thr);
       upper=1;
       //R-peak detected, save time instant
       //t must be current time
@@ -205,7 +221,6 @@ if(seg<thr) {
       bpm=float(60)/(R_R/1000);
       upper = 1;
     }
-//    sendData(1,1,average_rr,analogRead(A0),bpm,r_rate);
  }
  delay(interv);
 } // end of function
@@ -304,6 +319,11 @@ void exitMode(){
   thirtySec.stop();
   resp_timer.stop();
   bpm_timer.stop();
+
+  maxBpmCounter = 0;
+  thr = 0;
+  average_rr = 0;
+  total_rr = 0;
 }
 
  //////////////////////////////////////////////////////
@@ -393,7 +413,7 @@ void fitness() {
         colorFlag = 9;  
       }
     }
- sendData(1,colorFlag,average_rr,analogRead(A0),bpm,r_rate);
+ sendData(1,colorFlag,ecgRead,average_rr,bpm,r_rate);
  delay(interv); 
   }
  }
@@ -439,7 +459,7 @@ void stress () {
 void setup() {
   // initialize the serial communication:
   Serial.begin(115200);
-  pinMode(10, INPUT); // Setup for leads off detection LO +
+  pinMode(9, INPUT); // Setup for leads off detection LO +
   pinMode(11, INPUT); // Setup for leads off detection LO -
 }
 
@@ -454,28 +474,23 @@ void loop() {
 
     // MODIFY FITNESS MODE WITH THE CODE TO GET THE FITNESS MODE AND COLORS************************************
     // fitness mode
-    if(val == 'f'){       //if f received
-//      Serial.println("*************in f");
+    if(val == 'f'){       // fitness
       set_readings();
       fitness();
       baseline=1;
     }
-    else if(val == 's'){       //if s received
+    else if(val == 's'){       // stress
       set_readings();
       stress();
       baseline=1;
     }
-   else if(val == 'm'){       //if m received
+   else if(val == 'm'){       // meditation
       set_readings();
       meditation();
       baseline=1;
    }
-//EXTRA STILL TO WRITE
-    if(val == 'a'){       //if a received
-   
-      set_readings();
+    if(val == 'a'){       // exiting
       exitMode();
-      //extra();
       baseline=1;
    }
  }
