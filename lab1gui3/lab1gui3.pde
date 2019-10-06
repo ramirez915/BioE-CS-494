@@ -24,7 +24,7 @@ GPlot ecgPlot, respPlot, bpmPlot, rRatePlot;
 float fitnessColor = 0.0;    // keep track of the color that is to display while in fitness mode
 
 // music variable  *************************************************************************************************************** uncomment when ready with the song
-//SoundFile song;
+SoundFile song;
 int songCounter = 0;      // used to play the song when starting the stress mode
 
 void setup(){
@@ -44,10 +44,10 @@ void setup(){
   // starts serialEvent function when a newline character is read
   myPort.bufferUntil('\n');
   
-  background(255); // background color of window (r, g, b) or (0 to 255)
+  background(0,255,0); // background color of window (r, g, b) or (0 to 255)
   
   // setting song variable    *************************************************************************************************** make sure song is in the same folder as this file
-  //song = new SoundFile(this,sketchPath("Careless Whisper.mp3"));
+  song = new SoundFile(this,sketchPath("CarelessWhisper2.mp3"));
   
   // Create a new plot and set its position on the screen
   // ecg and respPlots    regular plots to see signal from device
@@ -65,7 +65,7 @@ void setup(){
   respPlot.getYAxis().setAxisLabelText("y axis");
   respPlot.setDim(900,500);
   respPlot.setXLim(0,300);    // x axis must stay at 300
-  respPlot.setYLim(0,500);    // values determined by tests 24000,30000
+  respPlot.setYLim(1900,2050);    // values determined by tests 24000,30000 with raw values
   respPlot.activateZooming(2.0,CENTER,CENTER);
   
   
@@ -99,7 +99,19 @@ void setup(){
     .setPosition(100, 50)  //x and y coordinates of upper left corner of button
     .setSize(120, 70)      //(width, height)
     .setFont(font)
-  ;   
+  ;
+  
+  cp5.addButton("Stress")
+    .setPosition(100,150)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
+  
+  cp5.addButton("Meditation")
+    .setPosition(100,250)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
   
   cp5.addButton("MainMenu")     //"alloff" is the name of button
     .setPosition(100, 350)  //x and y coordinates of upper left corner of button
@@ -111,7 +123,7 @@ void setup(){
 void draw(){  //same as loop in arduino
   
   //lets give title to our window
-  fill(0, 255, 0);               //text color (r, g, b)
+  fill(0);               //text color (r, g, b)
   textFont(font);
   text("FITNESS CONTROL", 80, 30);  // ("text", x coordinate, y coordinate)
   
@@ -129,18 +141,19 @@ void draw(){  //same as loop in arduino
     plotData();
   }
   
-  //// stress mode (mode that will need the song)
-  //else if(modeType == 2.0){
-  //  // if first time entering stress mode play song
-  //  if(songCounter == 0){
-  //    //song.play();
-  //    songCounter++;
-  //  }
-  //  // else continue and just plot data
-  //  plotData();
-  //}
+  // stress mode (mode that will need the song)
+  else if(modeType == 2.0){
+    // if first time entering stress mode play song
+    if(songCounter == 0){
+      song.play();
+      songCounter++;
+      background(0,0,255);
+    }
+    // else continue and just plot data
+    plotData();
+  }
   
-  //// meditaion mode
+  //// meditaion mode                    // comment out when ready for meditation mode
   //else if(modeType == 3.0){
   //  plotData();
   //}
@@ -157,6 +170,11 @@ void draw(){  //same as loop in arduino
 void Fitness(){
   myPort.write('f');
   println("f");
+}
+
+void Stress(){
+  myPort.write('s');
+  println("s");
 }
 
 void MainMenu(){
@@ -182,11 +200,12 @@ void serialEvent (Serial myPort) {
         
         // data is being mapped from 0- 255 given that the data is from 0-1023 max
         //heartRateVal = map(dataArr[2], 0, 1023, 0, 255);    // this gets plotted on y axis
-        //respRateVal = map(dataArr[3], 0, 1023, 0, 255);    // this gets plotted on y axis
         
         // get raw values (actual values)
         ecgRateVal = dataArr[2];      // gets plotted on y axis
-        respRateVal = dataArr[3];      // gets plotted on y axis
+        //respRateVal = dataArr[3];      // gets plotted on y axis
+        respRateVal = map(dataArr[3], 0, 70000, 0, 5500);    // this gets plotted on y axis
+
         
         bpm = dataArr[4];
         rRate = dataArr[5];
@@ -236,7 +255,7 @@ void plotData(){
   // center and zoom for resp rate???
   respPlot.addPoint(new GPoint(x1,respRateVal));
   respPlot.setPoint(x1, new GPoint(x1,respRateVal));
-  //respPlot.zoom(2.0);
+  respPlot.getTitle().setText("Respiratory Monitor     Rate: " + str(respRateVal));
   
   // bpm and rRate
   // remove values from bpm and rRate plots
@@ -253,6 +272,8 @@ void plotData(){
   rRatePlot.setPoint(histLim,new GPoint(xMid,rRate));
   rRatePlot.getTitle().setText("R Rate Monitor     RRate: " + str(rRate));
   
+  println("plotted vals: ecg "+ ecgRateVal + " resp " + respRateVal);
+  println("BPM:  " + bpm + " rRate   " + rRate);
   
   x1++;  // move on to the next x coordinate
   //println("x1 val " + x1);
@@ -323,7 +344,7 @@ void resetPlotsAndVars(){
   ecgPlot.updateLimits();
   
   respPlot.setXLim(0,300);    // x axis must stay the same
-  respPlot.setYLim(0,500);    // y axis
+  respPlot.setYLim(1900,2050);    // y axis
   respPlot.updateLimits();
   x1 = 0;
   
@@ -340,6 +361,9 @@ void resetPlotsAndVars(){
   
   modeType = -1.0;
   fitnessColor = -1.0;
+  if(songCounter > 0){
+    song.stop();
+  }
   songCounter = 0;
   interpretColor(fitnessColor);
   

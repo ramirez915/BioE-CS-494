@@ -437,13 +437,12 @@ void stress () {
 
 //    Serial.println(bpm);                                        // are we to send bpm and r_rate here????????????????????????
 //    Serial.println(r_rate);
-
-    //sendData(2,9,bpm,average);       // if we are supposed to send data here this is the code  (maybe need to change color)
     
     //if baseline state
     if (baseline==1){
       getBaseLine();
     }
+    sendData(2,6,ecgRead,average_rr,bpm,r_rate);       // if we are supposed to send data here this is the code
     
 //baseline will be set to 0;
 
