@@ -286,7 +286,7 @@ void set_readings () {
  void breathPattern(){
     int count = 0;
 
-    if (ex_t < 3*in__t) {
+    if (ex_t < 3*in_t) {
     not_med++;
 
     if(not_med==3) {
@@ -460,14 +460,13 @@ void stress () {
       getBaseLine();
     }
     sendData(2,6,ecgRead,average_rr,bpm,r_rate);       // if we are supposed to send data here this is the code
-    
-//baseline will be set to 0;
 
-//STRESS STILL TO DO
-    
+    // else{
+    //stress_monitoring
+  }
 
   
-}   // end of stress mode
+}   
 }
 
 ///////////////////////////////////////////////////////////////
