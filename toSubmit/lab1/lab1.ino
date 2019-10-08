@@ -9,6 +9,7 @@ int upper=0;
 int baseline=0;
 int it=0;
 int interv = 30;
+int not_med=0;
 
 const int age = 50;
 
@@ -262,23 +263,41 @@ void set_readings () {
 
 //////////////////////////////////////////////////////
 
+ void stress_monitoring(){
+
+  //baseline already computed
+
+  //music:
+  //switch a flag variable called music=1;
+  //we play the music after the baseline, measure the heart rate average and respiration rate average during music_flag=1
+  //we measure music duration through a timer or we make the music_flag=0 from processing
+  //after music is ended compare the baseline with the avrage heart and respiration rate
+  //display on processing the difference between the 2, and say if the person is stressed or not
+
+  //hard task
+  ////we play an hard task, measure the heart rate average and respiration rate average during play_flag=1
+  //measure the time of playing wirth a timer
+  //after play is ended compare the baseline with the avrage heart and respiration rate acquired
+  //display on processing the difference between the 2, and say if the person is stressed or not
+  
+ }
+
+//////////////////////////////////////////////////////
  void breathPattern(){
     int count = 0;
-    int topValue; // Max value taken from ECG reader
-    int bottomValue; // Min value taken from ECG
 
-    int dif = topValue - bottomValue;
-    if ( dif < 3.0 ){
-      count++;
-      if (count = 3){
-        buzzer();
-      }
-    }
-    else{
-      count = 0;
-    }
-   }
+    if (ex_t < 3*in__t) {
+    not_med++;
 
+    if(not_med==3) {
+      buzzer();
+      not_med=0;
+    }
+    }
+
+ }
+
+    
 
 //////////////////////////////////////////////////////
    
@@ -417,8 +436,6 @@ void fitness() {
  delay(interv); 
   }
  }
-
-
 
 
 

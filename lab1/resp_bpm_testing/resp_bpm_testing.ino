@@ -113,7 +113,7 @@ void acquire_signal() {
   // calculate the average:
   average_rr = total_rr / numReadings_rr;
 
-  Serial.println(average_rr);           // might need this???
+ // Serial.println(average_rr);           // might need this???
 
 
     s2=s1;
@@ -190,7 +190,7 @@ void acquire_signal() {
   // calculate the average:
   average_bpm = total_bpm / numReadings_bpm;
   //Serial.print("AVG ");
-   //Serial.println(average_bpm);
+  // Serial.println(average_bpm);
 
 seg=average_bpm;
 
@@ -258,7 +258,7 @@ void loop() {
 //        Serial.println(r_rate);
 //      Serial.print(" ");
         //Serial.println("bpm");
-//        Serial.println(bpm);
+        Serial.println(bpm);
 //      Serial.print(" ");
 
 }
