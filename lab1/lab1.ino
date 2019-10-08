@@ -485,7 +485,9 @@ void loop() {
     }
    else if(val == 'm'){       // meditation
       set_readings();
-      meditation();
+      buzzer();
+      sendData(3,6,ecgRead,average_rr,bpm,r_rate);
+//      meditation();
       baseline=1;
    }
     if(val == 'a'){       // exiting

@@ -58,6 +58,7 @@ void setup(){
   ecgPlot.setDim(900,500);              // one graph alone is 1500,500
   ecgPlot.setXLim(0,300);    // x axis must stay the same
   ecgPlot.setYLim(0,1000);    // y axis
+  ecgPlot.activateZooming(2.0,CENTER,CENTER);
   
   respPlot = new GPlot(this,300,600);        //graph positioned at 300,600
   respPlot.setTitleText("Respiration Monitor");
@@ -153,10 +154,10 @@ void draw(){  //same as loop in arduino
     plotData();
   }
   
-  //// meditaion mode                    // comment out when ready for meditation mode
-  //else if(modeType == 3.0){
-  //  plotData();
-  //}
+  // meditaion mode                    // comment out when ready for meditation mode
+  else if(modeType == 3.0){
+    plotData();
+  }
   
   // exiting from any mode so clear graphs
   else if(modeType == 0.0){
@@ -175,6 +176,11 @@ void Fitness(){
 void Stress(){
   myPort.write('s');
   println("s");
+}
+
+void Meditation(){
+  myPort.write('m');
+  println("m");
 }
 
 void MainMenu(){
@@ -255,7 +261,7 @@ void plotData(){
   // center and zoom for resp rate???
   respPlot.addPoint(new GPoint(x1,respRateVal));
   respPlot.setPoint(x1, new GPoint(x1,respRateVal));
-  respPlot.getTitle().setText("Respiratory Monitor     Rate: " + str(respRateVal));
+  respPlot.getTitle().setText("Respiratory Monitor     Signal: " + str(respRateVal));
   
   // bpm and rRate
   // remove values from bpm and rRate plots
