@@ -113,7 +113,7 @@ void acquire_signal() {
   // calculate the average:
   average_rr = total_rr / numReadings_rr;
 
-  Serial.println(average_rr);
+ // Serial.println(average_rr);           // might need this???
 
 
     s2=s1;
@@ -160,7 +160,7 @@ void acquire_signal() {
   float R_R;
   
   if((digitalRead(11) == 1)||(digitalRead(9) == 1)){
-    Serial.println('!');
+//    Serial.println('!');      // dont need this
   }
 
   //if everything ok acquire the signal and check for treshold
@@ -190,7 +190,7 @@ void acquire_signal() {
   // calculate the average:
   average_bpm = total_bpm / numReadings_bpm;
   //Serial.print("AVG ");
-   //Serial.println(average_bpm);
+  // Serial.println(average_bpm);
 
 seg=average_bpm;
 
@@ -255,10 +255,10 @@ void setup() {
 void loop() {
 
       acquire_signal();
-        Serial.println(r_rate);
+//        Serial.println(r_rate);
 //      Serial.print(" ");
         //Serial.println("bpm");
-//        Serial.println(bpm);
+        Serial.println(bpm);
 //      Serial.print(" ");
 
 }
