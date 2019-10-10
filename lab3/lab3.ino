@@ -35,25 +35,17 @@ void loop() {
   force[2]=analogRead(f_s2);
   force[3]=analogRead(f_s3);
 
+  Serial.println(force[0]);
+  
+
   //mapping force_inputs with leds_outputs
-  for(i=0; i< 4; i++){
-    mappedforce[i] = map(force[i]-9,0,1023-9,0,255);
+  for(int i=0; i< 4; i++){
+    mappedForce[i] = map(force[i]-9,0,1023-9,0,255);
   }
   analogWrite(led_0,mappedForce[0]);
   analogWrite(led_1,mappedForce[1]);
   analogWrite(led_2,mappedForce[2]);
   analogWrite(led_3,mappedForce[3]);
-}
 
-
-void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println(analogRead(A0));
- // Serial.print(" ");
-  
- // Serial.println(mapped);
- // Serial.print(" ");
-  analogWrite(3,mapped);
-  
   delay(50);
 }
