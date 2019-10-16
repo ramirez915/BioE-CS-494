@@ -12,7 +12,7 @@ float dataArr[];      // array that will store the data
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
-float[] newVals = new float[4];
+float[] newVals = new float[4];     // new test values
 
 PShape foot;
 
@@ -112,6 +112,7 @@ void draw(){  //same as loop in arduino
   }
   
   //***************************************** everything above this line works as intended
+  // using the code down here to update the heat map with new values
   println("pause");
   delay(2000);
   resetPixels();
@@ -141,7 +142,7 @@ void draw(){  //same as loop in arduino
     b.update();
     b.show();
   }
-  
+  //----------------------------------------------------------------------------------------------- end of new value attempt 
   
   
   // POSITION THIS IN ANOTHER SPOT
