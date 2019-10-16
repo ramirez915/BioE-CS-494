@@ -10,7 +10,9 @@ int x1 = 0;    // starting position of the graph
 
 float dataArr[];      // array that will store the data
 String valueFromArduino;  // value from the analog device
-Blob[] blobs = new Blob[2];
+Blob[] blobs = new Blob[4];
+float[] valueArr = new float[4];    // will contain practice values for heat map
+float[] newVals = new float[4];
 
 PShape foot;
 
@@ -21,8 +23,21 @@ void setup(){
   
   colorMode(HSB);
   blobs[0] = new Blob(200,200);
-  blobs[1] = new Blob(400,200);
-  //foot = loadShape("footoutline.svg");      // used to load svg
+  blobs[1] = new Blob(360,400);
+  blobs[2] = new Blob(160,550);
+  blobs[3] = new Blob(230,1000);
+  
+  // place values from sensors here*******************
+  valueArr[0] = 0;
+  valueArr[1] = 0;
+  valueArr[2] = 20;
+  valueArr[3] = 100;
+  
+  // values that will be used for practice second values
+  newVals[0] = 100;
+  newVals[1] = 20;
+  newVals[2] = 0;
+  newVals[3] = 0;
   
   
   printArray(Serial.list());   //prints all available serial ports
@@ -71,23 +86,23 @@ void draw(){  //same as loop in arduino
   background(51);
   loadPixels();
   
-  //float xf = 0;
-  //float yf = 0;
-  
+  println("1");
+  int i = 0;      // counter for 
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       int index = x + y * width;
       float sum = 0;
       for (Blob b : blobs) {
-        float d = dist(x, y, b.pos.x, b.pos.y);      // this takes in all float values
-        //float d = dist(xf, yf, b.pos.x, b.pos.y);
-        //xf++;
-        //yf++;
-        sum += 30 * b.r / d;
+        float d = dist(x, y, b.pos.x, b.pos.y);
+        float w = valueArr[i];                  // get values from valueArr to display
+        sum += 100 * w / d;
+        i++;    // go to next value in array
       }
+      i = 0; // start from the beginning
       pixels[index] = color(sum, 255, 255);
     }
   }
+  
   updatePixels();
   drawFoot();
 
@@ -95,6 +110,39 @@ void draw(){  //same as loop in arduino
     b.update();
     b.show();
   }
+  
+  //***************************************** everything above this line works as intended
+  println("pause");
+  delay(2000);
+  resetPixels();
+  loadPixels();
+  
+  println("2");
+  i = 0;      // counter for 
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      int index = x + y * width;
+      float sum = 0;
+      for (Blob b : blobs) {
+        float d = dist(x, y, b.pos.x, b.pos.y);
+        float w = newVals[i];                  // get values from valueArr to display
+        sum += 100 * w / d;
+        i++;    // go to next value in array
+      }
+      i = 0; // start from the beginning
+      pixels[index] = color(sum, 255, 255);
+    }
+  }
+  
+  updatePixels();
+  drawFoot();
+
+  for (Blob b : blobs) {
+    b.update();
+    b.show();
+  }
+  
+  
   
   // POSITION THIS IN ANOTHER SPOT
   //textFont(font);
@@ -152,7 +200,7 @@ class Blob {
     pos = new PVector(x, y);
     vel = PVector.random2D();
     vel.mult(random(0, 0));
-    r = 30; //random(10, 80);
+    r = 50; //random(10, 80);
   }
 
   void update() {
@@ -169,13 +217,15 @@ class Blob {
   void show() {
     noFill();
     stroke(0);
-    strokeWeight(1);
+    strokeWeight(3);
     ellipse(pos.x, pos.y, r*2, r*2);
   }
 }
 
 void drawFoot(){
   noFill();
+  strokeWeight(6);
+  
   beginShape();
   curveVertex(124,610);
   curveVertex(124,610);
@@ -213,4 +263,26 @@ void drawFoot(){
   curveVertex(124,610);
   curveVertex(124,610);
   endShape();
+}
+
+
+// supposed to reset pixels
+void resetPixels(){
+  loadPixels();
+  int i = 0;      // counter for 
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      int index = x + y * width;
+      float sum = 0;
+      for (Blob b : blobs) {
+        float d = dist(x, y, b.pos.x, b.pos.y);
+        float w = newVals[i];                  // get values from valueArr to display
+        sum += 100 * 0 / d;
+        i++;    // go to next value in array
+      }
+      i = 0; // start from the beginning
+      pixels[index] = color(sum, 255, 255);
+    }
+  }
+  updatePixels();
 }
