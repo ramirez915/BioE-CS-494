@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.0">
+<eagle version="9.4.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -144,10 +144,10 @@
 </layers>
 <board>
 <plain>
-<wire x1="-19.05" y1="-8.89" x2="94.92" y2="-8.89" width="0" layer="20"/>
-<wire x1="94.92" y1="-8.89" x2="94.92" y2="82.54" width="0" layer="20"/>
-<wire x1="94.92" y1="82.54" x2="-19.05" y2="82.54" width="0" layer="20"/>
-<wire x1="-19.05" y1="82.54" x2="-19.05" y2="-8.89" width="0" layer="20"/>
+<wire x1="25.4" y1="12.7" x2="77.14" y2="12.7" width="0" layer="20"/>
+<wire x1="77.14" y1="12.7" x2="77.14" y2="53.33" width="0" layer="20"/>
+<wire x1="77.14" y1="53.33" x2="25.4" y2="53.33" width="0" layer="20"/>
+<wire x1="25.4" y1="53.33" x2="25.4" y2="12.7" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="Headers" urn="urn:adsk.eagle:library:11687645">
