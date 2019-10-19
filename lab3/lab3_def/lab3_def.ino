@@ -53,6 +53,10 @@ bool mf_s=0;
 bool lf_s=0;
 
 
+//sect 4
+
+float dir;
+
 
 #include <Wire.h>
 const int MPU = 0x68; // MPU6050 I2C address
@@ -63,6 +67,28 @@ float roll, pitch, yaw;
 float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
 float elapsedTime, currentTime, previousTime;
 int c = 0;
+
+
+
+// function that sends over the data to processing once it is all collected
+//----------------------------------------------------------------------------------------- mode-color-ecg-resp-bpm-rRate
+void sendData(){
+  Serial.print(sect);
+  Serial.print("-");
+  Serial.print(mappedForce[0]);
+  Serial.print("-");
+  Serial.print(mappedForce[1]);
+  Serial.print("-");
+  Serial.print(mappedForce[2]);
+  Serial.print("-");
+  Serial.print(mappedForce[3]);
+  Serial.print("-");
+  Serial.println(dir);
+  Serial.print("-");
+  Serial.println(health);
+  Serial.print("-");
+  Serial.println(diff_health);
+}
 
 
 void calculate_IMU_error() {
@@ -158,11 +184,11 @@ void read_IMU() {
   pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
   
   // Print the values on the serial monitor
-  Serial.print(roll);
-  Serial.print("/");
-  Serial.print(pitch);
-  Serial.print("/");
-  Serial.println(yaw);
+//  Serial.print(roll);
+//  Serial.print("/");
+//  Serial.print(pitch);
+//  Serial.print("/");
+//  Serial.println(yaw);
 
 }
 
@@ -349,6 +375,7 @@ void sect 1 (){
 
   // DISPLAY IN PROCESSING
 
+  sendData();
   
   }
 
@@ -436,20 +463,29 @@ if(5gat_timer.elapsed()>150000){
 void sect 3 (){
 
 
-//THE DATA SHOULD BE ALREADY BIAS CORRECTED
+//THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
 
 
 //
+
+dir=0;
+
+//detect movement:
+
+if(abs(Accz)>thrmovem or abs(ccAngleY)>thrmovem or abs(ccAngleX)>thrmovem) {
+
+
 if(AccZ>0){
 
   //move right
+  dir=0.5;
   Serial.println(1/2);
 }
 
 if(AccZ<0){
 
   //move left
-
+  dir=-0.5;
   Serial.println(-1/2);
 }
 
@@ -458,7 +494,7 @@ if(AccZ<0){
 if(accAngleY<0 and aaccAngleX>0){
 
   //move forward
-
+  dir=1;
   Serial.println(1);
   
 }
@@ -466,11 +502,13 @@ if(accAngleY<0 and aaccAngleX>0){
 if(accAngleY>0 and aaccAngleX>0){
 
   //move backward
-
+  dir=-1;
   Serial.println(-1);
 }
 
+}
 
+SendData();
 
 }
 
@@ -482,7 +520,11 @@ void sect4 (){
 
 //insert age of subject
 
-Serial.read();
+while(!
+
+age=Serial.read();
+
+}
 
 //set speed_age
 
@@ -499,14 +541,21 @@ speed_age=
 }
 
 
+//execute sect 1 to acquire the speed:
 sect1();
 
 //check speed
 
 
-if(walking_speed < speed_age)
+if(walking_speed < speed_age) {
+
+  health=0;
+  diff_speed=speed_age-walking_speed;
+  
+}
 
 
+SendData();
 
 //
 
@@ -517,17 +566,6 @@ if(walking_speed < speed_age)
 void exitmode (){
   
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
 void setup() {
@@ -565,33 +603,30 @@ void loop() {
     // fitness mode
     
     if(val == '1'){       // section 1
-      
+      sec=1;
       sect1();
     }
     else if(val == '2'){       // section 2
-      
+      sec=2;
       sect2();
       
     }
    else if(val == '3'){       // section 3
-    
+      
       sect=3;
       sect3();
-    
-     // sendData(3,6,ecgRead,average_rr,bpm,r_rate);
       
    }
 
    else if(val == '4'){       // section 3
-    
+      sec=4;
       sect4();
-     // sendData(3,6,ecgRead,average_rr,bpm,r_rate);
       
    }
 
    
     if(val == '4'){       // exit
-      
+      sect=5;
       exitMode();
       
    }
