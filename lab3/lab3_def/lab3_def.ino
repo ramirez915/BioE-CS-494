@@ -64,6 +64,7 @@ float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
 float elapsedTime, currentTime, previousTime;
 int c = 0;
 
+
 void calculate_IMU_error() {
   // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
   // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
@@ -242,8 +243,6 @@ read_IMU();
 
 int calcMep(){
 
-  while (!esc){ // loop through code while the option is selected
-    
   float totalMep; // cumulative value
   float MEP; //MEP value taken each step
 
@@ -252,7 +251,6 @@ int calcMep(){
 
   MEP = topVal / bottomVal; //MEP calculation per step
   totalMEP = totalMEP + MEP; // add the MEP value taken per step to the cumulative value
-  }
 
   return totalMEP;
   
@@ -260,41 +258,41 @@ int calcMep(){
 
 
 void compute_reset {
-  
+
     for(int i=0; i< 5; i++){
   avg[i]=avg[i]/nacquis;
     }
     
-  pmm=avg[];
-  pmf=avg[];
-  plf=avg[];
-  pheel=avg[];  
+  pmm=avg[1];
+  pmf=avg[2];
+  plf=avg[3];
+  pheel=avg[4];  
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
     if(pmf+plf<thrheel){
-      rec[state]=//pattern heel
+      rec[state]=1//pattern heel
     }
 
     if(pheel<thrtip){
-      rec[state]=//pattern tiptoeing
+      rec[state]=2//pattern tiptoeing
     }
 
     if(plf<thrint){
-      rec[state]=//pattern intoeing
+      rec[state]=3//pattern intoeing
     }
 
     if(pmm+pmf<throut){
-      rec[state]=//pattern outtoeing
+      rec[state]=4//pattern outtoeing
     }
 
     else {
-      rec[state]=//normal gait
+      rec[state]=5//normal gait
       
       }
     }
     
-    MFN[rnd[state]]=calcMep();
+    MFN[state]=calcMep();
 
     //reset avg and data:
     for(int i=0; i< 5; i++){
@@ -308,6 +306,8 @@ void compute_reset {
     nacquis=0;
     
     state++;
+
+    //PLOT ON PROCESSING WHAT PHASE IS RECOGNIZED
 
 }
 
@@ -358,16 +358,19 @@ void sect 1 (){
 void sect 2 (){
 
  5gait_timer.start();
+ 
+ int istant=0;
 
 // GENERATE RANDOM ACQUISITION OF PATTERNS:
 
-for(int i=0; i< 5; i++){
+//for(int i=0; i< 5; i++){
+//
+//
+//  rndstate[i]=functionrandom();
+//}
 
-
-  rndstate[i]=functionrandom();
-}
 //consider 90000 for recording plus 5*5 between the actions
- while(5gat_timer.elapsed() <= 175000) {
+ while(5gat_timer.elapsed() <= 155000) {
 
   acquire_signal();
 
@@ -376,8 +379,9 @@ for(int i=0; i< 5; i++){
 if(change==1){
 
   for(int i=0; i< 5; i++){
-  data=
-  
+    //save data in a matrix
+  data[i][istant]=mappedForce[i];
+  istant++;
   avg[i]=avg[i]+mappedForce[i];
   
   nacquis++;
@@ -387,28 +391,20 @@ if(change==1){
 }
 
   
-  if(5gat_timer.elapsed()>5000 and 5gat_timer.elapsed()<35000 and state==0){
+  if(5gat_timer.elapsed()>30000 and state==0){
     
   compute_reset();
     
   }
 
-if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
+if(5gat_timer.elapsed()>60000){
 
     compute_reset();
     
   }
 
 
-  if(5gat_timer.elapsed()>75000 and 5gat_timer.elapsed()<105000){
-
-    compute_reset();
-
-    
-  }
-
-
-  if(5gat_timer.elapsed()>110000 and 5gat_timer.elapsed()<140000){
+  if(5gat_timer.elapsed()>90000){
 
     compute_reset();
 
@@ -416,11 +412,15 @@ if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
   }
 
 
-  if(5gat_timer.elapsed()>145000 and 5gat_timer.elapsed()<175000){
+  if(5gat_timer.elapsed()>120000){
 
     compute_reset();
+  
+  }
+if(5gat_timer.elapsed()>150000){
 
-    
+    compute_reset();
+    state=0;
   }
 
     
@@ -436,15 +436,80 @@ if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
 void sect 3 (){
 
 
+//THE DATA SHOULD BE ALREADY BIAS CORRECTED
+
+
+//
+if(AccZ>0){
+
+  //move right
+  Serial.println(1/2);
+}
+
+if(AccZ<0){
+
+  //move left
+
+  Serial.println(-1/2);
+}
 
 
 
+if(accAngleY<0 and aaccAngleX>0){
+
+  //move forward
+
+  Serial.println(1);
   
-  
-  }
+}
+
+if(accAngleY>0 and aaccAngleX>0){
+
+  //move backward
+
+  Serial.println(-1);
+}
 
 
-void sect 4 (){
+
+}
+
+
+
+
+void sect4 (){
+
+
+//insert age of subject
+
+Serial.read();
+
+//set speed_age
+
+if(age>){
+speed_age= 
+}
+
+if(age>){
+speed_age= 
+}
+
+if(age>){
+speed_age= 
+}
+
+
+sect1();
+
+//check speed
+
+
+if(walking_speed < speed_age)
+
+
+
+//
+
   
   }
 
@@ -512,6 +577,7 @@ void loop() {
     
       sect=3;
       sect3();
+    
      // sendData(3,6,ecgRead,average_rr,bpm,r_rate);
       
    }
