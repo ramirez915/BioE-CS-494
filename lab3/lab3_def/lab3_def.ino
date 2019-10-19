@@ -5,7 +5,7 @@ int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
 
 int change=1;
-
+int sect=3;
 
 
 //sect1 vars:
@@ -51,6 +51,121 @@ bool heel_s=0;
 bool mm_s=0;
 bool mf_s=0;
 bool lf_s=0;
+
+
+
+#include <Wire.h>
+const int MPU = 0x68; // MPU6050 I2C address
+float AccX, AccY, AccZ;
+float GyroX, GyroY, GyroZ;
+float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
+float roll, pitch, yaw;
+float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
+float elapsedTime, currentTime, previousTime;
+int c = 0;
+
+
+void calculate_IMU_error() {
+  // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
+  // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
+  // Read accelerometer values 200 times
+  while (c < 200) {
+    Wire.beginTransmission(MPU);
+    Wire.write(0x3B);
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU, 6, true);
+    AccX = (Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    AccY = (Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    AccZ = (Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    // Sum all readings
+    AccErrorX = AccErrorX + ((atan((AccY) / sqrt(pow((AccX), 2) + pow((AccZ), 2))) * 180 / PI));
+    AccErrorY = AccErrorY + ((atan(-1 * (AccX) / sqrt(pow((AccY), 2) + pow((AccZ), 2))) * 180 / PI));
+    c++;
+  }
+  //Divide the sum by 200 to get the error value
+  AccErrorX = AccErrorX / 200;
+  AccErrorY = AccErrorY / 200;
+  c = 0;
+  // Read gyro values 200 times
+  while (c < 200) {
+    Wire.beginTransmission(MPU);
+    Wire.write(0x43);
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU, 6, true);
+    GyroX = Wire.read() << 8 | Wire.read();
+    GyroY = Wire.read() << 8 | Wire.read();
+    GyroZ = Wire.read() << 8 | Wire.read();
+    // Sum all readings
+    GyroErrorX = GyroErrorX + (GyroX / 131.0);
+    GyroErrorY = GyroErrorY + (GyroY / 131.0);
+    GyroErrorZ = GyroErrorZ + (GyroZ / 131.0);
+    c++;
+  }
+  //Divide the sum by 200 to get the error value
+  GyroErrorX = GyroErrorX / 200;
+  GyroErrorY = GyroErrorY / 200;
+  GyroErrorZ = GyroErrorZ / 200;
+  // Print the error values on the Serial Monitor
+  Serial.print("AccErrorX: ");
+  Serial.println(AccErrorX);
+  Serial.print("AccErrorY: ");
+  Serial.println(AccErrorY);
+  Serial.print("GyroErrorX: ");
+  Serial.println(GyroErrorX);
+  Serial.print("GyroErrorY: ");
+  Serial.println(GyroErrorY);
+  Serial.print("GyroErrorZ: ");
+  Serial.println(GyroErrorZ);
+}
+
+
+
+void read_IMU() {
+  
+  // === Read acceleromter data === //
+  Wire.beginTransmission(MPU);
+  Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU, 6, true); // Read 6 registers total, each axis value is stored in 2 registers
+  //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
+  AccX = (Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
+  AccY = (Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
+  AccZ = (Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
+  // Calculating Roll and Pitch from the accelerometer data
+  accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI) - 0.58; // AccErrorX ~(0.58) See the calculate_IMU_error()custom function for more details
+  accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI) + 1.58; // AccErrorY ~(-1.58)
+  // === Read gyroscope data === //
+  previousTime = currentTime;        // Previous time is stored before the actual time read
+  currentTime = millis();            // Current time actual time read
+  elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
+  Wire.beginTransmission(MPU);
+  Wire.write(0x43); // Gyro data first register address 0x43
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
+  GyroX = (Wire.read() << 8 | Wire.read()) / 131.0; // For a 250deg/s range we have to divide first the raw value by 131.0, according to the datasheet
+  GyroY = (Wire.read() << 8 | Wire.read()) / 131.0;
+  GyroZ = (Wire.read() << 8 | Wire.read()) / 131.0;
+  // Correct the outputs with the calculated error values
+  GyroX = GyroX + 0.56; // GyroErrorX ~(-0.56)
+  GyroY = GyroY - 2; // GyroErrorY ~(2)
+  GyroZ = GyroZ + 0.79; // GyroErrorZ ~ (-0.8)
+  // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
+  gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
+  gyroAngleY = gyroAngleY + GyroY * elapsedTime;
+  yaw =  yaw + GyroZ * elapsedTime;
+  // Complementary filter - combine acceleromter and gyro angle values
+  roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
+  pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
+  
+  // Print the values on the serial monitor
+  Serial.print(roll);
+  Serial.print("/");
+  Serial.print(pitch);
+  Serial.print("/");
+  Serial.println(yaw);
+
+}
+
 
 
 
@@ -111,27 +226,13 @@ void acquire_signal () {
   analogWrite(mm_led,mappedForce[2]);
   analogWrite(heel_led,mappedForce[3]);
 
-  
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers
-  AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
-  AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-  AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
-  Tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  GyX=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
-  Serial.print("AcX = "); Serial.print(AcX);
-  Serial.print(" | AcY = "); Serial.print(AcY);
-  Serial.print(" | AcZ = "); Serial.print(AcZ);
-  Serial.print(" | Tmp = "); Serial.print(Tmp/340.00+36.53);  //equation for temperature in degrees C from datasheet
-  Serial.print(" | GyX = "); Serial.print(GyX);
-  Serial.print(" | GyY = "); Serial.print(GyY);
-  Serial.print(" | GyZ = "); Serial.println(GyZ);
-  delay(333);
+//read IMU data:
 
+if(sect==3) {
+  
+read_IMU();
+
+}
 
 //  delay(50);
 
@@ -142,8 +243,6 @@ void acquire_signal () {
 
 int calcMep(){
 
-  while (!esc){ // loop through code while the option is selected
-    
   float totalMep; // cumulative value
   float MEP; //MEP value taken each step
 
@@ -152,7 +251,6 @@ int calcMep(){
 
   MEP = topVal / bottomVal; //MEP calculation per step
   totalMEP = totalMEP + MEP; // add the MEP value taken per step to the cumulative value
-  }
 
   return totalMEP;
   
@@ -160,41 +258,41 @@ int calcMep(){
 
 
 void compute_reset {
-  
+
     for(int i=0; i< 5; i++){
   avg[i]=avg[i]/nacquis;
     }
     
-  pmm=avg[];
-  pmf=avg[];
-  plf=avg[];
-  pheel=avg[];  
+  pmm=avg[1];
+  pmf=avg[2];
+  plf=avg[3];
+  pheel=avg[4];  
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
     if(pmf+plf<thrheel){
-      rec[state]=//pattern heel
+      rec[state]=1//pattern heel
     }
 
     if(pheel<thrtip){
-      rec[state]=//pattern tiptoeing
+      rec[state]=2//pattern tiptoeing
     }
 
     if(plf<thrint){
-      rec[state]=//pattern intoeing
+      rec[state]=3//pattern intoeing
     }
 
     if(pmm+pmf<throut){
-      rec[state]=//pattern outtoeing
+      rec[state]=4//pattern outtoeing
     }
 
     else {
-      rec[state]=//normal gait
+      rec[state]=5//normal gait
       
       }
     }
     
-    MFN[rnd[state]]=calcMep();
+    MFN[state]=calcMep();
 
     //reset avg and data:
     for(int i=0; i< 5; i++){
@@ -208,6 +306,8 @@ void compute_reset {
     nacquis=0;
     
     state++;
+
+    //PLOT ON PROCESSING WHAT PHASE IS RECOGNIZED
 
 }
 
@@ -258,16 +358,19 @@ void sect 1 (){
 void sect 2 (){
 
  5gait_timer.start();
+ 
+ int istant=0;
 
 // GENERATE RANDOM ACQUISITION OF PATTERNS:
 
-for(int i=0; i< 5; i++){
+//for(int i=0; i< 5; i++){
+//
+//
+//  rndstate[i]=functionrandom();
+//}
 
-
-  rndstate[i]=functionrandom();
-}
 //consider 90000 for recording plus 5*5 between the actions
- while(5gat_timer.elapsed() <= 175000) {
+ while(5gat_timer.elapsed() <= 155000) {
 
   acquire_signal();
 
@@ -276,8 +379,9 @@ for(int i=0; i< 5; i++){
 if(change==1){
 
   for(int i=0; i< 5; i++){
-  data=
-  
+    //save data in a matrix
+  data[i][istant]=mappedForce[i];
+  istant++;
   avg[i]=avg[i]+mappedForce[i];
   
   nacquis++;
@@ -287,28 +391,20 @@ if(change==1){
 }
 
   
-  if(5gat_timer.elapsed()>5000 and 5gat_timer.elapsed()<35000 and state==0){
+  if(5gat_timer.elapsed()>30000 and state==0){
     
   compute_reset();
     
   }
 
-if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
+if(5gat_timer.elapsed()>60000){
 
     compute_reset();
     
   }
 
 
-  if(5gat_timer.elapsed()>75000 and 5gat_timer.elapsed()<105000){
-
-    compute_reset();
-
-    
-  }
-
-
-  if(5gat_timer.elapsed()>110000 and 5gat_timer.elapsed()<140000){
+  if(5gat_timer.elapsed()>90000){
 
     compute_reset();
 
@@ -316,11 +412,15 @@ if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
   }
 
 
-  if(5gat_timer.elapsed()>145000 and 5gat_timer.elapsed()<175000){
+  if(5gat_timer.elapsed()>120000){
 
     compute_reset();
+  
+  }
+if(5gat_timer.elapsed()>150000){
 
-    
+    compute_reset();
+    state=0;
   }
 
     
@@ -336,15 +436,80 @@ if(5gat_timer.elapsed()>40000 and 5gat_timer.elapsed()<70000){
 void sect 3 (){
 
 
+//THE DATA SHOULD BE ALREADY BIAS CORRECTED
+
+
+//
+if(AccZ>0){
+
+  //move right
+  Serial.println(1/2);
+}
+
+if(AccZ<0){
+
+  //move left
+
+  Serial.println(-1/2);
+}
 
 
 
+if(accAngleY<0 and aaccAngleX>0){
+
+  //move forward
+
+  Serial.println(1);
   
-  
-  }
+}
+
+if(accAngleY>0 and aaccAngleX>0){
+
+  //move backward
+
+  Serial.println(-1);
+}
 
 
-void sect 4 (){
+
+}
+
+
+
+
+void sect4 (){
+
+
+//insert age of subject
+
+Serial.read();
+
+//set speed_age
+
+if(age>){
+speed_age= 
+}
+
+if(age>){
+speed_age= 
+}
+
+if(age>){
+speed_age= 
+}
+
+
+sect1();
+
+//check speed
+
+
+if(walking_speed < speed_age)
+
+
+
+//
+
   
   }
 
@@ -382,12 +547,13 @@ void setup() {
   pinMode(mm, INPUT); 
   pinMode(heel,NPUT); 
 
-  Wire.begin();
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x6B);  // PWR_MGMT_1 register
-  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
-  Serial.begin(9600);
+   Serial.begin(19200);
+  Wire.begin();                      // Initialize comunication
+  Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
+  Wire.write(0x6B);                  // Talk to the register 6B
+  Wire.write(0x00);                  // Make reset - place a 0 into the 6B register
+  Wire.endTransmission(true);        //end the transmission
+
 
 }
 
@@ -409,7 +575,9 @@ void loop() {
     }
    else if(val == '3'){       // section 3
     
+      sect=3;
       sect3();
+    
      // sendData(3,6,ecgRead,average_rr,bpm,r_rate);
       
    }
