@@ -40,9 +40,13 @@ void loop() {
   force[3]=analogRead(f_s3);
 
   Serial.println(force[0]);
-//  Serial.println(force[1]);
-//  Serial.println(force[2]);
-//  Serial.println(force[3]);
+  Serial.println(" ");
+  Serial.println(force[1]);
+  Serial.println(" ");
+  Serial.println(force[2]);
+  Serial.println(" ");
+  Serial.println(force[3]);
+  Serial.println(" ");
 
   
   //mapping force_inputs with leds_outputs

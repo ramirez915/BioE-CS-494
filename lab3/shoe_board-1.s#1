@@ -711,11 +711,11 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 </net>
 <net name="N$9" class="0">
 <segment>
-<pinref part="J2" gate="G$1" pin="10"/>
-<wire x1="99.06" y1="58.42" x2="71.12" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="58.42" x2="71.12" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="J20" gate="G$1" pin="5"/>
+<wire x1="71.12" y1="55.88" x2="71.12" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="50.8" x2="63.5" y2="50.8" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="11"/>
+<wire x1="99.06" y1="55.88" x2="71.12" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
