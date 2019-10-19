@@ -13,6 +13,7 @@ String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
 float[] newVals = new float[4];     // new test values
+float modeType = -1.0;              // tells us what mode type were going into
 
 PShape foot;
 
@@ -83,67 +84,75 @@ void draw(){  //same as loop in arduino
   
   //lets give title to our window
   //fill(0);               //text color (r, g, b)
-  background(51);
-  loadPixels();
   
-  println("1");
-  int i = 0;      // counter for 
-  for (int x = 0; x < width; x++) {
-    for (int y = 0; y < height; y++) {
-      int index = x + y * width;
-      float sum = 0;
-      for (Blob b : blobs) {
-        float d = dist(x, y, b.pos.x, b.pos.y);
-        float w = valueArr[i];                  // get values from valueArr to display
-        sum += 100 * w / d;
-        i++;    // go to next value in array
-      }
-      i = 0; // start from the beginning
-      pixels[index] = color(sum, 255, 255);
-    }
+  //get data then draw on heat map
+  if(modeType == 0.0){
+    
   }
   
-  updatePixels();
-  drawFoot();
+  drawHeatMap();
+  //-------------------------------------------------------------------------------------------------- old working code
+  //background(51);
+  //loadPixels();
+  
+  //println("1");
+  //int i = 0;      // counter for 
+  //for (int x = 0; x < width; x++) {
+  //  for (int y = 0; y < height; y++) {
+  //    int index = x + y * width;
+  //    float sum = 0;
+  //    for (Blob b : blobs) {
+  //      float d = dist(x, y, b.pos.x, b.pos.y);
+  //      float w = valueArr[i];                  // get values from valueArr to display
+  //      sum += 100 * w / d;
+  //      i++;    // go to next value in array
+  //    }
+  //    i = 0; // start from the beginning
+  //    pixels[index] = color(sum, 255, 255);
+  //  }
+  //}
+  
+  //updatePixels();
+  //drawFoot();
 
-  for (Blob b : blobs) {
-    b.update();
-    b.show();
-  }
+  //for (Blob b : blobs) {
+  //  b.update();
+  //  b.show();
+  //}
   
-  //***************************************** everything above this line works as intended
-  // using the code down here to update the heat map with new values
-  println("pause");
-  delay(2000);
-  resetPixels();
-  loadPixels();
+  ////***************************************** everything above this line works as intended
+  //// using the code down here to update the heat map with new values
+  //println("pause");
+  //delay(2000);
   
-  println("2");
-  i = 0;      // counter for 
-  for (int x = 0; x < width; x++) {
-    for (int y = 0; y < height; y++) {
-      int index = x + y * width;
-      float sum = 0;
-      for (Blob b : blobs) {
-        float d = dist(x, y, b.pos.x, b.pos.y);
-        float w = newVals[i];                  // get values from valueArr to display
-        sum += 100 * w / d;
-        i++;    // go to next value in array
-      }
-      i = 0; // start from the beginning
-      pixels[index] = color(sum, 255, 255);
-    }
-  }
+  //loadPixels();
   
-  updatePixels();
-  drawFoot();
+  //println("2");
+  //i = 0;      // counter for 
+  //for (int x = 0; x < width; x++) {
+  //  for (int y = 0; y < height; y++) {
+  //    int index = x + y * width;
+  //    float sum = 0;
+  //    for (Blob b : blobs) {
+  //      float d = dist(x, y, b.pos.x, b.pos.y);
+  //      float w = newVals[i];                  // get values from valueArr to display
+  //      sum += 100 * w / d;
+  //      i++;    // go to next value in array
+  //    }
+  //    i = 0; // start from the beginning
+  //    pixels[index] = color(sum, 255, 255);
+  //  }
+  //}
+  
+  //updatePixels();
+  //drawFoot();
 
-  for (Blob b : blobs) {
-    b.update();
-    b.show();
-  }
-  //----------------------------------------------------------------------------------------------- end of new value attempt 
-  
+  //for (Blob b : blobs) {
+  //  b.update();
+  //  b.show();
+  //}
+  ////----------------------------------------------------------------------------------------------- end of new value attempt 
+  //----------------------------------------------------------------------------------------------------------------------------- old working code
   
   // POSITION THIS IN ANOTHER SPOT
   //textFont(font);
@@ -177,8 +186,13 @@ void MainMenu(){
 //    try{
 //      dataArr = float(split(valueFromArduino,"-"));
 //      //println(valueFromArduino);
-//      if(dataArr.length == 3){    // ----------------------------------------------------------------should have 6 values from arduino mode-color-ecg-resp-bpm-rRate
-      
+//      if(dataArr.length == 5){    // -----------------------------------------should have 5 values from arduino mode-sens1-sens2-sens3-sens4
+//         // map values to be placed as the radius for the blobs
+//           for(int i = 1; i < 5; i++){
+//             float mappedR = map(dataArr[i],0,1023,0,80);
+//             //update blobs
+//             blobs[i].updateR(mappedR);
+//           }
 //      }
 //    }catch(RuntimeException e){
 //      e.printStackTrace();
@@ -192,16 +206,24 @@ void MainMenu(){
 
 
 class Blob {
-
   PVector pos;
   float r;
   PVector vel;
+  
+  //added
+  float updatedR;
+  float interpolateStepSize = .01;
+  //
   
   Blob(float x, float y) {
     pos = new PVector(x, y);
     vel = PVector.random2D();
     vel.mult(random(0, 0));
-    r = 50; //random(10, 80);
+    //r = 50; //random(10, 80);
+    
+    // new r
+    r = 0;
+    //
   }
 
   void update() {
@@ -214,6 +236,16 @@ class Blob {
       vel.y *= -1;
     }
   }
+  
+  // gets the updated radius
+  void updateR(float newRadius){
+    if(newRadius < 20){
+      this.updatedR = 0;
+    }
+    else{
+      this.updatedR = newRadius;
+    }
+  }
 
   void show() {
     noFill();
@@ -221,6 +253,23 @@ class Blob {
     strokeWeight(3);
     ellipse(pos.x, pos.y, r*2, r*2);
   }
+  
+  // sets the updated radius
+  void interpolateR(){
+    if(updatedR - r < 1){
+      this.r = updatedR;
+    }
+    else{
+      float nextR = lerp(r,updatedR,interpolateStepSize);
+      this.r = nextR;
+    }
+  }
+  
+  void reset(){
+    r = 0;
+    updatedR = 0;
+  }
+  
 }
 
 void drawFoot(){
@@ -267,23 +316,40 @@ void drawFoot(){
 }
 
 
-// supposed to reset pixels
-void resetPixels(){
+void drawHeatMap(){
+  background(51);
   loadPixels();
-  int i = 0;      // counter for 
+  
+  println("1");
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       int index = x + y * width;
       float sum = 0;
       for (Blob b : blobs) {
         float d = dist(x, y, b.pos.x, b.pos.y);
-        float w = newVals[i];                  // get values from valueArr to display
-        sum += 100 * 0 / d;
-        i++;    // go to next value in array
+        sum += 100 * b.r / d;
       }
-      i = 0; // start from the beginning
       pixels[index] = color(sum, 255, 255);
     }
   }
+  
   updatePixels();
+  
+  for(Blob b: blobs){
+    b.interpolateR();
+    b.show();
+  }
+  drawFoot();
+
+  //for (Blob b : blobs) {
+  //  b.update();
+  //  b.show();
+  //}
+}
+
+void resetValues(){
+  for(Blob b: blobs){
+    b.reset();
+  }
+  modeType = -1.0;
 }
