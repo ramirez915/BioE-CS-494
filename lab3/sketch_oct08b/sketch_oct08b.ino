@@ -765,11 +765,11 @@ void loop()
   //   340 per degrees Celsius, -512 at 35 degrees.
   // At 0 degrees: -512 - (340 * 35) = -12412
  
-  Serial.print(F("temperature: "));
-  dT = ( (double) accel_t_gyro.value.temperature + 12412.0) / 340.0;
-  Serial.print(dT, 3);
-  Serial.print(F(" degrees Celsius"));
-  Serial.println(F(""));
+//  Serial.print(F("temperature: "));
+//  dT = ( (double) accel_t_gyro.value.temperature + 12412.0) / 340.0;
+//  Serial.print(dT, 3);
+//  Serial.print(F(" degrees Celsius"));
+//  Serial.println(F(""));
  
  
   // Print the raw gyro values.

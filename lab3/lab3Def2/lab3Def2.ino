@@ -8,30 +8,6 @@ int change=1;
 int sect=3;
 
 
-//sect1 vars:
-int distance = 100;
-int step_count = 0;
-int cadence;
-StopWatch step_timer;
-
-float step_length;
-float stride_length;
-float walking_speed;
-
-
-
-//sect2 vars:
-
-int rndstate[5];
-int state=0;
-int MFN[];
-
-float pmm;
-float pmf;
-float plf;
-float pheel;
-
-
 
 float force[4];
 float mappedForce[4];
@@ -53,6 +29,41 @@ bool mf_s=0;
 bool lf_s=0;
 
 
+
+
+
+
+
+//sect1 vars:
+int distance = 100;
+int step_count = 0;
+int cadence;
+StopWatch step_timer;
+
+float step_length;
+float stride_length;
+float walking_speed;
+
+
+
+//sect2 vars:
+
+int rec[5];
+int state=0;
+int MFN[];
+float data[4][100];
+
+float pmm;
+float pmf;
+float plf;
+float pheel;
+
+int thrheel;
+int thrint;
+int throut;
+int thrtip;
+
+
 //sect 4
 
 float dir;
@@ -70,25 +81,67 @@ int c = 0;
 
 
 
+
+
+
 // function that sends over the data to processing once it is all collected
 //----------------------------------------------------------------------------------------- mode-color-ecg-resp-bpm-rRate
 void sendData(){
   Serial.print(sect);
   Serial.print("-");
-  Serial.print(mappedForce[0]);
+  //all force sensors are for sections 1-2
+  //mf
+  Serial.print(force[0]);
   Serial.print("-");
-  Serial.print(mappedForce[1]);
+  //lf
+  Serial.print(force[1]);
   Serial.print("-");
-  Serial.print(mappedForce[2]);
+  //mm
+  Serial.print(force[2]);
   Serial.print("-");
-  Serial.print(mappedForce[3]);
+  //heel
+  Serial.print(force[3]);
   Serial.print("-");
+  Serial.print(step_length);
+  Serial.print("-");
+  Serial.print(stride_length);
+  Serial.print("-");
+  Serial.print(cadence);
+  Serial.print("-");
+  Serial.print(walking_speed);
+  Serial.print("-");
+  Serial.print(step_count);
+  //section 2
+  Serial.print("-");
+  Serial.print(rec[0]);
+  Serial.print("-");
+  Serial.print(MFN[0]);
+  Serial.print("-");
+  Serial.print(rec[1]);
+  Serial.print("-");
+  Serial.print(MFN[1]);
+  Serial.print("-");
+  Serial.print(rec[2]);
+  Serial.print("-");
+  Serial.print(MFN[2]);
+  Serial.print("-");
+  Serial.print(rec[3]);
+  Serial.print("-");
+  Serial.print(MFN[3]);
+  Serial.print("-");
+  Serial.print(rec[4]);
+  Serial.print("-");
+  Serial.print(MFN[4]);
+  //section 3
   Serial.println(dir);
   Serial.print("-");
+  //section 4
   Serial.println(health);
   Serial.print("-");
-  Serial.println(diff_health);
+  Serial.println(virt_age);
 }
+
+
 
 
 void calculate_IMU_error() {
@@ -195,18 +248,14 @@ void read_IMU() {
 
 
 
-
-
-
-
 void acquire_signal () {
   
-  force[0]=analogRead(f_s0);
-  force[1]=analogRead(f_s1);
-  force[2]=analogRead(f_s2);
-  force[3]=analogRead(f_s3);
+  force[0]=analogRead(mf);
+  force[1]=analogRead(lf);
+  force[2]=analogRead(mm);
+  force[3]=analogRead(heel);
 
-  Serial.println(force[0]);
+  //Serial.println(force[0]);
 //  Serial.println(force[1]);
 //  Serial.println(force[2]);
 //  Serial.println(force[3]);
@@ -217,6 +266,7 @@ void acquire_signal () {
     mappedForce[i] = map(force[i],0,1023,0,255);
 
     change=0;
+    
     if(mappedForce[i]>thr) {
 
       if(i==0){
@@ -224,13 +274,16 @@ void acquire_signal () {
         change=1;
       }
       else if(i==1){
-        mm_s=2;
+        mm_s=1;
+        change=1;
       }
       else if(i==2){
-        mf_s=3;
+        mf_s=1;
+        change=1;
       }
-      else if(i==1){
-        ml_s=4;
+      else if(i==3){
+        ml_s=1;
+        change=1;
       }
   }
   }
@@ -348,7 +401,8 @@ void sect 1 (){
 
   acquire_signal();
   
-    if (mf_sensor == 1 || lf_sensor == 1 || mm_sensor == 1 || heel_sensor == 1){
+    if (mf_s == 1 || lf_s == 1 || mm_s == 1 || heel_s == 1){
+      
       if (step_count == 0){
         step_count += 1; //to keep track of the total no. of Step Counts 
       }
@@ -405,7 +459,7 @@ void sect 2 (){
 //save data in array matrix at each iteration
 if(change==1){
 
-  for(int i=0; i< 5; i++){
+  for(int i=0; i< 4; i++){
     //save data in a matrix
   data[i][istant]=mappedForce[i];
   istant++;
@@ -479,14 +533,14 @@ if(AccZ>0){
 
   //move right
   dir=0.5;
-  Serial.println(1/2);
+ // Serial.println(1/2);
 }
 
 if(AccZ<0){
 
   //move left
   dir=-0.5;
-  Serial.println(-1/2);
+ // Serial.println(-1/2);
 }
 
 
@@ -495,7 +549,7 @@ if(accAngleY<0 and aaccAngleX>0){
 
   //move forward
   dir=1;
-  Serial.println(1);
+ // Serial.println(1);
   
 }
 
@@ -503,7 +557,7 @@ if(accAngleY>0 and aaccAngleX>0){
 
   //move backward
   dir=-1;
-  Serial.println(-1);
+ // Serial.println(-1);
 }
 
 }
@@ -528,15 +582,20 @@ age=Serial.read();
 
 //set speed_age
 
-if(age>){
+if(age>20){
+  
+speed_age= 10
+}
+
+if(age>30){
 speed_age= 
 }
 
-if(age>){
+if(age>40){
 speed_age= 
 }
 
-if(age>){
+if(age>50){
 speed_age= 
 }
 
@@ -550,7 +609,10 @@ sect1();
 if(walking_speed < speed_age) {
 
   health=0;
+  
   diff_speed=speed_age-walking_speed;
+
+  virt_age=(1+diff_speed/speed_age)*age;
   
 }
 
@@ -558,12 +620,12 @@ if(walking_speed < speed_age) {
 SendData();
 
 //
-
-  
   }
 
 
 void exitmode (){
+
+  for(
   
   }
 
@@ -625,10 +687,9 @@ void loop() {
    }
 
    
-    if(val == '4'){       // exit
-      sect=5;
-      exitMode();
+    if(val == '5'){       // exit
       
+      exitMode();
    }
 
    
