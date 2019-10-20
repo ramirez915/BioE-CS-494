@@ -13,7 +13,43 @@ String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
 float[] newVals = new float[4];     // new test values
-float modeType = -1.0;              // tells us what mode type were going into
+float sec = -1.0;              // tells us what mode type were going into
+
+// section 1
+// place table in the middle of the screen to display values
+float mf = 0.0;    // blob[0]
+float lf = 0.0;    // blob[1]
+float mm = 0.0;    // blob[2]
+float heel = 0.0;  // blob[3]
+float stepLen = 0.0;
+float strideLen = 0.0;
+float cadence = 0.0;
+float walkingSpd = 0.0;
+int stepCount = 0;
+
+//section 2
+// display images corresponding to step pattern
+/*
+recieving flags form arduino so just display image
+0 = still waiting      will display all 5 parts and will have a ? to display that. images will update live.... 1 2 3 4 5
+1 = heel                                                                                                       ? ? ? ? ?
+2 = tiptoeing                                                                                                  I O N
+3 = intoeing
+4 = out toeing
+5 = normal
+*/
+
+//section 3
+// have moving image in direction of travel determined by dir
+// have a matrix in the middle and move image depending on where we're goiung
+// +1 = up, -1 = down, +0.5 = right, -0.5 = left
+float dir = 0.0;
+
+//section 4
+// display image of person depending on their virtual age
+// display age ranges for now just do 5... 0-10, 11-20, 21-30...
+
+
 
 PShape foot;
 
@@ -23,10 +59,10 @@ void setup(){
   drawFoot();
   
   colorMode(HSB);
-  blobs[0] = new Blob(200,200);
-  blobs[1] = new Blob(360,400);
-  blobs[2] = new Blob(160,550);
-  blobs[3] = new Blob(230,1000);
+  blobs[0] = new Blob(200,200);      // mf
+  blobs[1] = new Blob(360,400);      //lf
+  blobs[2] = new Blob(160,550);      //mm
+  blobs[3] = new Blob(230,1000);     //heel
   
   // place values from sensors here*******************
   valueArr[0] = 0;
@@ -41,7 +77,7 @@ void setup(){
   newVals[3] = 0;
   
   
-  printArray(Serial.list());   //prints all available serial ports
+  //printArray(Serial.list());   //prints all available serial ports
   //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
@@ -56,41 +92,44 @@ void setup(){
   //myPort.bufferUntil('\n');
     
   // adds buttons to the window
-  //cp5 = new ControlP5(this);
-  //font = createFont("Arial", 20);    // custom fonts for buttons and title
+  cp5 = new ControlP5(this);
+  font = createFont("Arial", 20);    // custom fonts for buttons and title
   
-  //cp5.addButton("Display")     //"red" is the name of button
-  //  .setPosition(100, 50)  //x and y coordinates of upper left corner of button
-  //  .setSize(120, 70)      //(width, height)
-  //  .setFont(font)
-  //;
+  cp5.addButton("Walking_Stats")     //"red" is the name of button
+    .setPosition(1700, 50)  //x and y coordinates of upper left corner of button
+    .setSize(220, 70)      //(width, height)
+    .setFont(font)
+  ;
   
-  //cp5.addButton("Walking Analysis")
-  //  .setPosition(100,150)
-  //  .setSize(120, 70)
-  //  .setFont(font)
-  //;
+  cp5.addButton("sec2")
+    .setPosition(1700,150)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
   
-  //cp5.addButton("MainMenu")     //"alloff" is the name of button
-  //  .setPosition(100, 350)  //x and y coordinates of upper left corner of button
-  //  .setSize(120, 70)      //(width, height)
-  //  .setFont(font)
-  //;
+  cp5.addButton("Main_Menu")     //"alloff" is the name of button
+    .setPosition(1700, 350)  //x and y coordinates of upper left corner of button
+    .setSize(150, 70)      //(width, height)
+    .setFont(font)
+  ;
   
   
-}
+}  // end of setup
 
 void draw(){  //same as loop in arduino
   
   //lets give title to our window
   //fill(0);               //text color (r, g, b)
-  
-  //get data then draw on heat map
-  if(modeType == 0.0){
+  //background(255);
+  //get data from serial event then draw on heat map
+  if(sec == 1.0){
     
   }
   
-  drawHeatMap();
+  
+  //drawHeatMap();
+
+
   //-------------------------------------------------------------------------------------------------- old working code
   //background(51);
   //loadPixels();
@@ -163,114 +202,51 @@ void draw(){  //same as loop in arduino
 //lets add some functions to our buttons
 //so whe you press any button, it sends perticular char over serial port
 
-void Display(){
-  //myPort.write('f');
-  println("d");
+void Walking_Stats(){
+  myPort.write('1');
+  println("Walking Stats");
 }
 
-void Walking_Analysis(){
-  //myPort.write('s');
+void sec2(){
+  //myPort.write('2');
   println("wa");
 }
 
-void MainMenu(){
-  //myPort.write('a');
+void Main_Menu(){
+  myPort.write('5');
 }
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      dataArr = float(split(valueFromArduino,"-"));
-//      //println(valueFromArduino);
-//      if(dataArr.length == 5){    // -----------------------------------------should have 5 values from arduino mode-sens1-sens2-sens3-sens4
-//         // map values to be placed as the radius for the blobs
-//           for(int i = 1; i < 5; i++){
-//             float mappedR = map(dataArr[i],0,1023,0,80);
-//             //update blobs
-//             blobs[i].updateR(mappedR);
-//           }
-//      }
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
-
-
-
-
-
-
-class Blob {
-  PVector pos;
-  float r;
-  PVector vel;
-  
-  //added
-  float updatedR;
-  float interpolateStepSize = .01;
-  //
-  
-  Blob(float x, float y) {
-    pos = new PVector(x, y);
-    vel = PVector.random2D();
-    vel.mult(random(0, 0));
-    //r = 50; //random(10, 80);
-    
-    // new r
-    r = 0;
-    //
-  }
-
-  void update() {
-    pos.add(vel); 
-    if (pos.x > width || pos.x < 0) {
-      vel.x *= -1;
-    }
-
-    if (pos.y > height || pos.y < 0) {
-      vel.y *= -1;
+    try{
+      dataArr = float(split(valueFromArduino,"-"));
+      //println(valueFromArduino);
+      //should have 13 values from arduino
+//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-direction-health-virtualAge
+      if(dataArr.length == 23){
+        int sec = int(dataArr[0]);
+        
+        // needed values for sec 1
+        // everything (0-9) except dir, health, virtualAge
+        if(sec == 1){
+          setSec1Data(dataArr);
+        }
+        
+        // exit mode reset values
+        else if(sec == 5){
+          
+        }
+      }
+    }catch(RuntimeException e){
+      e.printStackTrace();
     }
   }
-  
-  // gets the updated radius
-  void updateR(float newRadius){
-    if(newRadius < 20){
-      this.updatedR = 0;
-    }
-    else{
-      this.updatedR = newRadius;
-    }
-  }
-
-  void show() {
-    noFill();
-    stroke(0);
-    strokeWeight(3);
-    ellipse(pos.x, pos.y, r*2, r*2);
-  }
-  
-  // sets the updated radius
-  void interpolateR(){
-    if(updatedR - r < 1){
-      this.r = updatedR;
-    }
-    else{
-      float nextR = lerp(r,updatedR,interpolateStepSize);
-      this.r = nextR;
-    }
-  }
-  
-  void reset(){
-    r = 0;
-    updatedR = 0;
-  }
-  
 }
+
 
 void drawFoot(){
   noFill();
@@ -351,5 +327,5 @@ void resetValues(){
   for(Blob b: blobs){
     b.reset();
   }
-  modeType = -1.0;
+  sec = -1.0;
 }

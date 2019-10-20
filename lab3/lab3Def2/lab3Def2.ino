@@ -43,7 +43,7 @@ StopWatch step_timer;
 float step_length;
 float stride_length;
 float walking_speed;
-
+int thr_step;
 
 
 //sect2 vars:
@@ -267,7 +267,7 @@ void acquire_signal () {
 
     change=0;
     
-    if(mappedForce[i]>thr) {
+    if(mappedForce[i]>thr_step) {
 
       if(i==0){
         heel_s=1;
@@ -349,19 +349,19 @@ void compute_reset {
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
-    if(pmf+plf<thrheel){
+    if(pmf+plf<pheel-100){
       rec[state]=1//pattern heel
     }
 
-    if(pheel<thrtip){
+    if(pheel+pmm<plf+pmf){
       rec[state]=2//pattern tiptoeing
     }
 
-    if(plf<thrint){
+    if(plf>pmf+100){
       rec[state]=3//pattern intoeing
     }
 
-    if(pmm+pmf<throut){
+    if(pmf>plf+100){
       rec[state]=4//pattern outtoeing
     }
 
