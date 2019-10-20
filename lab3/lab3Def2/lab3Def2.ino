@@ -7,8 +7,6 @@ int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 int change=1;
 int sect=3;
 
-
-
 float force[4];
 float mappedForce[4];
 
@@ -23,16 +21,11 @@ int lf_led=6;
 int mm_led=5;
 int heel_led=3;
 
+
 bool heel_s=0;
 bool mm_s=0;
 bool mf_s=0;
 bool lf_s=0;
-
-
-
-
-
-
 
 //sect1 vars:
 int distance = 100;
@@ -43,49 +36,64 @@ StopWatch step_timer;
 float step_length;
 float stride_length;
 float walking_speed;
-
+int thr_step=500;
 
 
 //sect2 vars:
 
+StopWatch gait_timer;
 int rec[5];
 int state=0;
-int MFN[];
-float data[4][100];
+float MFN[5];
+const int max_steps=100;
+float data[4][max_steps];
+float avg[4];
 
-float pmm;
-float pmf;
-float plf;
-float pheel;
-
-int thrheel;
-int thrint;
+const int thrheel;
+const int thrint;
 int throut;
 int thrtip;
 
-
-//sect 4
-
+//sect 3 vars:
+int nacquis=0;
 float dir;
 
+//sect 4:
+
+bool health=0;
+bool virt_age;
+int thrmovem=300;
+int age;
 
 #include <Wire.h>
 const int MPU = 0x68; // MPU6050 I2C address
 float AccX, AccY, AccZ;
-float GyroX, GyroY, GyroZ;
-float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
-float roll, pitch, yaw;
-float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
-float elapsedTime, currentTime, previousTime;
+//float GyroX, GyroY, GyroZ;
+//float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
+//float roll, pitch, yaw;
+float AccErrorX, AccErrorY;
+
+//float GyroErrorX, GyroErrorY, GyroErrorZ;
+//float elapsedTime, currentTime, previousTime;
 int c = 0;
 
 
+void reset_values(){
+
+  for (int i=0; i< 4; i++){
+
+    avg[i]=0;
+    
+    for (int j=0; j<max_steps ; j++){
+
+      data[i][j]=0;
+      
+    }
+  }
+
+}
 
 
-
-
-// function that sends over the data to processing once it is all collected
-//----------------------------------------------------------------------------------------- mode-color-ecg-resp-bpm-rRate
 void sendData(){
   Serial.print(sect);
   Serial.print("-");
@@ -164,37 +172,37 @@ void calculate_IMU_error() {
   //Divide the sum by 200 to get the error value
   AccErrorX = AccErrorX / 200;
   AccErrorY = AccErrorY / 200;
-  c = 0;
-  // Read gyro values 200 times
-  while (c < 200) {
-    Wire.beginTransmission(MPU);
-    Wire.write(0x43);
-    Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 6, true);
-    GyroX = Wire.read() << 8 | Wire.read();
-    GyroY = Wire.read() << 8 | Wire.read();
-    GyroZ = Wire.read() << 8 | Wire.read();
-    // Sum all readings
-    GyroErrorX = GyroErrorX + (GyroX / 131.0);
-    GyroErrorY = GyroErrorY + (GyroY / 131.0);
-    GyroErrorZ = GyroErrorZ + (GyroZ / 131.0);
-    c++;
-  }
-  //Divide the sum by 200 to get the error value
-  GyroErrorX = GyroErrorX / 200;
-  GyroErrorY = GyroErrorY / 200;
-  GyroErrorZ = GyroErrorZ / 200;
-  // Print the error values on the Serial Monitor
-  Serial.print("AccErrorX: ");
-  Serial.println(AccErrorX);
-  Serial.print("AccErrorY: ");
-  Serial.println(AccErrorY);
-  Serial.print("GyroErrorX: ");
-  Serial.println(GyroErrorX);
-  Serial.print("GyroErrorY: ");
-  Serial.println(GyroErrorY);
-  Serial.print("GyroErrorZ: ");
-  Serial.println(GyroErrorZ);
+//  c = 0;
+//  // Read gyro values 200 times
+//  while (c < 200) {
+//    Wire.beginTransmission(MPU);
+//    Wire.write(0x43);
+//    Wire.endTransmission(false);
+//    Wire.requestFrom(MPU, 6, true);
+//    GyroX = Wire.read() << 8 | Wire.read();
+//    GyroY = Wire.read() << 8 | Wire.read();
+//    GyroZ = Wire.read() << 8 | Wire.read();
+//    // Sum all readings
+//    GyroErrorX = GyroErrorX + (GyroX / 131.0);
+//    GyroErrorY = GyroErrorY + (GyroY / 131.0);
+//    GyroErrorZ = GyroErrorZ + (GyroZ / 131.0);
+//    c++;
+//  }
+//  //Divide the sum by 200 to get the error value
+//  GyroErrorX = GyroErrorX / 200;
+//  GyroErrorY = GyroErrorY / 200;
+//  GyroErrorZ = GyroErrorZ / 200;
+//  // Print the error values on the Serial Monitor
+//  Serial.print("AccErrorX: ");
+//  Serial.println(AccErrorX);
+//  Serial.print("AccErrorY: ");
+//  Serial.println(AccErrorY);
+//  Serial.print("GyroErrorX: ");
+//  Serial.println(GyroErrorX);
+//  Serial.print("GyroErrorY: ");
+//  Serial.println(GyroErrorY);
+//  Serial.print("GyroErrorZ: ");
+//  Serial.println(GyroErrorZ);
 }
 
 
@@ -211,30 +219,30 @@ void read_IMU() {
   AccY = (Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
   AccZ = (Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
   // Calculating Roll and Pitch from the accelerometer data
-  accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI) - 0.58; // AccErrorX ~(0.58) See the calculate_IMU_error()custom function for more details
-  accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI) + 1.58; // AccErrorY ~(-1.58)
-  // === Read gyroscope data === //
-  previousTime = currentTime;        // Previous time is stored before the actual time read
-  currentTime = millis();            // Current time actual time read
-  elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
-  Wire.beginTransmission(MPU);
-  Wire.write(0x43); // Gyro data first register address 0x43
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
-  GyroX = (Wire.read() << 8 | Wire.read()) / 131.0; // For a 250deg/s range we have to divide first the raw value by 131.0, according to the datasheet
-  GyroY = (Wire.read() << 8 | Wire.read()) / 131.0;
-  GyroZ = (Wire.read() << 8 | Wire.read()) / 131.0;
-  // Correct the outputs with the calculated error values
-  GyroX = GyroX + 0.56; // GyroErrorX ~(-0.56)
-  GyroY = GyroY - 2; // GyroErrorY ~(2)
-  GyroZ = GyroZ + 0.79; // GyroErrorZ ~ (-0.8)
-  // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
-  gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
-  gyroAngleY = gyroAngleY + GyroY * elapsedTime;
-  yaw =  yaw + GyroZ * elapsedTime;
-  // Complementary filter - combine acceleromter and gyro angle values
-  roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
-  pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
+//  accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI) - 0.58; // AccErrorX ~(0.58) See the calculate_IMU_error()custom function for more details
+//  accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI) + 1.58; // AccErrorY ~(-1.58)
+//  // === Read gyroscope data === //
+//  previousTime = currentTime;        // Previous time is stored before the actual time read
+//  currentTime = millis();            // Current time actual time read
+//  elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
+//  Wire.beginTransmission(MPU);
+//  Wire.write(0x43); // Gyro data first register address 0x43
+//  Wire.endTransmission(false);
+//  Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
+//  GyroX = (Wire.read() << 8 | Wire.read()) / 131.0; // For a 250deg/s range we have to divide first the raw value by 131.0, according to the datasheet
+//  GyroY = (Wire.read() << 8 | Wire.read()) / 131.0;
+//  GyroZ = (Wire.read() << 8 | Wire.read()) / 131.0;
+//  // Correct the outputs with the calculated error values
+//  GyroX = GyroX + 0.56; // GyroErrorX ~(-0.56)
+//  GyroY = GyroY - 2; // GyroErrorY ~(2)
+//  GyroZ = GyroZ + 0.79; // GyroErrorZ ~ (-0.8)
+//  // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
+//  gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
+//  gyroAngleY = gyroAngleY + GyroY * elapsedTime;
+//  yaw =  yaw + GyroZ * elapsedTime;
+//  // Complementary filter - combine acceleromter and gyro angle values
+//  roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
+//  pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
   
   // Print the values on the serial monitor
 //  Serial.print(roll);
@@ -267,22 +275,22 @@ void acquire_signal () {
 
     change=0;
     
-    if(mappedForce[i]>thr) {
+    if(mappedForce[i]>thr_step) {
 
       if(i==0){
-        heel_s=1;
-        change=1;
-      }
-      else if(i==1){
-        mm_s=1;
-        change=1;
-      }
-      else if(i==2){
         mf_s=1;
         change=1;
       }
+      else if(i==1){
+        lf_s=1;
+        change=1;
+      }
+      else if(i==2){
+        mm_s=1;
+        change=1;
+      }
       else if(i==3){
-        ml_s=1;
+        heel_s=1;
         change=1;
       }
   }
@@ -320,23 +328,25 @@ read_IMU();
 
 
 
-int calcMep(){
+float calcMep(float pmm,float pmf,float plf,float pheel){
 
   float totalMep; // cumulative value
   float MEP; //MEP value taken each step
-
   float topVal = (pmm + pmf) * 100;
   float bottomVal = (pmf + plf + pmm + pheel + 0.001);
 
   MEP = topVal / bottomVal; //MEP calculation per step
-  totalMEP = totalMEP + MEP; // add the MEP value taken per step to the cumulative value
-
-  return totalMEP;
   
+  return MEP;
 }
 
 
-void compute_reset {
+void compute_reset() {
+
+    float pmm;
+    float pmf;
+    float plf;
+    float pheel;
 
     for(int i=0; i< 5; i++){
   avg[i]=avg[i]/nacquis;
@@ -349,39 +359,31 @@ void compute_reset {
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
-    if(pmf+plf<thrheel){
-      rec[state]=1//pattern heel
+    if(pmf+plf<pheel-100){
+      rec[state]=1;//pattern heel
     }
 
-    if(pheel<thrtip){
-      rec[state]=2//pattern tiptoeing
+    if(pheel+pmm<plf+pmf){
+      rec[state]=2;//pattern tiptoeing
     }
 
-    if(plf<thrint){
-      rec[state]=3//pattern intoeing
+    if(plf>pmf+100){
+      rec[state]=3;//pattern intoeing
     }
 
-    if(pmm+pmf<throut){
-      rec[state]=4//pattern outtoeing
+    if(pmf>plf+100){
+      rec[state]=4;//pattern outtoeing
     }
 
     else {
-      rec[state]=5//normal gait
+      rec[state]=5;//normal gait
       
       }
-    }
     
-    MFN[state]=calcMep();
+    MFN[state]=calcMep(pmm,pmf,plf,pheel);
 
-    //reset avg and data:
-    for(int i=0; i< 5; i++){
-      
-      avg[i]=0;
-      
-      for(int j=0; j< nacquis; j++){
-      data[i][j]=0;
-    }
-
+    reset_values();
+    
     nacquis=0;
     
     state++;
@@ -390,7 +392,9 @@ void compute_reset {
 
 }
 
-void sect 1 (){
+
+
+void sect1 (){
 
   
   step_timer.start();
@@ -436,9 +440,9 @@ void sect 1 (){
 
 
 
-void sect 2 (){
+void sect2 (){
 
- 5gait_timer.start();
+ gait_timer.start();
  
  int istant=0;
 
@@ -451,7 +455,7 @@ void sect 2 (){
 //}
 
 //consider 90000 for recording plus 5*5 between the actions
- while(5gat_timer.elapsed() <= 155000) {
+ while(gait_timer.elapsed() <= 155000) {
 
   acquire_signal();
 
@@ -472,20 +476,20 @@ if(change==1){
 }
 
   
-  if(5gat_timer.elapsed()>30000 and state==0){
+  if(gait_timer.elapsed()>30000 and state==0){
     
   compute_reset();
     
   }
 
-if(5gat_timer.elapsed()>60000){
+if(gait_timer.elapsed()>60000){
 
     compute_reset();
     
   }
 
 
-  if(5gat_timer.elapsed()>90000){
+  if(gait_timer.elapsed()>90000){
 
     compute_reset();
 
@@ -493,12 +497,12 @@ if(5gat_timer.elapsed()>60000){
   }
 
 
-  if(5gat_timer.elapsed()>120000){
+  if(gait_timer.elapsed()>120000){
 
     compute_reset();
   
   }
-if(5gat_timer.elapsed()>150000){
+if(gait_timer.elapsed()>150000){
 
     compute_reset();
     state=0;
@@ -514,7 +518,7 @@ if(5gat_timer.elapsed()>150000){
 
   
 
-void sect 3 (){
+void sect3 (){
 
 
 //THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
@@ -526,7 +530,7 @@ dir=0;
 
 //detect movement:
 
-if(abs(Accz)>thrmovem or abs(ccAngleY)>thrmovem or abs(ccAngleX)>thrmovem) {
+if(abs(AccZ)>thrmovem or abs(AccY)>thrmovem or abs(AccX)>thrmovem) {
 
 
 if(AccZ>0){
@@ -545,7 +549,7 @@ if(AccZ<0){
 
 
 
-if(accAngleY<0 and aaccAngleX>0){
+if(AccY<0 and AccX>0){
 
   //move forward
   dir=1;
@@ -553,7 +557,7 @@ if(accAngleY<0 and aaccAngleX>0){
   
 }
 
-if(accAngleY>0 and aaccAngleX>0){
+if(AccY>0 and AccX>0){
 
   //move backward
   dir=-1;
@@ -562,7 +566,7 @@ if(accAngleY>0 and aaccAngleX>0){
 
 }
 
-SendData();
+sendData();
 
 }
 
@@ -571,11 +575,11 @@ SendData();
 
 void sect4 (){
 
-
+int speed_age;
 //insert age of subject
 
-while(!
-
+while(!age=='x') {
+  //wait for processing to send inserted age
 age=Serial.read();
 
 }
@@ -584,19 +588,19 @@ age=Serial.read();
 
 if(age>20){
   
-speed_age= 10
+speed_age= 20;
 }
 
 if(age>30){
-speed_age= 
+speed_age= 15;
 }
 
 if(age>40){
-speed_age= 
+speed_age= 13;
 }
 
 if(age>50){
-speed_age= 
+speed_age= 11;
 }
 
 
@@ -609,15 +613,17 @@ sect1();
 if(walking_speed < speed_age) {
 
   health=0;
-  
-  diff_speed=speed_age-walking_speed;
 
-  virt_age=(1+diff_speed/speed_age)*age;
+  
+
+  
+//  diff_speed=speed_age-walking_speed;
+//  virt_age=(1+diff_speed/speed_age)*age;
   
 }
 
 
-SendData();
+sendData();
 
 //
   }
@@ -625,7 +631,7 @@ SendData();
 
 void exitmode (){
 
-  for(
+  reset_values();
   
   }
 
@@ -633,27 +639,29 @@ void exitmode (){
 void setup() {
   // initialize the serial communication:
   Serial.begin(115200);
-  //outputs for the leds
+  
+  //LEDS:
   pinMode(mf_led, OUTPUT); 
   pinMode(lf_led, OUTPUT);
   pinMode(mm_led, OUTPUT); 
   pinMode(heel_led, OUTPUT);  
 
-  
-  
-  //analogue inputs from FRSs
+  //FRSs:
   pinMode(mf, INPUT); 
   pinMode(lf, INPUT);
   pinMode(mm, INPUT); 
-  pinMode(heel,NPUT); 
+  pinMode(heel,INPUT); 
 
-   Serial.begin(19200);
+  //IMU:
+  //SERIAL ALREADY SET
   Wire.begin();                      // Initialize comunication
   Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
   Wire.write(0x6B);                  // Talk to the register 6B
   Wire.write(0x00);                  // Make reset - place a 0 into the 6B register
   Wire.endTransmission(true);        //end the transmission
 
+  //setting array to 0
+  reset_values();
 
 }
 
@@ -665,11 +673,11 @@ void loop() {
     // fitness mode
     
     if(val == '1'){       // section 1
-      sec=1;
+      sect=1;
       sect1();
     }
     else if(val == '2'){       // section 2
-      sec=2;
+      sect=2;
       sect2();
       
     }
@@ -681,7 +689,7 @@ void loop() {
    }
 
    else if(val == '4'){       // section 3
-      sec=4;
+      sect=4;
       sect4();
       
    }
@@ -689,7 +697,7 @@ void loop() {
    
     if(val == '5'){       // exit
       
-      exitMode();
+      exitmode();
    }
 
    
