@@ -5,21 +5,21 @@ int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
 
 int change=1;
-int sect=3;
+int sect=0;
 
 float force[4];
 float mappedForce[4];
 
-int mf=A0;
-int lf=A1;
-int mm=A2;
-int heel=A3;
-
-
-int mf_led=9;
-int lf_led=6;
-int mm_led=5;
-int heel_led=3;
+//int mf=A0;
+//int lf=A1;
+//int mm=A2;
+//int heel=A3;
+//
+//
+//int mf_led=9;
+//int lf_led=6;
+//int mm_led=5;
+//int heel_led=3;
 
 
 bool heel_s=0;
@@ -33,9 +33,9 @@ int step_count = 0;
 int cadence;
 StopWatch step_timer;
 
-float step_length;
-float stride_length;
-float walking_speed;
+float step_length=0;
+float stride_length=0;
+float walking_speed=0;
 int thr_step=500;
 
 
@@ -45,7 +45,7 @@ StopWatch gait_timer;
 int rec[5];
 int state=0;
 float MFN[5];
-const int max_steps=100;
+const int max_steps=60;
 float data[4][max_steps];
 float avg[4];
 
@@ -258,10 +258,10 @@ void read_IMU() {
 
 void acquire_signal () {
   
-  force[0]=analogRead(mf);
-  force[1]=analogRead(lf);
-  force[2]=analogRead(mm);
-  force[3]=analogRead(heel);
+  force[0]=analogRead(A0);
+  force[1]=analogRead(A1);
+  force[2]=analogRead(A2);
+  force[3]=analogRead(A3);
 
   //Serial.println(force[0]);
 //  Serial.println(force[1]);
@@ -308,10 +308,10 @@ void acquire_signal () {
 //  Serial.println(mappedForce[3]);
 
   
-  analogWrite(mf_led,mappedForce[0]);
-  analogWrite(lf_led,mappedForce[1]);
-  analogWrite(mm_led,mappedForce[2]);
-  analogWrite(heel_led,mappedForce[3]);
+  analogWrite(9,mappedForce[0]);
+  analogWrite(6,mappedForce[1]);
+  analogWrite(5,mappedForce[2]);
+  analogWrite(3,mappedForce[3]);
 
 //read IMU data:
 
@@ -321,7 +321,9 @@ read_IMU();
 
 }
 
-//  delay(50);
+sendData();
+
+  delay(10);
 
 
 }
@@ -390,6 +392,7 @@ void compute_reset() {
 
     //PLOT ON PROCESSING WHAT PHASE IS RECOGNIZED
 
+    sendData();
 }
 
 
@@ -434,6 +437,8 @@ void sect1 (){
   // DISPLAY IN PROCESSING
 
   sendData();
+
+  
   
   }
 
@@ -458,7 +463,6 @@ void sect2 (){
  while(gait_timer.elapsed() <= 155000) {
 
   acquire_signal();
-
 
 //save data in array matrix at each iteration
 if(change==1){
@@ -641,16 +645,16 @@ void setup() {
   Serial.begin(115200);
   
   //LEDS:
-  pinMode(mf_led, OUTPUT); 
-  pinMode(lf_led, OUTPUT);
-  pinMode(mm_led, OUTPUT); 
-  pinMode(heel_led, OUTPUT);  
+  pinMode(9, OUTPUT); 
+  pinMode(6, OUTPUT);
+  pinMode(5, OUTPUT); 
+  pinMode(3, OUTPUT);  
 
   //FRSs:
-  pinMode(mf, INPUT); 
-  pinMode(lf, INPUT);
-  pinMode(mm, INPUT); 
-  pinMode(heel,INPUT); 
+  pinMode(A0, INPUT); 
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT); 
+  pinMode(A3,INPUT); 
 
   //IMU:
   //SERIAL ALREADY SET
