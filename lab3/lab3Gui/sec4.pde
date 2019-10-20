@@ -5,21 +5,21 @@ void setupSec4(){
   
   numPadCp5.addButton("_0_")
     .setPosition(200,50)
-    .setSize(50,70)
+    .setSize(100,70)
     //.setFont(font)
   ;
   numPadCp5.addButton("_1_")
-    .setPosition(250,50)
-    .setSize(50,70)
+    .setPosition(300,50)
+    .setSize(100,70)
     //.setFont(font)
   ;
   numPadCp5.addButton("_2_")
-    .setPosition(300,50)
-    .setSize(50,70)
+    .setPosition(400,50)
+    .setSize(80,70)
     //.setFont(font)
   ;
   numPadCp5.addButton("Done")
-    .setPosition(350,50)
+    .setPosition(500,50)
     .setSize(50,70)
     //.setFont(font)
   ;

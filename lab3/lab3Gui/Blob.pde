@@ -5,14 +5,12 @@ class Blob {
   
   //added
   float updatedR;
-  float interpolateStepSize = .01;
   //
   
   Blob(float x, float y) {
     pos = new PVector(x, y);
     vel = PVector.random2D();
     vel.mult(random(0, 0));
-    //r = 50; //random(10, 80);
     
     // new r
     r = 0;
@@ -32,12 +30,7 @@ class Blob {
   
   // gets the updated radius
   void updateR(float newRadius){
-    if(newRadius < 20){
-      this.updatedR = 0;
-    }
-    else{
-      this.updatedR = newRadius;
-    }
+    r = newRadius;
   }
 
   void show() {
@@ -45,17 +38,6 @@ class Blob {
     stroke(0);
     strokeWeight(3);
     ellipse(pos.x, pos.y, r*2, r*2);
-  }
-  
-  // sets the updated radius
-  void interpolateR(){
-    if(updatedR - r < 1){
-      this.r = updatedR;
-    }
-    else{
-      float nextR = lerp(r,updatedR,interpolateStepSize);
-      this.r = nextR;
-    }
   }
   
   void reset(){
