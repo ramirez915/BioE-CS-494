@@ -58,6 +58,7 @@ void resetSec2(){
 void updateSec2Tbl(int timeFrame[]){
   int counter = 0;
   for(int i: timeFrame){
+    println(counter + " values is " + i);
     // place correspinding image depending on the value of the timeframe
     switch(i){
       // ? mark
@@ -72,21 +73,25 @@ void updateSec2Tbl(int timeFrame[]){
         text(MFNs[counter],x[counter]-100,y[counter] + 50);
         counter++;
         break;
+      // tip toe
       case 2:
         image(footTypes[2],x[counter],y[counter],width/6,width/6);
         text(MFNs[counter],x[counter]-100,y[counter] + 50);
         counter++;
         break;
+      //in toe
       case 3:
         image(footTypes[3],x[counter],y[counter],width/6,width/6);
         text(MFNs[counter],x[counter]-100,y[counter] + 50);
         counter++;
         break;
+      // out toe
       case 4:
         image(footTypes[4],x[counter],y[counter],width/6,width/6);
         text(MFNs[counter],x[counter]-100,y[counter] + 50);
         counter++;
         break;
+      // normal
       case 5:
         image(footTypes[5],x[counter],y[counter],width/6,width/6);
         text(MFNs[counter],x[counter]-100,y[counter] + 50);

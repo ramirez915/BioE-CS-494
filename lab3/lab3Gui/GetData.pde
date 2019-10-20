@@ -15,6 +15,7 @@ SECTION 4
 void setSec1Data(float arr[]){
   // map values to be placed as the radius for the blobs
   for(int i = 1; i < 5; i++){
+    println(i +" value " + dataArr[i]);
     float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
     //update blobs
     blobs[i-1].updateR(mappedR);
