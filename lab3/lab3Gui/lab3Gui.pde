@@ -5,6 +5,9 @@ import processing.serial.*;
 
 Serial myPort;
 ControlP5 cp5; //create ControlP5 object
+
+ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input
+
 PFont font;
 int x1 = 0;    // starting position of the graph
 
@@ -13,21 +16,26 @@ String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
 float[] newVals = new float[4];     // new test values
-float sec = -1.0;              // tells us what mode type were going into
+int sec = -1;              // tells us what mode type were going into
+int oldSec = -1;          // helps keep track of what sec we're on
 
-// section 1
+boolean firstRun = true;      // used as a flag to set up section display only once
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------- section 1
 // place table in the middle of the screen to display values
 float mf = 0.0;    // blob[0]
 float lf = 0.0;    // blob[1]
 float mm = 0.0;    // blob[2]
-float heel = 0.0;  // blob[3]
+float heelSens = 0.0;  // blob[3]
 float stepLen = 0.0;
 float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
 int stepCount = 0;
+//---------------------------------------------------------------------------------------------------------------
 
-//section 2
+//-------------------------------------------------------------------------------------------------------------------------------------- section 2
 // display images corresponding to step pattern
 /*
 recieving flags form arduino so just display image
@@ -39,24 +47,44 @@ recieving flags form arduino so just display image
 5 = normal
 */
 
-//section 3
+int timeFrames[] = new int[5];  // contains all the time frames
+float MFNs[] = new float[5];
+PImage footTypes[] = new PImage[6];    // contains all images to be displayed
+PImage qmark;
+PImage heelImg;
+PImage tiptoe;
+PImage intoe;
+PImage outtoe;
+PImage normal;
+
+int testCount = 0;        // for testing the live update of the time frames
+
+// place the x and y pos of the images in arrays
+int[] x = new int[5];
+int[] y = new int[5];
+
+//---------------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------------------------------- section 3
 // have moving image in direction of travel determined by dir
-// have a matrix in the middle and move image depending on where we're goiung
+// have a matrix in the middle and move image depending on where we're going
 // +1 = up, -1 = down, +0.5 = right, -0.5 = left
 float dir = 0.0;
+float[] testDir = new float[5];
 
-//section 4
+//----------------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------------------------------- section 4
 // display image of person depending on their virtual age
 // display age ranges for now just do 5... 0-10, 11-20, 21-30...
 
 
+//--------------------------------------------------------------------------------------------------------------------------------
 
 PShape foot;
 
 void setup(){
   size(2000, 1200);    //window size, (width, height)  1200
-  
-  drawFoot();
   
   colorMode(HSB);
   blobs[0] = new Blob(200,200);      // mf
@@ -76,6 +104,21 @@ void setup(){
   newVals[2] = 0;
   newVals[3] = 0;
   
+  //sec 2 variables
+  setupSec2();
+  
+  // test sec 3
+  testDir[0] = 0.0;
+  testDir[1] = 1.0;
+  testDir[2] = -1.0;
+  testDir[3] = 0.5;
+  testDir[4] = -0.5;
+  
+  //setup sec 4 butons
+  setupSec4();
+  hideSec4Buttons();
+  
+  drawFoot();
   
   //printArray(Serial.list());   //prints all available serial ports
   //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
@@ -107,8 +150,20 @@ void setup(){
     .setFont(font)
   ;
   
+  cp5.addButton("sec3")
+  .setPosition(1700,250)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
+  
+  cp5.addButton("sec4")
+  .setPosition(1700,350)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
+  
   cp5.addButton("Main_Menu")     //"alloff" is the name of button
-    .setPosition(1700, 350)  //x and y coordinates of upper left corner of button
+    .setPosition(1700, 450)  //x and y coordinates of upper left corner of button
     .setSize(150, 70)      //(width, height)
     .setFont(font)
   ;
@@ -122,13 +177,70 @@ void draw(){  //same as loop in arduino
   //fill(0);               //text color (r, g, b)
   //background(255);
   //get data from serial event then draw on heat map
-  if(sec == 1.0){
-    
+  if(sec == 1){
+    if(firstRun){
+      displaySec1Tbl();
+      firstRun = false;
+      oldSec = 1;
+    }
+    else{
+      updateValues();
+      drawHeatMap();
+    }
+  }
+  else if(sec == 2){
+    if(firstRun){
+      displaySec2Tbl();
+      firstRun = false;
+      oldSec = 2;
+    }
+    else{
+      updateSec2Tbl(timeFrames);
+      //------------------------------------------------ testing image change
+      //println("wait for update");
+      timeFrames[testCount] = int(random(1,6));
+      testCount++;
+      if(testCount == 5){
+        testCount = 0;
+      }
+      delay(1000);
+      //--------------------------------------------------------------
+    }
+    //-------------- how are we going to end this????
   }
   
+  else if(sec == 3){
+    if(firstRun){
+      displaySec3Text();
+      firstRun = false;
+      oldSec = 3;
+    }
+    else{
+      updateSec3(dir);
+      //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
+      dir = testDir[int(random(0,5))];
+      delay(1000);
+      //----------------------------------------------------
+    }
+  }
   
-  //drawHeatMap();
-
+  else if(sec == 4){
+    if(firstRun){
+      showSec4Buttons();
+      firstRun = false;
+      oldSec = 4;
+    }
+    // do what is meant to do in sec 4
+    else{
+      
+    }
+  }
+  
+  // resets any given mode
+  else if(sec == -2){
+    resetGivenMode(oldSec);
+    oldSec = -1;
+  }
 
   //-------------------------------------------------------------------------------------------------- old working code
   //background(51);
@@ -203,49 +315,64 @@ void draw(){  //same as loop in arduino
 //so whe you press any button, it sends perticular char over serial port
 
 void Walking_Stats(){
-  myPort.write('1');
+  //myPort.write('1');
+  sec = 1;
   println("Walking Stats");
 }
 
 void sec2(){
   //myPort.write('2');
-  println("wa");
+  sec = 2;
+  println("sec2");
 }
 
+void sec3(){
+  //myPort.write('3');
+  sec =3;
+  println("sec3");
+}
+
+void sec4(){
+  //myPort.write('4');
+  sec = 4;
+  println("sec4");
+}
 void Main_Menu(){
-  myPort.write('5');
+  sec = -2;
+  testCount = 0;
+  //myPort.write('5');
 }
 
-// checks what is being printed by the micro controller
-void serialEvent (Serial myPort) {
-  // check for incoming numbers on the serial monitor
-  if (myPort.available() >= 0) {
-    valueFromArduino = myPort.readStringUntil('\n');
+//// checks what is being printed by the micro controller
+//void serialEvent (Serial myPort) {
+//  // check for incoming numbers on the serial monitor
+//  if (myPort.available() >= 0) {
+//    valueFromArduino = myPort.readStringUntil('\n');
     
-    try{
-      dataArr = float(split(valueFromArduino,"-"));
-      //println(valueFromArduino);
-      //should have 13 values from arduino
-//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-direction-health-virtualAge
-      if(dataArr.length == 23){
-        int sec = int(dataArr[0]);
+//    try{
+//      dataArr = float(split(valueFromArduino,"-"));
+//      //println(valueFromArduino);
+//      //should have 13 values from arduino
+////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-direction-health-virtualAge
+//      if(dataArr.length == 23){
+//        int sec = int(dataArr[0]);
         
-        // needed values for sec 1
-        // everything (0-9) except dir, health, virtualAge
-        if(sec == 1){
-          setSec1Data(dataArr);
-        }
+//        // needed values for sec 1
+//        // everything (0-9) except dir, health, virtualAge
+//        if(sec == 1){
+//          setSec1Data(dataArr);
+//        }
         
-        // exit mode reset values
-        else if(sec == 5){
+//        // exit mode reset values
+//        else if(sec == 5){
           
-        }
-      }
-    }catch(RuntimeException e){
-      e.printStackTrace();
-    }
-  }
-}
+//        }
+//      }
+//    }catch(RuntimeException e){
+//      e.printStackTrace();
+//    }
+//  }
+//}
 
 
 void drawFoot(){
@@ -291,41 +418,28 @@ void drawFoot(){
   endShape();
 }
 
-
-void drawHeatMap(){
-  background(51);
-  loadPixels();
-  
-  println("1");
-  for (int x = 0; x < width; x++) {
-    for (int y = 0; y < height; y++) {
-      int index = x + y * width;
-      float sum = 0;
-      for (Blob b : blobs) {
-        float d = dist(x, y, b.pos.x, b.pos.y);
-        sum += 100 * b.r / d;
-      }
-      pixels[index] = color(sum, 255, 255);
-    }
-  }
-  
-  updatePixels();
-  
-  for(Blob b: blobs){
-    b.interpolateR();
-    b.show();
-  }
-  drawFoot();
-
-  //for (Blob b : blobs) {
-  //  b.update();
-  //  b.show();
-  //}
-}
-
 void resetValues(){
   for(Blob b: blobs){
     b.reset();
   }
-  sec = -1.0;
+  sec = -1;
+}
+
+
+void resetGivenMode(int oldSec){
+  switch(oldSec){
+    //resetting sec 1
+    case 1:
+      resetSec1();
+      break;
+    case 2:
+      resetSec2();
+      break;
+    case 3:
+      resetSec3();
+      break;
+    case 4:
+      resetSec4();
+      break;
+  }
 }
