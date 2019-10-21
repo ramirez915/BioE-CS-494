@@ -11,7 +11,19 @@ float roll, pitch, yaw;
 float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
 float elapsedTime, currentTime, previousTime;
 int c = 0;
+
+int gain=10;
+const int numReadings = 10;
+int readings[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+int readIndex = 0;
+float total= 0;                  // the running total
+float average=0;             // the average
+
+
+
 void setup() {
+  //Serial.begin(19200);
   Serial.begin(115200);
   Wire.begin();                      // Initialize comunication
   Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
@@ -33,7 +45,7 @@ void setup() {
   */
   // Call this function if you need to get the IMU error values for your module
   calculate_IMU_error();
-  delay(20);
+  delay(50);
 }
 void loop() {
   // === Read acceleromter data === //
@@ -42,9 +54,9 @@ void loop() {
   Wire.endTransmission(false);
   Wire.requestFrom(MPU, 6, true); // Read 6 registers total, each axis value is stored in 2 registers
   //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
-  AccX =100* (Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
-  AccY =100* (Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
-  AccZ =100*(Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
+  AccX = (Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
+  AccY = (Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
+  AccZ = (Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
   // Calculating Roll and Pitch from the accelerometer data
   accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI) - 0.58; // AccErrorX ~(0.58) See the calculate_IMU_error()custom function for more details
   accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI) + 1.58; // AccErrorY ~(-1.58)
@@ -71,18 +83,36 @@ void loop() {
   roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
   pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
   
-  // Print the values on the serial monitor
-//  Serial.print(roll);
-//  Serial.print("/");
-//  Serial.print(pitch);
-//  Serial.print("/");
-//  Serial.println(yaw);
-
-  Serial.println(AccX);
-  Serial.print(" ");
+ // Serial.println(AccX);
+//  Serial.print(",");
 //  Serial.print(AccY);
-//  Serial.print(" ");
+//  Serial.print(",");
 //  Serial.println(AccZ);
+
+
+ // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = AccX *gain ;
+    //x is a sin wave to test;
+ // readings [readIndex ] = x;
+  // add the reading to the total:
+  total  = total  + readings [readIndex];
+  // advance to the next position in the array:
+  readIndex  = readIndex  + 1;
+
+  // if we're at the end of the array...
+  if (readIndex  >= numReadings ) {
+    // ...wrap around to the beginning:
+    readIndex  = 0;
+  }
+
+  // calculate the average:
+  average  = total  / numReadings;
+
+  Serial.println(average);
+  
+  //delay(20);
 }
 void calculate_IMU_error() {
   // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
@@ -125,14 +155,16 @@ void calculate_IMU_error() {
   GyroErrorY = GyroErrorY / 200;
   GyroErrorZ = GyroErrorZ / 200;
   // Print the error values on the Serial Monitor
-//  Serial.print("AccErrorX: ");
-//  Serial.println(AccErrorX);
-//  Serial.print("AccErrorY: ");
-//  Serial.println(AccErrorY);
-//  Serial.print("GyroErrorX: ");
-//  Serial.println(GyroErrorX);
-//  Serial.print("GyroErrorY: ");
-//  Serial.println(GyroErrorY);
-//  Serial.print("GyroErrorZ: ");
-//  Serial.println(GyroErrorZ);
+  /*
+  Serial.print("AccErrorX: ");
+  Serial.println(AccErrorX);
+  Serial.print("AccErrorY: ");
+  Serial.println(AccErrorY);
+  Serial.print("GyroErrorX: ");
+  Serial.println(GyroErrorX);
+  Serial.print("GyroErrorY: ");
+  Serial.println(GyroErrorY);
+  Serial.print("GyroErrorZ: ");
+  Serial.println(GyroErrorZ);
+  */
 }
