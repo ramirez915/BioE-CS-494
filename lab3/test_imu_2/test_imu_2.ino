@@ -11,8 +11,20 @@ float roll, pitch, yaw;
 float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
 float elapsedTime, currentTime, previousTime;
 int c = 0;
+
+int gain=10;
+const int numReadings = 10;
+int readings[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+int readIndex = 0;
+float total= 0;                  // the running total
+float average=0;             // the average
+
+
+
 void setup() {
-  Serial.begin(19200);
+  //Serial.begin(19200);
+  Serial.begin(115200);
   Wire.begin();                      // Initialize comunication
   Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
   Wire.write(0x6B);                  // Talk to the register 6B
@@ -71,12 +83,36 @@ void loop() {
   roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
   pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
   
-  Serial.print(AccX);
-  Serial.print(",");
-  Serial.print(AccY);
-  Serial.print(",");
-  Serial.println(AccZ);
+ // Serial.println(AccX);
+//  Serial.print(",");
+//  Serial.print(AccY);
+//  Serial.print(",");
+//  Serial.println(AccZ);
+
+
+ // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = AccX *gain ;
+    //x is a sin wave to test;
+ // readings [readIndex ] = x;
+  // add the reading to the total:
+  total  = total  + readings [readIndex];
+  // advance to the next position in the array:
+  readIndex  = readIndex  + 1;
+
+  // if we're at the end of the array...
+  if (readIndex  >= numReadings ) {
+    // ...wrap around to the beginning:
+    readIndex  = 0;
+  }
+
+  // calculate the average:
+  average  = total  / numReadings;
+
+  Serial.println(average);
   
+  //delay(20);
 }
 void calculate_IMU_error() {
   // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.

@@ -1,7 +1,15 @@
 #include <StopWatch.h>
-#include<Wire.h>
-const int MPU_addr=0x1c;  // I2C address of the MPU-6050
-int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+#include <Wire.h>
+const int MPU = 0x68; // MPU6050 I2C address
+float AccX, AccY, AccZ;
+//float GyroX, GyroY, GyroZ;
+//float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
+//float roll, pitch, yaw;
+float AccErrorX, AccErrorY;
+
+//float GyroErrorX, GyroErrorY, GyroErrorZ;
+//float elapsedTime, currentTime, previousTime;
+int c = 0;
 
 
 int change=1;
@@ -9,6 +17,19 @@ int sect=0;
 
 float force[4];
 float mappedForce[4];
+
+
+//acquire_signal
+
+int gain=10;
+const int numReadings = 10;
+int readings[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+int readIndex = 0;
+float total= 0;                  // the running total
+float average=0;             // the average
+
+
 
 //int mf=A0;
 //int lf=A1;
@@ -49,33 +70,21 @@ const int max_steps=60;
 float data[4][max_steps];
 float avg[4];
 
-const int thrheel;
-const int thrint;
-int throut;
-int thrtip;
+//const int thrheel;
+//const int thrint;
+//int throut;
+//int thrtip;
 
 //sect 3 vars:
 int nacquis=0;
 float dir=0;
+int thrmovem=4;
 
 //sect 4:
 
 bool health=0;
 bool virt_age=0;
-int thrmovem=300;
 int age;
-
-#include <Wire.h>
-const int MPU = 0x68; // MPU6050 I2C address
-float AccX, AccY, AccZ;
-//float GyroX, GyroY, GyroZ;
-//float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
-//float roll, pitch, yaw;
-float AccErrorX, AccErrorY;
-
-//float GyroErrorX, GyroErrorY, GyroErrorZ;
-//float elapsedTime, currentTime, previousTime;
-int c = 0;
 
 
 void reset_values(){
@@ -109,62 +118,64 @@ for (int i=0; i< 4; i++){
 
 }
 
+set_readings();
+
 }
 
 
 void sendData(){
-  Serial.print(sect);
-  Serial.print("-");
-  //all force sensors are for sections 1-2
-  //mf
-  Serial.print(force[0]);
-  Serial.print("-");
-  //lf
-  Serial.print(force[1]);
-  Serial.print("-");
-  //mm
-  Serial.print(force[2]);
-  Serial.print("-");
-  //heel
-  Serial.print(force[3]);
-  Serial.print("-");
-  Serial.print(step_length);
-  Serial.print("-");
-  Serial.print(stride_length);
-  Serial.print("-");
-  Serial.print(cadence);
-  Serial.print("-");
-  Serial.print(walking_speed);
-  Serial.print("-");
-  Serial.print(step_count);
-  //section 2
-  Serial.print("-");
-  Serial.print(rec[0]);
-  Serial.print("-");
-  Serial.print(MFN[0]);
-  Serial.print("-");
-  Serial.print(rec[1]);
-  Serial.print("-");
-  Serial.print(MFN[1]);
-  Serial.print("-");
-  Serial.print(rec[2]);
-  Serial.print("-");
-  Serial.print(MFN[2]);
-  Serial.print("-");
-  Serial.print(rec[3]);
-  Serial.print("-");
-  Serial.print(MFN[3]);
-  Serial.print("-");
-  Serial.print(rec[4]);
-  Serial.print("-");
-  Serial.print(MFN[4]);
-  //section 3
-  Serial.print(dir);
-  Serial.print("-");
-  //section 4
-  Serial.print(health);
-  Serial.print("-");
-  Serial.println(virt_age);
+//  Serial.print(sect);
+//  Serial.print("-");
+//  //all force sensors are for sections 1-2
+//  //mf
+//  Serial.print(force[0]);
+//  Serial.print("-");
+//  //lf
+//  Serial.print(force[1]);
+//  Serial.print("-");
+//  //mm
+//  Serial.print(force[2]);
+//  Serial.print("-");
+//  //heel
+//  Serial.print(force[3]);
+//  Serial.print("-");
+//  Serial.print(step_length);
+//  Serial.print("-");
+//  Serial.print(stride_length);
+//  Serial.print("-");
+//  Serial.print(cadence);
+//  Serial.print("-");
+//  Serial.print(walking_speed);
+//  Serial.print("-");
+//  Serial.print(step_count);
+//  //section 2
+//  Serial.print("-");
+//  Serial.print(rec[0]);
+//  Serial.print("-");
+//  Serial.print(MFN[0]);
+//  Serial.print("-");
+//  Serial.print(rec[1]);
+//  Serial.print("-");
+//  Serial.print(MFN[1]);
+//  Serial.print("-");
+//  Serial.print(rec[2]);
+//  Serial.print("-");
+//  Serial.print(MFN[2]);
+//  Serial.print("-");
+//  Serial.print(rec[3]);
+//  Serial.print("-");
+//  Serial.print(MFN[3]);
+//  Serial.print("-");
+//  Serial.print(rec[4]);
+//  Serial.print("-");
+//  Serial.print(MFN[4]);
+//  //section 3
+//  Serial.print(dir);
+//  Serial.print("-");
+//  //section 4
+//  Serial.print(health);
+//  Serial.print("-");
+//  Serial.println(virt_age);
 }
 
 
@@ -337,11 +348,32 @@ if(sect==3) {
   
 read_IMU();
 
+// subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = AccX *gain ;
+    //x is a sin wave to test;
+ // readings [readIndex ] = x;
+  // add the reading to the total:
+  total  = total  + readings [readIndex];
+  // advance to the next position in the array:
+  readIndex  = readIndex  + 1;
+
+  // if we're at the end of the array...
+  if (readIndex  >= numReadings ) {
+    // ...wrap around to the beginning:
+    readIndex  = 0;
+  }
+
+  // calculate the average:
+  average  = total  / numReadings;
+
+  Serial.println(average);
+
 }
 
-sendData();
 
-  delay(100);
+  //delay(100);
 
 
 }
@@ -425,6 +457,7 @@ void sect1 (){
     
 
   acquire_signal();
+  sendData();
   
     if (mf_s == 1 || lf_s == 1 || mm_s == 1 || heel_s == 1){
       
@@ -481,7 +514,7 @@ void sect2 (){
  while(gait_timer.elapsed() <= 155000 || !Serial.read()=='5') {
 
   acquire_signal();
-
+  sendData();
 //save data in array matrix at each iteration
 if(change==1){
 
@@ -553,6 +586,8 @@ dir=0;
 //detect movement:
 
 while(!Serial.read()=='5') {
+
+  acquire_signal();
   
 if(abs(AccZ)>thrmovem or abs(AccY)>thrmovem or abs(AccX)>thrmovem) {
 
@@ -600,8 +635,8 @@ sendData();
 void sect4 (){
 
 int speed_age;
-//insert age of subject
 
+//insert age of subject
 while(!age=='x') {
   //wait for processing to send inserted age
 age=Serial.read();
@@ -629,18 +664,16 @@ speed_age= 11;
 
 
 //execute sect 1 to acquire the speed:
+sect=1;
 sect1();
-
 //check speed
 
 
 if(walking_speed < speed_age) {
 
   health=0;
-
   
 
-  
 //  diff_speed=speed_age-walking_speed;
 //  virt_age=(1+diff_speed/speed_age)*age;
   
@@ -659,11 +692,17 @@ void exitmode (){
   
   }
 
+void set_readings () {
+    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+      readings[thisReading] = 0;
+    }
+}
+
 
 void setup() {
   // initialize the serial communication:
   Serial.begin(115200);
-  
+  //Serial.begin(19200);
   //LEDS:
   pinMode(9, OUTPUT); 
   pinMode(6, OUTPUT);
