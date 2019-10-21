@@ -421,7 +421,7 @@ void sect1 (){
   step_timer.start();
   
   
-  while(step_timer.elapsed() <= 120000) {
+  while(step_timer.elapsed() <= 120000 || !Serial.read()=='5') {
     
 
   acquire_signal();
@@ -478,7 +478,7 @@ void sect2 (){
 //}
 
 //consider 90000 for recording plus 5*5 between the actions
- while(gait_timer.elapsed() <= 155000) {
+ while(gait_timer.elapsed() <= 155000 || !Serial.read()=='5') {
 
   acquire_signal();
 
@@ -552,6 +552,8 @@ dir=0;
 
 //detect movement:
 
+while(!Serial.read()=='5') {
+  
 if(abs(AccZ)>thrmovem or abs(AccY)>thrmovem or abs(AccX)>thrmovem) {
 
 
@@ -592,7 +594,7 @@ sendData();
 
 }
 
-
+}
 
 
 void sect4 (){
