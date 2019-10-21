@@ -159,10 +159,10 @@ void sendData(){
   Serial.print("-");
   Serial.print(MFN[4]);
   //section 3
-  Serial.println(dir);
+  Serial.print(dir);
   Serial.print("-");
   //section 4
-  Serial.println(health);
+  Serial.print(health);
   Serial.print("-");
   Serial.println(virt_age);
 }
