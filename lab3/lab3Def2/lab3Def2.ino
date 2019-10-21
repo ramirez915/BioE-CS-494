@@ -30,7 +30,7 @@ bool lf_s=0;
 //sect1 vars:
 int distance = 100;
 int step_count = 0;
-int cadence;
+int cadence=0;
 StopWatch step_timer;
 
 float step_length=0;
@@ -56,12 +56,12 @@ int thrtip;
 
 //sect 3 vars:
 int nacquis=0;
-float dir;
+float dir=0;
 
 //sect 4:
 
 bool health=0;
-bool virt_age;
+bool virt_age=0;
 int thrmovem=300;
 int age;
 
@@ -89,7 +89,25 @@ void reset_values(){
       data[i][j]=0;
       
     }
+
   }
+
+  for (int i=0; i< 5; i++){
+
+    MFN[i]=0;
+  }
+
+  for (int i=0; i< 5; i++){
+
+    rec[i]=0;
+
+}
+
+for (int i=0; i< 4; i++){
+
+    force[i]=0;
+
+}
 
 }
 
@@ -323,7 +341,7 @@ read_IMU();
 
 sendData();
 
-  delay(10);
+  delay(100);
 
 
 }
