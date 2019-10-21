@@ -742,55 +742,57 @@ sendData();
 
 
 void sect4 (){
-
+ 
 int speed_age;
-
 //insert age of subject
-while(!age=='x') {
+ 
+while(!age =='x') {
   //wait for processing to send inserted age
 age=Serial.read();
-
+ 
 }
-
+ 
 //set speed_age
-
-if(age>20){
-  
-speed_age= 20;
+ 
+if(age>=20 && age<=29){
+ 
+speed_age= 0.18; //in meters per minute
 }
-
-if(age>30){
-speed_age= 15;
+ 
+if(age>=30 && age<=39){
+speed_age= 0.11;
 }
-
-if(age>40){
-speed_age= 13;
+ 
+if(age>=40 && age <=49){
+speed_age= 0.19;
 }
-
-if(age>50){
-speed_age= 11;
+ 
+if(age>=50 && age<=59){
+speed_age= 0.27;
 }
-
-
+ 
+ 
 //execute sect 1 to acquire the speed:
-sect=1;
 sect1();
+ 
 //check speed
-
-
+ 
+ 
 if(walking_speed < speed_age) {
-
+ 
   health=0;
-  
-
+ 
+ 
+ 
+ 
 //  diff_speed=speed_age-walking_speed;
 //  virt_age=(1+diff_speed/speed_age)*age;
-  
+ 
 }
-
-
+ 
+ 
 sendData();
-
+ 
 //
   }
 
