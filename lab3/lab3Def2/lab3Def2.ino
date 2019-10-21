@@ -12,7 +12,7 @@ float AccErrorX, AccErrorY;
 int c = 0;
 
 
-int change=1;
+int change=0;
 int sect=0;
 
 float force[4];
@@ -20,14 +20,6 @@ float mappedForce[4];
 
 
 //acquire_signal
-
-int gain=10;
-const int numReadings = 10;
-int readings[numReadings];      // the readings from the analog input
-                              // the index of the current reading
-int readIndex = 0;
-float total= 0;                  // the running total
-float average=0;             // the average
 
 
 
@@ -51,12 +43,13 @@ bool lf_s=0;
 //sect1 vars:
 int distance = 100;
 int step_count = 0;
-int cadence=0;
+float cadence=0;
 StopWatch step_timer;
 
 float step_length=0;
 float stride_length=0;
 float walking_speed=0;
+//int thr_step=100;
 int thr_step=500;
 
 
@@ -76,9 +69,20 @@ float avg[4];
 //int thrtip;
 
 //sect 3 vars:
+const int gain=10;
+const int numReadings = 10;
 int nacquis=0;
 float dir=0;
-int thrmovem=4;
+float thrmovem=7;
+float averagex=0; 
+float averagey=0; 
+float averagez=0; 
+
+int cyf=0;
+int cyb=0;
+int czl=0;
+int czr=0;
+int thrcount=5;
 
 //sect 4:
 
@@ -118,7 +122,7 @@ for (int i=0; i< 4; i++){
 
 }
 
-set_readings();
+//set_readings();
 
 }
 
@@ -237,6 +241,7 @@ void calculate_IMU_error() {
 
 
 void read_IMU() {
+  //Serial.print("in read imu");
   
   // === Read acceleromter data === //
   Wire.beginTransmission(MPU);
@@ -286,6 +291,8 @@ void read_IMU() {
 
 
 void acquire_signal () {
+
+  //Serial.print("in acquire");
   
   force[0]=analogRead(A0);
   force[1]=analogRead(A1);
@@ -297,30 +304,32 @@ void acquire_signal () {
 //  Serial.println(force[2]);
 //  Serial.println(force[3]);
 
-  
+  change=0;
   //mapping force_inputs with leds_outputs
   for(int i=0; i< 4; i++){
     mappedForce[i] = map(force[i],0,1023,0,255);
 
-    change=0;
-    
-    if(mappedForce[i]>thr_step) {
+    if(force[i]>thr_step) {
 
       if(i==0){
         mf_s=1;
         change=1;
+        //Serial.println("mf");
       }
       else if(i==1){
         lf_s=1;
         change=1;
+        //Serial.println("lf");
       }
       else if(i==2){
         mm_s=1;
         change=1;
+        //Serial.println("mm");
       }
       else if(i==3){
         heel_s=1;
         change=1;
+        //Serial.println("heel");
       }
   }
   }
@@ -348,14 +357,47 @@ if(sect==3) {
   
 read_IMU();
 
+smoothing(AccX,AccY,AccZ);
+  
+}
+
+  delay(20);
+}
+
+
+
+float smoothing(float accx, float accy, float accz){
+
+  
+static int readIndex = 0;
+
+static int readingsx[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+static float totalx= 0;                  // the running total
+            // the average
+
+static int readingsy[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+static float totaly= 0;                  // the running total
+            // the average
+
+static int readingsz[numReadings];      // the readings from the analog input
+                              // the index of the current reading
+static float totalz= 0;                  // the running total
+            // the average
+
 // subtract the last reading:
-  total = total - readings[readIndex];
-  // read from the sensor:
-  readings[readIndex] = AccX *gain ;
-    //x is a sin wave to test;
- // readings [readIndex ] = x;
-  // add the reading to the total:
-  total  = total  + readings [readIndex];
+  totalx = totalx - readingsx[readIndex];
+  totaly = totaly - readingsy[readIndex];
+  totalz = totalz - readingsz[readIndex];
+
+  readingsx[readIndex] = accx *gain ;
+  readingsy[readIndex] = accy *gain ;
+  readingsz[readIndex] = accz *gain ;
+
+  totalx  = totalx  + readingsx [readIndex];
+  totaly  = totaly  + readingsy [readIndex];
+  totalz  = totalz  + readingsz [readIndex];
   // advance to the next position in the array:
   readIndex  = readIndex  + 1;
 
@@ -366,19 +408,17 @@ read_IMU();
   }
 
   // calculate the average:
-  average  = total  / numReadings;
+  averagex  = totalx  / numReadings;
+  averagey  = totaly  / numReadings;
+  averagez  = totalz  / numReadings;
 
-  Serial.println(average);
+//  Serial.println(averagex);
+//  Serial.print(",");
+//  Serial.println(averagey);
+//  Serial.print(",");
+//  Serial.println(averagez);
 
 }
-
-
-  //delay(100);
-
-
-}
-
-
 
 float calcMep(float pmm,float pmf,float plf,float pheel){
 
@@ -395,6 +435,8 @@ float calcMep(float pmm,float pmf,float plf,float pheel){
 
 void compute_reset() {
 
+   // Serial.println("in compute_Reset");
+    
     float pmm;
     float pmf;
     float plf;
@@ -411,24 +453,31 @@ void compute_reset() {
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
-    if(pmf+plf<pheel-100){
+    if(pmf+plf<pheel){
       rec[state]=1;//pattern heel
+      Serial.println("heel");
     }
 
     if(pheel+pmm<plf+pmf){
       rec[state]=2;//pattern tiptoeing
+      Serial.println("tiptoeing");
     }
 
-    if(plf>pmf+100){
+//or pmf
+    if(plf>pmm){
       rec[state]=3;//pattern intoeing
+      Serial.println("intoeing");
     }
 
-    if(pmf>plf+100){
+//or pmf
+    if(pmm>plf){
       rec[state]=4;//pattern outtoeing
+      Serial.println("outtoeing");
     }
 
     else {
       rec[state]=5;//normal gait
+      Serial.println("normal");
       
       }
     
@@ -451,13 +500,14 @@ void sect1 (){
 
   
   step_timer.start();
-  
-  
-  while(step_timer.elapsed() <= 120000 || !Serial.read()=='5') {
+  int sec_60=0;
     
+ // while(step_timer.elapsed() <= 120000 || !Serial.read()=='5') {
+    while(step_timer.elapsed() <= 12000) {
 
-  acquire_signal();
-  sendData();
+      Serial.println(step_timer.elapsed());
+    acquire_signal();
+    sendData();
   
     if (mf_s == 1 || lf_s == 1 || mm_s == 1 || heel_s == 1){
       
@@ -470,8 +520,9 @@ void sect1 (){
     }
     
    
-    if (step_timer.elapsed() == 60000){
+    if (step_timer.elapsed() > 6000 && sec_60==0){
       cadence = step_count;  //to output the Cadence: Number of steps in a minute
+      sec_60=1;
     }
      
   }
@@ -483,7 +534,12 @@ void sect1 (){
   walking_speed = cadence * step_length; //Computing speed: distance covered in a given time (1 min)
 
   step_timer.stop();
-  
+
+
+  Serial.println(step_length);
+  Serial.println(stride_length);
+  Serial.println(walking_speed);
+  Serial.println(step_count);
 
   // DISPLAY IN PROCESSING
 
@@ -511,18 +567,31 @@ void sect2 (){
 //}
 
 //consider 90000 for recording plus 5*5 between the actions
- while(gait_timer.elapsed() <= 155000 || !Serial.read()=='5') {
+// while(gait_timer.elapsed() <= 155000 || !Serial.read()=='5')
+ 
+while (gait_timer.elapsed() <= 155000) {
 
+ // Serial.println("in while of sect 2");
+  
   acquire_signal();
+  
   sendData();
 //save data in array matrix at each iteration
-if(change==1){
 
+//Serial.println(change);
+
+if(change==1){
+  
+//Serial.println("in if");
   for(int i=0; i< 4; i++){
+    
     //save data in a matrix
-  data[i][istant]=mappedForce[i];
+    
+    //Serial.println(force[i]);
+    
+  data[i][istant]=force[i];
   istant++;
-  avg[i]=avg[i]+mappedForce[i];
+  avg[i]=avg[i]+force[i];
   
   nacquis++;
   
@@ -575,7 +644,7 @@ if(gait_timer.elapsed()>150000){
 
 void sect3 (){
 
-
+//Serial.print("in sect 3");
 //THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
 
 
@@ -585,47 +654,87 @@ dir=0;
 
 //detect movement:
 
-while(!Serial.read()=='5') {
-
+//while(!Serial.read()=='5') {
+while (1){
+  
+  //Serial.print("in while");
+  
   acquire_signal();
   
-if(abs(AccZ)>thrmovem or abs(AccY)>thrmovem or abs(AccX)>thrmovem) {
+if(abs(averagey)>thrmovem or abs(averagez)>thrmovem) {
 
 
-if(AccZ>0){
+if(averagez>0){
 
+  czr++;
+  if(czr>thrcount) {
+    
   //move right
+  Serial.println("right");
   dir=0.5;
+  czr=0;
+  czl=0;
+  cyb=0;
+  cyf=0;
+  
+  }
  // Serial.println(1/2);
 }
 
-if(AccZ<0){
+if(averagez<0){
 
+  czl++;
+  if(czl>thrcount) {
   //move left
+  Serial.println("left");
   dir=-0.5;
+  czr=0;
+  czl=0;
+  cyb=0;
+  cyf=0;
  // Serial.println(-1/2);
 }
-
-
-
-if(AccY<0 and AccX>0){
-
-  //move forward
-  dir=1;
- // Serial.println(1);
-  
 }
 
-if(AccY>0 and AccX>0){
 
+
+if(averagey<0){
+
+  cyf++;
+  //move forward
+  if(cyf>thrcount) {
+  Serial.println("forward");
+  dir=1;
+  czr=0;
+  czl=0;
+  cyb=0;
+  cyf=0;
+ // Serial.println(1);
+}
+}
+
+if(averagey>0){
+  cyb++;
+  if(cyb>thrcount) {
   //move backward
+  Serial.println("backward");
   dir=-1;
+  czr=0;
+  czl=0;
+  cyb=0;
+  cyf=0;
  // Serial.println(-1);
 }
 
 }
 
+else{
+  Serial.println("stop");
+  }
+
 sendData();
+
+}
 
 }
 
@@ -692,11 +801,11 @@ void exitmode (){
   
   }
 
-void set_readings () {
-    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-      readings[thisReading] = 0;
-    }
-}
+//void set_readings () {
+//    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+//      readings[thisReading] = 0;
+//    }
+//}
 
 
 void setup() {
