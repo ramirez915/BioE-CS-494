@@ -7,11 +7,15 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object
 
 ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input
+ControlTimer timer;
+Textlabel timerVal;
+
+ControlP5 sec4Cp5;
 
 PFont font;
 int x1 = 0;    // starting position of the graph
 
-float dataArr[];      // array that will store the data
+float dataArr[] = new float[22];      // array that will store the data      // size determined by the number of data coming in from arduino
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
@@ -33,6 +37,13 @@ float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
 int stepCount = 0;
+boolean twoMin = false;
+boolean noValues = true;
+
+
+Textlabel stepLenLbl;
+Textlabel strideLenLbl;
+Textlabel cadenceLbl;
 //---------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------- section 2
@@ -75,9 +86,10 @@ float[] testDir = new float[5];
 //----------------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------------------------------- section 4
-// display image of person depending on their virtual age
-// display age ranges for now just do 5... 0-10, 11-20, 21-30...
-
+// used to display user health
+int health = -1;
+Textlabel healthLbl;
+Textlabel notHealthLbl;
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,6 +97,9 @@ PShape foot;
 
 void setup(){
   size(2000, 1200);    //window size, (width, height)  1200
+  
+  timer = new ControlTimer();
+  timer.setSpeedOfTime(1);
   
   colorMode(HSB);
   blobs[0] = new Blob(200,200);      // mf
@@ -114,14 +129,14 @@ void setup(){
   testDir[3] = 0.5;
   testDir[4] = -0.5;
   
-  //setup sec 4 butons
-  setupSec4();
-  hideSec4Buttons();
+  //setup keypad
+  setupKeypad();
+  hideKeypad();
   
   drawFoot();
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[15];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
@@ -168,25 +183,46 @@ void setup(){
     .setFont(font)
   ;
   
+  timerVal = cp5.addTextlabel("timerVal")
+                 .setText("30"+"s")
+                 .setPosition(700,1200)
+                 .setColorValue(color(61))
+                 .setFont(createFont("Helvetica",50))
+                 .hide()
+                 ;
   
+  setDataArrZeros();
 }  // end of setup
 
 void draw(){  //same as loop in arduino
-  
-  //lets give title to our window
-  //fill(0);               //text color (r, g, b)
-  //background(255);
   //get data from serial event then draw on heat map
+  
   if(sec == 1){
     if(firstRun){
       displaySec1Tbl();
       firstRun = false;
       oldSec = 1;
+      timer.reset();
     }
     else{
-      drawHeatMap();
+      if(!twoMin){
+        drawHeatMap();
+      }
     }
+    int time= (int)timer.time()/1000;
+    timerVal.setValue(Integer.toString((time))+"s");
+    timerVal.show();
+    if(time == 70){
+      twoMin = true;
+    }
+    if(twoMin){
+      showKeypad();
+      displaySec1Tbl();
+    }
+    setDataArrZeros();
   }
+  
+  
   else if(sec == 2){
     if(firstRun){
       displaySec2Tbl();
@@ -225,7 +261,7 @@ void draw(){  //same as loop in arduino
   
   else if(sec == 4){
     if(firstRun){
-      showSec4Buttons();
+      showKeypad();
       firstRun = false;
       oldSec = 4;
     }
@@ -234,76 +270,11 @@ void draw(){  //same as loop in arduino
       
     }
   }
-  
   // resets any given mode
   else if(sec == -2){
     resetGivenMode(oldSec);
     oldSec = -1;
   }
-
-  //-------------------------------------------------------------------------------------------------- old working code
-  //background(51);
-  //loadPixels();
-  
-  //println("1");
-  //int i = 0;      // counter for 
-  //for (int x = 0; x < width; x++) {
-  //  for (int y = 0; y < height; y++) {
-  //    int index = x + y * width;
-  //    float sum = 0;
-  //    for (Blob b : blobs) {
-  //      float d = dist(x, y, b.pos.x, b.pos.y);
-  //      float w = valueArr[i];                  // get values from valueArr to display
-  //      sum += 100 * w / d;
-  //      i++;    // go to next value in array
-  //    }
-  //    i = 0; // start from the beginning
-  //    pixels[index] = color(sum, 255, 255);
-  //  }
-  //}
-  
-  //updatePixels();
-  //drawFoot();
-
-  //for (Blob b : blobs) {
-  //  b.update();
-  //  b.show();
-  //}
-  
-  ////***************************************** everything above this line works as intended
-  //// using the code down here to update the heat map with new values
-  //println("pause");
-  //delay(2000);
-  
-  //loadPixels();
-  
-  //println("2");
-  //i = 0;      // counter for 
-  //for (int x = 0; x < width; x++) {
-  //  for (int y = 0; y < height; y++) {
-  //    int index = x + y * width;
-  //    float sum = 0;
-  //    for (Blob b : blobs) {
-  //      float d = dist(x, y, b.pos.x, b.pos.y);
-  //      float w = newVals[i];                  // get values from valueArr to display
-  //      sum += 100 * w / d;
-  //      i++;    // go to next value in array
-  //    }
-  //    i = 0; // start from the beginning
-  //    pixels[index] = color(sum, 255, 255);
-  //  }
-  //}
-  
-  //updatePixels();
-  //drawFoot();
-
-  //for (Blob b : blobs) {
-  //  b.update();
-  //  b.show();
-  //}
-  ////----------------------------------------------------------------------------------------------- end of new value attempt 
-  //----------------------------------------------------------------------------------------------------------------------------- old working code
-  
 }
 
 //lets add some functions to our buttons
@@ -316,14 +287,14 @@ void Walking_Stats(){
 }
 
 void sec2(){
-  myPort.write('2');
+  //myPort.write('2');
   sec = 2;
   println("sec2");
 }
 
 void sec3(){
   //myPort.write('3');
-  sec =3;
+  sec = 3;
   println("sec3");
 }
 
@@ -336,6 +307,7 @@ void Main_Menu(){
   sec = -2;
   testCount = 0;
   myPort.write('5');
+  hideKeypad();
 }
 
 // checks what is being printed by the micro controller
@@ -345,26 +317,36 @@ void serialEvent (Serial myPort) {
     valueFromArduino = myPort.readStringUntil('\n');
     
     try{
+      setDataArrZeros();
       dataArr = float(split(valueFromArduino,"-"));
-      //println(valueFromArduino);
+      println(valueFromArduino);
       //should have 13 values from arduino
-//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-direction-health-virtualAge
-      if(dataArr.length == 23){
+//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
+      if(dataArr.length == 22){
         int sec = int(dataArr[0]);
         
         // parse out data according to section
         if(sec == 1){
           setSec1Data(dataArr);
+          println("sec1");
+          delay(100);
         }
         else if(sec == 2){
           setSec2Data(dataArr);
         }
-        
+        else if(sec == 3){
+          dir = dataArr[20];
+          println("dir: " + dir);
+        }
+        else if(sec == 4){
+          
+        }
         // exit mode reset values
         else if(sec == 5){
           
         }
       }
+      setDataArrZeros();
     }catch(RuntimeException e){
       e.printStackTrace();
     }
@@ -428,6 +410,7 @@ void resetGivenMode(int oldSec){
     //resetting sec 1
     case 1:
       resetSec1();
+      twoMin = false;
       break;
     case 2:
       resetSec2();
@@ -439,4 +422,5 @@ void resetGivenMode(int oldSec){
       resetSec4();
       break;
   }
+  timer.reset();
 }

@@ -174,11 +174,12 @@ void sendData(){
   Serial.print("-");
   Serial.print(MFN[4]);
   //section 3
+  Serial.print("-");
   Serial.print(dir);
   Serial.print("-");
   //section 4
-  Serial.print(health);
-  Serial.print("-");
+  Serial.println(health);
+  
 }
 
 
@@ -502,7 +503,7 @@ void sect1 (){
   int sec_60=0;
     
  // while(step_timer.elapsed() <= 120000 || !Serial.read()=='5') {
-    while(step_timer.elapsed() <= 12000) {
+    while(step_timer.elapsed() <= 70000) {
 
      // Serial.println(step_timer.elapsed());
     acquire_signal();
@@ -519,7 +520,7 @@ void sect1 (){
     }
     
    
-    if (step_timer.elapsed() > 6000 && sec_60==0){
+    if (step_timer.elapsed() > 60000 && sec_60==0){
       cadence = step_count;  //to output the Cadence: Number of steps in a minute
       sec_60=1;
     }
@@ -530,14 +531,12 @@ void sect1 (){
 
   String distance="";
   while(Serial.read()!='x') {
-
-
     distance= distance + String(Serial.read());
     
   }
 
   
-  step_length = distance / step_count; //computing Step Length
+  step_length = float(distance.toInt()) / step_count; //computing Step Length
   
   stride_length = step_length * 2; //computing Stride Length
   
@@ -599,7 +598,7 @@ if(change==1){
     
     //Serial.println(force[i]);
     
-  data[i][istant]=force[i];
+  data[i][instant]=force[i];
   instant++;
   avg[i]=avg[i]+force[i];
   

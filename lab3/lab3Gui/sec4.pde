@@ -1,53 +1,28 @@
 //size of GUI size(2000, 1200);
 
-void setupSec4(){
-  numPadCp5 = new ControlP5(this);
+void sec4setup(){
+  sec4Cp5 = new ControlP5(this);
+  notHealthLbl = sec4Cp5.addTextlabel("Not_Health")
+    .setText("You aren't as healthy as your average age based on your walking speed")
+    .setPosition(1000,600)
+    .setColorValue(color(69))
+    .setFont(createFont("Cambria",20));
   
-  numPadCp5.addButton("_0_")
-    .setPosition(200,50)
-    .setSize(100,70)
-    //.setFont(font)
-  ;
-  numPadCp5.addButton("_1_")
-    .setPosition(300,50)
-    .setSize(100,70)
-    //.setFont(font)
-  ;
-  numPadCp5.addButton("_2_")
-    .setPosition(400,50)
-    .setSize(80,70)
-    //.setFont(font)
-  ;
-  numPadCp5.addButton("Done")
-    .setPosition(500,50)
-    .setSize(50,70)
-    //.setFont(font)
-  ;
-}
-
-void _0_(){
-  
-}
-
-void Done(){
-  //myPort.write('x');  // sends the 'x' to signal that we're done getting the age
-  println("done getting age");
-  hideSec4Buttons();
-}
-
-
-void showSec4Buttons(){
-  background(51);
-  numPadCp5.show();
-}
-
-void hideSec4Buttons(){
-  background(51);
-  numPadCp5.hide();
+  healthLbl = sec4Cp5.addTextlabel("Health")
+    .setText("You aren't as healthy as your average age based on your walking speed")
+    .setPosition(1000,600)
+    .setColorValue(color(69))
+    .setFont(createFont("Cambria",20));
+    
+  healthLbl.hide();
+  notHealthLbl.hide();
 }
 
 void resetSec4(){
   background(100);
-  hideSec4Buttons();
+  hideKeypad();
   firstRun = true;
+  
+  healthLbl.hide();
+  notHealthLbl.hide();
 }
