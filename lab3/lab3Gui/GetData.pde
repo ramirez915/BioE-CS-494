@@ -11,7 +11,7 @@ SECTION 4
 */
 
 void setDataArrZeros(){
-  for(int i = 0; i < 23; i++){
+  for(int i = 0; i < 22; i++){
     dataArr[i] = 0;
   }
 }
@@ -48,11 +48,11 @@ void setSec1Data(float arr[]){
   //update blobs
   blobs[3].updateR(mappedR3);
   
-  stepLen = arr[5];
-  strideLen = arr[6];
-  cadence = arr[7];
-  walkingSpd = arr[8];
-  stepCount = int(arr[9]);
+    stepLen = arr[5];
+    strideLen = arr[6];
+    cadence = arr[7];
+    walkingSpd = arr[8];
+    stepCount = int(arr[9]);
 }
 
 //parse out data for sec 2

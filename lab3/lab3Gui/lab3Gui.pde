@@ -15,7 +15,7 @@ ControlP5 sec4Cp5;
 PFont font;
 int x1 = 0;    // starting position of the graph
 
-float dataArr[] = new float[23];;      // array that will store the data      // size determined by the number of data coming in from arduino
+float dataArr[] = new float[22];      // array that will store the data      // size determined by the number of data coming in from arduino
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
@@ -317,6 +317,7 @@ void serialEvent (Serial myPort) {
     valueFromArduino = myPort.readStringUntil('\n');
     
     try{
+      setDataArrZeros();
       dataArr = float(split(valueFromArduino,"-"));
       println(valueFromArduino);
       //should have 13 values from arduino
@@ -328,6 +329,7 @@ void serialEvent (Serial myPort) {
         if(sec == 1){
           setSec1Data(dataArr);
           println("sec1");
+          delay(100);
         }
         else if(sec == 2){
           setSec2Data(dataArr);
