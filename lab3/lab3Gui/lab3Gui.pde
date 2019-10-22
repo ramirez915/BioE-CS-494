@@ -136,9 +136,9 @@ void setup(){
   
   drawFoot();
   
-  //printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  printArray(Serial.list());   //prints all available serial ports
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
                                                                               //************************************ and change the index to the port where the arduino is connected
@@ -148,7 +148,7 @@ void setup(){
                                                                               //*** String portName = Serial.list()[2];
   
   // starts serialEvent function when a newline character is read
-  //myPort.bufferUntil('\n');
+  myPort.bufferUntil('\n');
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -213,7 +213,7 @@ void draw(){  //same as loop in arduino
     int time= (int)timer.time()/1000;
     timerVal.setValue(Integer.toString((time))+"s");
     timerVal.show();
-    if(time == 120){
+    if(time == 70){
       twoMin = true;
     }
     if(twoMin){
@@ -306,47 +306,47 @@ void sec4(){
 void Main_Menu(){
   sec = -2;
   testCount = 0;
-  //myPort.write('5');
+  myPort.write('5');
 }
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      dataArr = float(split(valueFromArduino,"-"));
-//      //println(valueFromArduino);
-//      //should have 13 values from arduino
-////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
-//      if(dataArr.length == 22){
-//        int sec = int(dataArr[0]);
+    try{
+      dataArr = float(split(valueFromArduino,"-"));
+      //println(valueFromArduino);
+      //should have 13 values from arduino
+//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
+      if(dataArr.length == 22){
+        int sec = int(dataArr[0]);
         
-//        // parse out data according to section
-//        if(sec == 1){
-//          setSec1Data(dataArr);
-//        }
-//        else if(sec == 2){
-//          setSec2Data(dataArr);
-//        }
-//        else if(sec == 3){
-//          dir = dataArr[20];
-//          println("dir: " + dir);
-//        }
-//        else if(sec == 4){
+        // parse out data according to section
+        if(sec == 1){
+          setSec1Data(dataArr);
+        }
+        else if(sec == 2){
+          setSec2Data(dataArr);
+        }
+        else if(sec == 3){
+          dir = dataArr[20];
+          println("dir: " + dir);
+        }
+        else if(sec == 4){
           
-//        }
-//        // exit mode reset values
-//        else if(sec == 5){
+        }
+        // exit mode reset values
+        else if(sec == 5){
           
-//        }
-//      }
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
+        }
+      }
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
 
 
 void drawFoot(){
