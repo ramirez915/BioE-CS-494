@@ -664,8 +664,8 @@ dir=0;
 
 //detect movement:
 
-//while(!Serial.read()=='5') {
-while (1){
+while(Serial.read()!='5') {
+//while (1){
   
   //Serial.print("in while");
   
@@ -756,13 +756,13 @@ void sect4 (){
  
 int speed_age;
 //insert age of subject
- 
-while(!age =='x') {
+String inputedAge = "";
+while(Serial.read() !='x') {
   //wait for processing to send inserted age
-age=Serial.read();
- 
+  inputedAge = inputedAge + String(Serial.read());
 }
- 
+
+int age = inputedAge.toInt();
 //set speed_age
  
 if(age>=20 && age<=29){

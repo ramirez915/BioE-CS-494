@@ -4,17 +4,13 @@ import processing.sound.*;    // for music
 import processing.serial.*;
 
 Serial myPort;
-ControlP5 cp5; //create ControlP5 object
+ControlP5 cp5; //create ControlP5 object for the main menu buttons
 
-ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input
+ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input and the distance
 ControlTimer timer;
 Textlabel timerVal;
 
-ControlP5 sec4Cp5;
-
 PFont font;
-int x1 = 0;    // starting position of the graph
-
 float dataArr[] = new float[22];      // array that will store the data      // size determined by the number of data coming in from arduino
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
@@ -40,10 +36,7 @@ int stepCount = 0;
 boolean twoMin = false;
 boolean noValues = true;
 
-
-Textlabel stepLenLbl;
-Textlabel strideLenLbl;
-Textlabel cadenceLbl;
+Textlabel sec1Inst;
 //---------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------- section 2
@@ -90,7 +83,7 @@ int[] y = new int[5];
 float dir = 0.0;
 float[] testDir = new float[5];
 
-ControlP5 sec3Cp5;
+ControlP5 sec3Cp5;                // sec3 labels
 Textlabel sec3Lbl;
 Textlabel up;
 Textlabel right;
@@ -101,9 +94,12 @@ Textlabel left;
 
 //---------------------------------------------------------------------------------------------------------------------------------------------- section 4
 // used to display user health
-int health = -1;
+int health = -1;          // -1 by default
+ControlP5 sec4Cp5;
 Textlabel healthLbl;
 Textlabel notHealthLbl;
+Textlabel waitingLbl;
+Textlabel sec4Inst;
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -147,11 +143,14 @@ void setup(){
   setupKeypad();
   hideKeypad();
   
+  // sec4 set up
+  sec4setup();
+  
   drawFoot();
   
-  //printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  printArray(Serial.list());   //prints all available serial ports
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
                                                                               //************************************ and change the index to the port where the arduino is connected
@@ -161,7 +160,7 @@ void setup(){
                                                                               //*** String portName = Serial.list()[2];
   
   // starts serialEvent function when a newline character is read
-  //myPort.bufferUntil('\n');
+  myPort.bufferUntil('\n');
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -201,7 +200,7 @@ void setup(){
                  .setText("30"+"s")
                  .setPosition(700,1200)
                  .setColorValue(color(61))
-                 .setFont(createFont("Helvetica",50))
+                 .setFont(createFont("Cambria",50))
                  .hide()
                  ;
   
@@ -221,21 +220,23 @@ void draw(){  //same as loop in arduino
     else{
       if(!twoMin){
         drawHeatMap();
+        waitingLbl.show();
       }
     }
     int time= (int)timer.time()/1000;
     timerVal.setValue(Integer.toString((time))+"s");
     timerVal.show();
-    if(time == 70){
+    if(time == 120){
       twoMin = true;
     }
     if(twoMin){
+      waitingLbl.hide();
       showKeypad();
+      sec1Inst.show();
       displaySec1Tbl();
     }
     setDataArrZeros();
   }
-  
   
   else if(sec == 2){
     if(firstRun){
@@ -246,16 +247,15 @@ void draw(){  //same as loop in arduino
     else{
       updateSec2Tbl(1);
       //------------------------------------------------ testing image change
-      println("wait for update");
-      timeFrames[testCount] = int(random(1,6));
-      testCount++;
-      if(testCount == 5){
-        testCount = 0;
-      }
-      delay(1000);
+      //println("wait for update");
+      //timeFrames[testCount] = int(random(1,6));
+      //testCount++;
+      //if(testCount == 5){
+      //  testCount = 0;
+      //}
+      //delay(1000);
       //--------------------------------------------------------------
     }
-    //-------------- how are we going to end this????
   }
   
   else if(sec == 3){
@@ -267,8 +267,8 @@ void draw(){  //same as loop in arduino
     else{
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
-      dir = testDir[int(random(0,5))];
-      delay(1000);
+      //dir = testDir[int(random(0,5))];
+      //delay(1000);
       //----------------------------------------------------
     }
   }
@@ -276,12 +276,22 @@ void draw(){  //same as loop in arduino
   else if(sec == 4){
     if(firstRun){
       showKeypad();
+      sec4Inst.show();
       firstRun = false;
       oldSec = 4;
     }
     // do what is meant to do in sec 4
     else{
-      
+      if(health == 1){
+        waitingLbl.hide();
+        healthLbl.show();
+      }
+      else if(health == 0){
+        notHealthLbl.show();
+      }
+      else{
+        waitingLbl.show();
+      }
     }
   }
   // resets any given mode
@@ -295,77 +305,75 @@ void draw(){  //same as loop in arduino
 //so whe you press any button, it sends perticular char over serial port
 
 void Walking_Stats(){
-  //myPort.write('1');
+  myPort.write('1');
   sec = 1;
   println("Walking Stats");
 }
 
 void sec2(){
-  //myPort.write('2');
+  myPort.write('2');
   sec = 2;
   println("sec2");
 }
 
 void sec3(){
-  //myPort.write('3');
+  myPort.write('3');
   sec = 3;
   println("sec3");
 }
 
 void sec4(){
-  //myPort.write('4');
+  myPort.write('4');
   sec = 4;
   println("sec4");
 }
 void Main_Menu(){
   sec = -2;
   testCount = 0;
-  //myPort.write('5');
+  myPort.write('5');
   hideKeypad();
 }
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      setDataArrZeros();
-//      dataArr = float(split(valueFromArduino,"-"));
-//      println(valueFromArduino);
-//      //should have 13 values from arduino
-////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
-//      if(dataArr.length == 22){
-//        int sec = int(dataArr[0]);
+    try{
+      setDataArrZeros();
+      dataArr = float(split(valueFromArduino,"-"));
+      println(valueFromArduino);
+      //should have 22 values from arduino
+//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
+      if(dataArr.length == 22){
+        int sec = int(dataArr[0]);
         
-//        // parse out data according to section
-//        if(sec == 1){
-//          setSec1Data(dataArr);
-//          println("sec1");
-//          delay(100);
-//        }
-//        else if(sec == 2){
-//          setSec2Data(dataArr);
-//        }
-//        else if(sec == 3){
-//          dir = dataArr[20];
-//          println("dir: " + dir);
-//        }
-//        else if(sec == 4){
-          
-//        }
-//        // exit mode reset values
-//        else if(sec == 5){
-          
-//        }
-//      }
-//      setDataArrZeros();
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
+        // parse out data according to section
+        if(sec == 1){
+          setSec1Data(dataArr);
+          println("sec1");
+          //delay(100);
+        }
+        else if(sec == 2){
+          setSec2Data(dataArr);
+          println("sec2");
+        }
+        else if(sec == 3){
+          dir = dataArr[20];
+          println("dir: " + dir);
+        }
+        else if(sec == 4){
+          health = int(dataArr[21]);
+          println("health is " + health);
+        }
+      }
+      setDataArrZeros();
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
 
 
 void drawFoot(){

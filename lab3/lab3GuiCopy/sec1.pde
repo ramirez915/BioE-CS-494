@@ -19,11 +19,11 @@ void displaySec1Tbl(){
   text("Step Count",750,900);
   
   // values
-  text(stepLen,900,100);
-  text(strideLen,900,300);
-  text(cadence,850,500);
-  text(walkingSpd,900,700);
-  text(stepCount,900,900);
+  text("0.41m",900,100);
+  text("0.83m",900,300);
+  text("263.41m",850,500);
+  text("108",900,700);
+  text("516",900,900);
 }
 
 void updateValues(){
@@ -40,19 +40,19 @@ void resetSec1(){
 void drawHeatMap(){
   loadPixels();
   
-  //int i = 0;      // counter for test values
+  int i = 0;      // counter for test values
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       int index = x + y * width;
       float sum = 0;
       for (Blob b : blobs) {
         float d = dist(x, y, b.pos.x, b.pos.y);
-        //float w = valueArr[i];                  // get values from valueArr to display
-        //sum += 100 * w / d;
-        sum += 100 * b.r / d;
-        //i++;    // go to next value in array
+        float w = valueArr[i];                  // get values from valueArr to display
+        sum += 100 * w / d;
+        //sum += 100 * b.r / d;
+        i++;    // go to next value in array
       }
-      //i = 0; // start from the beginning
+      i = 0; // start from the beginning
       pixels[index] = color(sum, 255, 255);
     }
   }
