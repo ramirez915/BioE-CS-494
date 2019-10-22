@@ -17,19 +17,37 @@ void setDataArrZeros(){
 }
 
 
+
 // parses out data for sec 1
 void setSec1Data(float arr[]){
   // map values to be placed as the radius for the blobs
-  for(int i = 1; i < 5; i++){
-    println(i +" value " + dataArr[i]);
-    float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
-    //update blobs
-    blobs[i-1].updateR(mappedR);
-  }
-  //mf = arr[1];
-  //lf = arr[2];
-  //mm = arr[3];
-  //heelSens = arr[4];
+  //for(int i = 1; i < 5; i++){
+  //  println(i +" value " + dataArr[i]);
+  //  float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
+  //  //update blobs
+  //  blobs[i-1].updateR(mappedR);
+  //}
+  mf = arr[1];
+  float mappedR0 = map(dataArr[1],0,1023,0,100);    // max radius 60-100...
+  println("0 " + mappedR0);
+  //update blobs
+  blobs[0].updateR(mappedR0);
+  lf = arr[2];
+  float mappedR1 = map(dataArr[2],0,1023,0,100);    // max radius 60-100...
+  println("1 " + mappedR1);
+  //update blobs
+  blobs[1].updateR(mappedR1);
+  mm = arr[3];
+  float mappedR2 = map(dataArr[3],0,1023,0,100);    // max radius 60-100...
+  println("2 " + mappedR2);
+  //update blobs
+  blobs[2].updateR(mappedR2);
+  heelSens = arr[4];
+  float mappedR3 = map(dataArr[4],0,1023,0,100);    // max radius 60-100...
+  println("3 " + mappedR3);
+  //update blobs
+  blobs[3].updateR(mappedR3);
+  
   stepLen = arr[5];
   strideLen = arr[6];
   cadence = arr[7];

@@ -137,7 +137,7 @@ void setup(){
   drawFoot();
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
@@ -307,6 +307,7 @@ void Main_Menu(){
   sec = -2;
   testCount = 0;
   myPort.write('5');
+  hideKeypad();
 }
 
 // checks what is being printed by the micro controller
@@ -317,7 +318,7 @@ void serialEvent (Serial myPort) {
     
     try{
       dataArr = float(split(valueFromArduino,"-"));
-      //println(valueFromArduino);
+      println(valueFromArduino);
       //should have 13 values from arduino
 //sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
       if(dataArr.length == 22){
@@ -326,6 +327,7 @@ void serialEvent (Serial myPort) {
         // parse out data according to section
         if(sec == 1){
           setSec1Data(dataArr);
+          println("sec1");
         }
         else if(sec == 2){
           setSec2Data(dataArr);
@@ -342,6 +344,7 @@ void serialEvent (Serial myPort) {
           
         }
       }
+      setDataArrZeros();
     }catch(RuntimeException e){
       e.printStackTrace();
     }
