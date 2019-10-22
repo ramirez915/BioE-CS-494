@@ -179,7 +179,6 @@ void sendData(){
 //  //section 4
 //  Serial.print(health);
 //  Serial.print("-");
-//  Serial.println(virt_age);
 }
 
 
@@ -453,7 +452,7 @@ void compute_reset() {
 
 //RECOGNIZE THE MODALITIES BASE ON THE AVG VALUES:
 
-    if(pmf+plf<pheel){
+    if(pheel>pmm && pheel>pmf && pheel>plf){
       rec[state]=1;//pattern heel
       Serial.println("heel");
     }
@@ -464,13 +463,13 @@ void compute_reset() {
     }
 
 //or pmf
-    if(plf>pmm){
+    if(plf>pmm && plf>pmf && plf>pheel){
       rec[state]=3;//pattern intoeing
       Serial.println("intoeing");
     }
 
 //or pmf
-    if(pmm>plf){
+    if(pmm+pmf>plf+pheel){
       rec[state]=4;//pattern outtoeing
       Serial.println("outtoeing");
     }
@@ -527,6 +526,17 @@ void sect1 (){
      
   }
   
+//wait for the distance to be inputed in processing
+
+  String distance="";
+  while(Serial.read()!='x') {
+
+
+    distance= distance + String(Serial.read());
+    
+  }
+
+  
   step_length = distance / step_count; //computing Step Length
   
   stride_length = step_length * 2; //computing Stride Length
@@ -536,16 +546,14 @@ void sect1 (){
   step_timer.stop();
 
 
-  Serial.println(step_length);
-  Serial.println(stride_length);
-  Serial.println(walking_speed);
-  Serial.println(step_count);
+//  Serial.println(step_length);
+//  Serial.println(stride_length);
+//  Serial.println(walking_speed);
+//  Serial.println(step_count);
 
   // DISPLAY IN PROCESSING
 
   sendData();
-
-  
   
   }
 
@@ -556,7 +564,7 @@ void sect2 (){
 
  gait_timer.start();
  
- int istant=0;
+ int instant=0;
 
 // GENERATE RANDOM ACQUISITION OF PATTERNS:
 
@@ -568,13 +576,15 @@ void sect2 (){
 
 //consider 90000 for recording plus 5*5 between the actions
 // while(gait_timer.elapsed() <= 155000 || !Serial.read()=='5')
+
+ //timer for 2 min and 30 sec
  
-while (gait_timer.elapsed() <= 155000) {
+while (gait_timer.elapsed() <= 150000) {
 
  // Serial.println("in while of sect 2");
   
   acquire_signal();
-  
+  //send data to display the heat map
   sendData();
 //save data in array matrix at each iteration
 
@@ -590,7 +600,7 @@ if(change==1){
     //Serial.println(force[i]);
     
   data[i][istant]=force[i];
-  istant++;
+  instant++;
   avg[i]=avg[i]+force[i];
   
   nacquis++;
@@ -644,7 +654,7 @@ if(gait_timer.elapsed()>150000){
 
 void sect3 (){
 
-//Serial.print("in sect 3");
+Serial.print("in sect 3");
 //THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
 
 
@@ -663,10 +673,10 @@ while (1){
   
 if(abs(averagey)>thrmovem or abs(averagez)>thrmovem) {
 
-
 if(averagez>0){
 
   czr++;
+  
   if(czr>thrcount) {
     
   //move right
@@ -781,14 +791,12 @@ sect1();
 if(walking_speed < speed_age) {
  
   health=0;
- 
- 
- 
- 
 //  diff_speed=speed_age-walking_speed;
 //  virt_age=(1+diff_speed/speed_age)*age;
- 
 }
+else{
+  health=1;
+ }
  
  
 sendData();
