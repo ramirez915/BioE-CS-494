@@ -128,57 +128,57 @@ for (int i=0; i< 4; i++){
 
 
 void sendData(){
-  Serial.print(sect);
-  Serial.print("-");
-  //all force sensors are for sections 1-2
-  //mf
-  Serial.print(force[0]);
-  Serial.print("-");
-  //lf
-  Serial.print(force[1]);
-  Serial.print("-");
-  //mm
-  Serial.print(force[2]);
-  Serial.print("-");
-  //heel
-  Serial.print(force[3]);
-  Serial.print("-");
-  Serial.print(step_length);
-  Serial.print("-");
-  Serial.print(stride_length);
-  Serial.print("-");
-  Serial.print(cadence);
-  Serial.print("-");
-  Serial.print(walking_speed);
-  Serial.print("-");
-  Serial.print(step_count);
-  //section 2
-  Serial.print("-");
-  Serial.print(rec[0]);
-  Serial.print("-");
-  Serial.print(MFN[0]);
-  Serial.print("-");
-  Serial.print(rec[1]);
-  Serial.print("-");
-  Serial.print(MFN[1]);
-  Serial.print("-");
-  Serial.print(rec[2]);
-  Serial.print("-");
-  Serial.print(MFN[2]);
-  Serial.print("-");
-  Serial.print(rec[3]);
-  Serial.print("-");
-  Serial.print(MFN[3]);
-  Serial.print("-");
-  Serial.print(rec[4]);
-  Serial.print("-");
-  Serial.print(MFN[4]);
-  //section 3
-  Serial.print(dir);
-  Serial.print("-");
-  //section 4
-  Serial.print(health);
-  Serial.print("-");
+//  Serial.print(sect);
+//  Serial.print("-");
+//  //all force sensors are for sections 1-2
+//  //mf
+//  Serial.print(force[0]);
+//  Serial.print("-");
+//  //lf
+//  Serial.print(force[1]);
+//  Serial.print("-");
+//  //mm
+//  Serial.print(force[2]);
+//  Serial.print("-");
+//  //heel
+//  Serial.print(force[3]);
+//  Serial.print("-");
+//  Serial.print(step_length);
+//  Serial.print("-");
+//  Serial.print(stride_length);
+//  Serial.print("-");
+//  Serial.print(cadence);
+//  Serial.print("-");
+//  Serial.print(walking_speed);
+//  Serial.print("-");
+//  Serial.print(step_count);
+//  //section 2
+//  Serial.print("-");
+//  Serial.print(rec[0]);
+//  Serial.print("-");
+//  Serial.print(MFN[0]);
+//  Serial.print("-");
+//  Serial.print(rec[1]);
+//  Serial.print("-");
+//  Serial.print(MFN[1]);
+//  Serial.print("-");
+//  Serial.print(rec[2]);
+//  Serial.print("-");
+//  Serial.print(MFN[2]);
+//  Serial.print("-");
+//  Serial.print(rec[3]);
+//  Serial.print("-");
+//  Serial.print(MFN[3]);
+//  Serial.print("-");
+//  Serial.print(rec[4]);
+//  Serial.print("-");
+//  Serial.print(MFN[4]);
+//  //section 3
+//  Serial.print(dir);
+//  Serial.print("-");
+//  //section 4
+//  Serial.print(health);
+//  Serial.print("-");
 }
 
 
@@ -454,29 +454,29 @@ void compute_reset() {
 
     if(pheel>pmm && pheel>pmf && pheel>plf){
       rec[state]=1;//pattern heel
-     // Serial.println("heel");
+      Serial.println("heel");
     }
 
     if(pheel+pmm<plf+pmf){
       rec[state]=2;//pattern tiptoeing
-     // Serial.println("tiptoeing");
+      Serial.println("tiptoeing");
     }
 
 //or pmf
     if(plf>pmm && plf>pmf && plf>pheel){
       rec[state]=3;//pattern intoeing
-     // Serial.println("intoeing");
+      Serial.println("intoeing");
     }
 
 //or pmf
     if(pmm+pmf>plf+pheel){
       rec[state]=4;//pattern outtoeing
-     // Serial.println("outtoeing");
+      Serial.println("outtoeing");
     }
 
     else {
       rec[state]=5;//normal gait
-      //Serial.println("normal");
+      Serial.println("normal");
       
       }
     
@@ -504,7 +504,7 @@ void sect1 (){
  // while(step_timer.elapsed() <= 120000 || !Serial.read()=='5') {
     while(step_timer.elapsed() <= 12000) {
 
-     // Serial.println(step_timer.elapsed());
+      Serial.println(step_timer.elapsed());
     acquire_signal();
     sendData();
   
@@ -654,7 +654,7 @@ if(gait_timer.elapsed()>150000){
 
 void sect3 (){
 
-// Serial.print("in sect 3");
+Serial.print("in sect 3");
 //THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
 
 
@@ -680,7 +680,7 @@ if(averagez>0){
   if(czr>thrcount) {
     
   //move right
- // Serial.println("right");
+  Serial.println("right");
   dir=0.5;
   czr=0;
   czl=0;
@@ -696,7 +696,7 @@ if(averagez<0){
   czl++;
   if(czl>thrcount) {
   //move left
- // Serial.println("left");
+  Serial.println("left");
   dir=-0.5;
   czr=0;
   czl=0;
@@ -713,7 +713,7 @@ if(averagey<0){
   cyf++;
   //move forward
   if(cyf>thrcount) {
- // Serial.println("forward");
+  Serial.println("forward");
   dir=1;
   czr=0;
   czl=0;
@@ -727,7 +727,7 @@ if(averagey>0){
   cyb++;
   if(cyb>thrcount) {
   //move backward
- // Serial.println("backward");
+  Serial.println("backward");
   dir=-1;
   czr=0;
   czl=0;
@@ -739,8 +739,7 @@ if(averagey>0){
 }
 
 else{
-  //Serial.println("stop");
-  dir=0;
+  Serial.println("stop");
   }
 
 sendData();
