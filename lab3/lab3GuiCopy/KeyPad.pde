@@ -63,15 +63,29 @@ void setupKeypad(){
     .setSize(50,70)
     .setFont(f)
   ;
+  
+  sec4Inst = numPadCp5.addTextlabel("sec4Inst")
+    .setText("Please enter your age")
+    .setPosition(1000,600)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",30));
+    
+  sec1Inst = numPadCp5.addTextlabel("sec1Inst")
+    .setText("Please enter your total distance traveled")
+    .setPosition(1000,600)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",30));
 }
 
 void showKeypad(){
-  background(51);
+  background(100);
   numPadCp5.show();
+  sec1Inst.hide();
+  sec4Inst.hide();
 }
 
 void hideKeypad(){
-  background(51);
+  background(100);
   numPadCp5.hide();
 }
 

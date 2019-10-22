@@ -44,6 +44,8 @@ boolean noValues = true;
 Textlabel stepLenLbl;
 Textlabel strideLenLbl;
 Textlabel cadenceLbl;
+
+Textlabel sec1Inst;
 //---------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------- section 2
@@ -114,6 +116,7 @@ Textlabel left;
 int health = -1;
 Textlabel healthLbl;
 Textlabel notHealthLbl;
+Textlabel sec4Inst;
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -145,22 +148,6 @@ void setup(){
   
   //sec 2 variables
   setupSec2();
-  
-  
-  // sec 2 test
-  /*
-  0 = still waiting      will display all 5 parts and will have a ? to display that. images will update live.... 1 2 3 4 5
-  1 = heel                                                                                                       ? ? ? ? ?
-  2 = tiptoeing                                                                                                  I O N
-  3 = intoeing
-  4 = out toeing
-  5 = normal
-  */
-  frameValues[0] = 50;  //tip
-  frameValues[1] = 47;  //
-  frameValues[2] = 40;
-  frameValues[3] = 37;
-  frameValues[4] = 36;
  
   // test sec 3
   testDir[0] = 0.0;
@@ -168,6 +155,9 @@ void setup(){
   testDir[2] = -1.0;
   testDir[3] = 0.5;
   testDir[4] = -0.5;
+  
+  // sec 4 setup
+  setupSec4();
   
   //setup keypad
   setupKeypad();
@@ -257,6 +247,7 @@ void draw(){  //same as loop in arduino
     }
     if(twoMin){
       showKeypad();
+      sec1Inst.show();
       displaySec1Tbl();
     }
     setDataArrZeros();
@@ -273,12 +264,15 @@ void draw(){  //same as loop in arduino
       updateSec2Tbl(timeFrames);
       //------------------------------------------------ testing image change
       println("wait for update");
-      timeFrames[testCount] = int(random(1,6));
-      testCount++;
-      if(testCount == 5){
-        testCount = 0;
+      //int ran = int(random(1,6));
+      //println("random num is: " + ran);
+      timeFrames[testCount] = testCount+1;
+      //testCount++;
+      if(testCount < 4){
+        //testCount = 0;
+        testCount++;
       }
-      delay(1000);
+      delay(1000);                                                                                      //******************************* change delay for the timeframe change
       //--------------------------------------------------------------
     }
     //-------------- how are we going to end this????
@@ -294,7 +288,9 @@ void draw(){  //same as loop in arduino
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
       dir = testDir[int(random(0,5))];
-      delay(1000);
+      int ran = int(random(0,5));
+      int[] da = new int[]{1000,500,1500,2000,250};                                                                                      // change times for directions***********
+      delay(da[ran]);
       //----------------------------------------------------
     }
   }
@@ -302,6 +298,7 @@ void draw(){  //same as loop in arduino
   else if(sec == 4){
     if(firstRun){
       showKeypad();
+      sec4Inst.show();
       firstRun = false;
       oldSec = 4;
     }
@@ -329,6 +326,7 @@ void Walking_Stats(){
 void sec2(){
   //myPort.write('2');
   sec = 2;
+  background(100);
   println("sec2");
 }
 

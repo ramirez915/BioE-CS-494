@@ -89,7 +89,7 @@ void displaySec2Tbl(){
 
 // resets the canvas after sec 2 is done
 void resetSec2(){
-  background(51);
+  background(100);
   firstRun = true;
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
@@ -116,7 +116,7 @@ void updateSec2Tbl(int timeFrame[]){
         image(footTypes[1],x[counter],y[counter],width/6,width/6);
         //text(MFNs[counter],x[counter]-100,y[counter] + 50);
         mfn1 = sec2Cp5.addLabel("mfn1")
-          .setText(str(MFNs[counter]))
+          .setText("37")
           .setPosition(x[counter]-100,y[counter] + 50)
           .setColorValue(color(255))
           .setFont(createFont("Cambria",50))
@@ -129,7 +129,7 @@ void updateSec2Tbl(int timeFrame[]){
         image(footTypes[2],x[counter],y[counter],width/6,width/6);
         //text(MFNs[counter],x[counter]-100,y[counter] + 50);
         mfn2 = sec2Cp5.addLabel("mfn2")
-          .setText(str(MFNs[counter]))
+          .setText("50")
           .setPosition(x[counter]-100,y[counter] + 50)
           .setColorValue(color(255))
           .setFont(createFont("Cambria",50))
@@ -142,7 +142,7 @@ void updateSec2Tbl(int timeFrame[]){
         image(footTypes[3],x[counter],y[counter],width/6,width/6);
         //text(MFNs[counter],x[counter]-100,y[counter] + 50);
         mfn3 = sec2Cp5.addLabel("mfn3")
-          .setText(str(MFNs[counter]))
+          .setText("47")
           .setPosition(x[counter]-100,y[counter] + 50)
           .setColorValue(color(255))
           .setFont(createFont("Cambria",50))
@@ -155,7 +155,7 @@ void updateSec2Tbl(int timeFrame[]){
         image(footTypes[4],x[counter],y[counter],width/6,width/6);
         //text(MFNs[counter],x[counter]-100,y[counter] + 50);
         mfn4 = sec2Cp5.addLabel("mfn4")
-          .setText(str(MFNs[counter]))
+          .setText("40")
           .setPosition(x[counter]-100,y[counter] + 50)
           .setColorValue(color(255))
           .setFont(createFont("Cambria",50))
@@ -168,7 +168,7 @@ void updateSec2Tbl(int timeFrame[]){
         image(footTypes[5],x[counter],y[counter],width/6,width/6);
         //text(MFNs[counter],x[counter]-100,y[counter] + 50);
         mfn5 = sec2Cp5.addLabel("mfn5")
-          .setText(str(MFNs[counter]))
+          .setText("36")
           .setPosition(x[counter]-100,y[counter] + 50)
           .setColorValue(color(255))
           .setFont(createFont("Cambria",50))

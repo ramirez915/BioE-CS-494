@@ -49,7 +49,7 @@ void displaySec3Text(){
 
 void updateSec3(float dir){
   //reset canvas
-  background(51);
+  background(100);
   displaySec3Text();
   // standing still
   if(dir == 0.0){
@@ -76,4 +76,5 @@ void updateSec3(float dir){
 void resetSec3(){
   background(100);
   firstRun = true;
+  sec3Cp5.hide();
 }
