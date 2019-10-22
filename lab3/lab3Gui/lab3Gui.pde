@@ -98,7 +98,6 @@ PShape foot;
 void setup(){
   size(2000, 1200);    //window size, (width, height)  1200
   
-  setDataArrZeros();
   timer = new ControlTimer();
   timer.setSpeedOfTime(1);
   
@@ -192,7 +191,7 @@ void setup(){
                  .hide()
                  ;
   
-  
+  setDataArrZeros();
 }  // end of setup
 
 void draw(){  //same as loop in arduino
@@ -220,6 +219,7 @@ void draw(){  //same as loop in arduino
       showKeypad();
       displaySec1Tbl();
     }
+    setDataArrZeros();
   }
   
   

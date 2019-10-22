@@ -60,8 +60,7 @@ void drawHeatMap(){
   updatePixels();
   
   updateValues();
-  setDataArrZeros();
-  setSec1Data(dataArr);
+  //setDataArrZeros();
   
   for(Blob b: blobs){
     b.update();
