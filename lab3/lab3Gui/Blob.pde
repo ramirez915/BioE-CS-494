@@ -3,18 +3,11 @@ class Blob {
   float r;
   PVector vel;
   
-  //added
-  float updatedR;
-  //
-  
   Blob(float x, float y) {
     pos = new PVector(x, y);
     vel = PVector.random2D();
     vel.mult(random(0, 0));
-    
-    // new r
     r = 0;
-    //
   }
 
   void update() {
@@ -27,11 +20,6 @@ class Blob {
       vel.y *= -1;
     }
   }
-  
-  // gets the updated radius
-  void updateR(float newRadius){
-    r = newRadius;
-  }
 
   void show() {
     noFill();
@@ -42,7 +30,10 @@ class Blob {
   
   void reset(){
     r = 0;
-    updatedR = 0;
+  }
+  
+  void updateR(float newR){
+    r = newR;
   }
   
 }

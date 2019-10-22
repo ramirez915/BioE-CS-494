@@ -40,7 +40,7 @@ void resetSec1(){
 void drawHeatMap(){
   loadPixels();
   
-  int i = 0;      // counter for 
+  //int i = 0;      // counter for test values
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       int index = x + y * width;
@@ -50,14 +50,17 @@ void drawHeatMap(){
         //float w = valueArr[i];                  // get values from valueArr to display
         //sum += 100 * w / d;
         sum += 100 * b.r / d;
-        i++;    // go to next value in array
+        //i++;    // go to next value in array
       }
-      i = 0; // start from the beginning
+      //i = 0; // start from the beginning
       pixels[index] = color(sum, 255, 255);
     }
   }
   
   updatePixels();
+  
+  updateValues();
+  setSec1Data(dataArr);
   
   for(Blob b: blobs){
     b.update();

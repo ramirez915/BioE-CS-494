@@ -10,6 +10,12 @@ SECTION 4
 -health-virtualAge
 */
 
+void setDataArrZeros(){
+  for(int i = 0; i < 23; i++){
+    dataArr[i] = 0;
+  }
+}
+
 
 // parses out data for sec 1
 void setSec1Data(float arr[]){
@@ -46,6 +52,23 @@ void setSec2Data(float arr[]){
   MFNs[4] = arr[19];
 }
 
-//void setSec3Data(float arr[]){
+void setSec3Data(float arr[]){
   
+}
+
+void setsec4Data(float arr[]){
+  
+}
+
+
+//void timerData30(){
+//  int time= (int)timer.time()/1000;
+//  timerVal.show();
+//  if(time<31){
+//    timer_value.setValue(Integer.toString((30-time))+"s");
+//  }
+//  if(time > 30){
+//   counter++;
+//   timer.reset(); 
+//  }
 //}
