@@ -74,6 +74,8 @@ Textlabel mfn4;
 Textlabel mfn5;
 
 int timeFrames[] = new int[5];  // contains all the time frames
+float frameValues[] = new float[5];
+
 float MFNs[] = new float[5];
 PImage footTypes[] = new PImage[6];    // contains all images to be displayed
 PImage qmark;
@@ -143,6 +145,22 @@ void setup(){
   
   //sec 2 variables
   setupSec2();
+  
+  
+  // sec 2 test
+  /*
+  0 = still waiting      will display all 5 parts and will have a ? to display that. images will update live.... 1 2 3 4 5
+  1 = heel                                                                                                       ? ? ? ? ?
+  2 = tiptoeing                                                                                                  I O N
+  3 = intoeing
+  4 = out toeing
+  5 = normal
+  */
+  frameValues[0] = 50;  //tip
+  frameValues[1] = 47;  //
+  frameValues[2] = 40;
+  frameValues[3] = 37;
+  frameValues[4] = 36;
  
   // test sec 3
   testDir[0] = 0.0;
