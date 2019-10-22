@@ -10,9 +10,9 @@ void setupSec2(){
   qmark = loadImage("qmark.jpg");
   heelImg = loadImage("heelImg.jpg");
   tiptoe = loadImage("tiptoe.jpg");
-  intoe = loadImage("intoeing.jpg");
-  outtoe = loadImage("outtoe.jpg");
-  normal = loadImage("normal.png");
+  intoe = loadImage("In-toeing.jpg");
+  outtoe = loadImage("Out toeing.jpg");
+  normal = loadImage("Straight Walking.png");
   footTypes[0] = qmark;
   footTypes[1] = heelImg;
   footTypes[2] = tiptoe;
@@ -37,51 +37,10 @@ void setupSec2(){
 void displaySec2Tbl(){
   sec2Cp5 = new ControlP5(this);
   //text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
-  fiveFrame = sec2Cp5.addLabel("5 Frame")
-    .setText("5 Frame")
+  currFrame = sec2Cp5.addLabel("curr Frame")
+    .setText("Current Walking Pattern")
     .setPosition(1000,30)
-    .setColorValue(color(255))
-    .setFont(createFont("Cambria",50))
-    .show();
-    ;
-    
-  //text("1",800,100);
-  f1 = sec2Cp5.addLabel("f1")
-    .setText("1")
-    .setPosition(800,100)
-    .setColorValue(color(255))
-    .setFont(createFont("Cambria",50))
-    .show();
-    ;
-  //text("2",1300,100);
-  f2 = sec2Cp5.addLabel("f2")
-    .setText("2")
-    .setPosition(1300,100)
-    .setColorValue(color(255))
-    .setFont(createFont("Cambria",50))
-    .show();
-    ;
-  //text("3",800,700);
-  f3 = sec2Cp5.addLabel("f3")
-    .setText("3")
-    .setPosition(800,700)
-    .setColorValue(color(255))
-    .setFont(createFont("Cambria",50))
-    .show();
-    ;
-  //text("4",1300,700);
-  f4 = sec2Cp5.addLabel("f4")
-    .setText("4")
-    .setPosition(1300,700)
-    .setColorValue(color(255))
-    .setFont(createFont("Cambria",50))
-    .show();
-    ;
-  //text("5",1750,700);
-  f5 = sec2Cp5.addLabel("f5")
-    .setText("5")
-    .setPosition(1750,700)
-    .setColorValue(color(255))
+    .setColorValue(color(255,255,0))
     .setFont(createFont("Cambria",50))
     .show();
     ;
@@ -99,83 +58,41 @@ void resetSec2(){
 }
 
 // updates the table according to what is being read from the arduino. so it all depends on what was recognized
-// use the timeFrame[]
-void updateSec2Tbl(int timeFrame[]){
-  int counter = 0;
-  for(int i: timeFrame){
-    println(counter + " values is " + i);
-    // place correspinding image depending on the value of the timeframe
-    switch(i){
-      // ? mark
-      case 0:
-        image(footTypes[0],x[counter],y[counter],width/6,width/6);
-        counter++;
-        break;
-      // heel
-      case 1:
-        image(footTypes[1],x[counter],y[counter],width/6,width/6);
-        //text(MFNs[counter],x[counter]-100,y[counter] + 50);
-        mfn1 = sec2Cp5.addLabel("mfn1")
-          .setText(str(MFNs[counter]))
-          .setPosition(x[counter]-100,y[counter] + 50)
-          .setColorValue(color(255))
-          .setFont(createFont("Cambria",50))
-          .show();
-          ;
-        counter++;
-        break;
-      // tip toe
-      case 2:
-        image(footTypes[2],x[counter],y[counter],width/6,width/6);
-        //text(MFNs[counter],x[counter]-100,y[counter] + 50);
-        mfn2 = sec2Cp5.addLabel("mfn2")
-          .setText(str(MFNs[counter]))
-          .setPosition(x[counter]-100,y[counter] + 50)
-          .setColorValue(color(255))
-          .setFont(createFont("Cambria",50))
-          .show();
-          ;
-        counter++;
-        break;
-      //in toe
-      case 3:
-        image(footTypes[3],x[counter],y[counter],width/6,width/6);
-        //text(MFNs[counter],x[counter]-100,y[counter] + 50);
-        mfn3 = sec2Cp5.addLabel("mfn3")
-          .setText(str(MFNs[counter]))
-          .setPosition(x[counter]-100,y[counter] + 50)
-          .setColorValue(color(255))
-          .setFont(createFont("Cambria",50))
-          .show();
-          ;
-        counter++;
-        break;
-      // out toe
-      case 4:
-        image(footTypes[4],x[counter],y[counter],width/6,width/6);
-        //text(MFNs[counter],x[counter]-100,y[counter] + 50);
-        mfn4 = sec2Cp5.addLabel("mfn4")
-          .setText(str(MFNs[counter]))
-          .setPosition(x[counter]-100,y[counter] + 50)
-          .setColorValue(color(255))
-          .setFont(createFont("Cambria",50))
-          .show();
-          ;
-        counter++;
-        break;
-      // normal
-      case 5:
-        image(footTypes[5],x[counter],y[counter],width/6,width/6);
-        //text(MFNs[counter],x[counter]-100,y[counter] + 50);
-        mfn5 = sec2Cp5.addLabel("mfn5")
-          .setText(str(MFNs[counter]))
-          .setPosition(x[counter]-100,y[counter] + 50)
-          .setColorValue(color(255))
-          .setFont(createFont("Cambria",50))
-          .show();
-          ;
-        counter++;
-        break;
+// can assume that were getting the walking type
+void updateSec2Tbl(int walkingType){
+  // place correspinding image depending on the value of the timeframe 
+  switch(walkingType){
+    // ? mark
+    case 0:
+      image(footTypes[0],width/2,height/2,width/6,width/6);
+      break;
+    // heel
+    case 1:
+      image(footTypes[1],width/2,height/2,width/6,width/6);
+      break;
+    // tip toe
+    case 2:
+      image(footTypes[2],width/2,height/2,width/6,width/6);
+      break;
+    //in toe
+    case 3:
+      image(footTypes[3],width/2,height/2,width/6,width/6);
+      break;
+    // out toe
+    case 4:
+      image(footTypes[4],width/2,height/2,width/6,width/6);
+      break;
+    // normal
+    case 5:
+      image(footTypes[5],width/2,height/2,width/6,width/6);
+      break;
     }
-  }
+    
+    mfn = sec2Cp5.addLabel("mfnlbl")
+        .setText(str(mfnVal))
+        .setPosition(800,height/2 - 50)
+        .setColorValue(color(255))
+        .setFont(createFont("Cambria",50))
+        .show();
+        ;
 }

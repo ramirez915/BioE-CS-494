@@ -12,11 +12,11 @@ int stepCount = 0;
 void displaySec1Tbl(){
   drawFoot();
   // labels
-  text("Step Length",750,100);
-  text("Stride Length",750,300);
-  text("Cadence",750,500);
-  text("Walking Speed",750,700);
-  text("Step Count",750,900);
+  text("Step Length",500,100);
+  text("Stride Length",500,300);
+  text("Cadence",500,500);
+  text("Walking Speed",500,700);
+  text("Step Count",500,900);
   
   // values
   text(stepLen,900,100);

@@ -121,9 +121,11 @@ Textlabel sec4Inst;
 //--------------------------------------------------------------------------------------------------------------------------------
 
 PShape foot;
+ int dirCount = 1;
 
 void setup(){
-  size(2000, 1200);    //window size, (width, height)  1200
+  fullScreen();
+  //size(2000, 1200);    //window size, (width, height)  1200
   
   timer = new ControlTimer();
   timer.setSpeedOfTime(1);
@@ -153,8 +155,8 @@ void setup(){
   testDir[0] = 0.0;
   testDir[1] = 1.0;
   testDir[2] = -1.0;
-  testDir[3] = 0.5;
-  testDir[4] = -0.5;
+  testDir[3] = -0.5;
+  testDir[4] = 0.5;
   
   // sec 4 setup
   setupSec4();
@@ -287,9 +289,9 @@ void draw(){  //same as loop in arduino
     else{
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
-      dir = testDir[int(random(0,5))];
+      dir = testDir[dirCount];            // up down left
       int ran = int(random(0,5));
-      int[] da = new int[]{1000,500,1500,2000,250};                                                                                      // change times for directions***********
+      int[] da = new int[]{7000,5000,6000,3000,6500};                                                                                      // change times for directions***********
       delay(da[ran]);
       //----------------------------------------------------
     }

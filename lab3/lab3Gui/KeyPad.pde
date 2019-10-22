@@ -98,22 +98,22 @@ void _3_(){
 }
 
 void _4_(){
-  myPort.write('4');
+  //myPort.write('4');
   println("user input 4");
 }
 
 void _5_(){
-  myPort.write('5');
+  //myPort.write('5');
   println("user input 5");
 }
 
 void _6_(){
-  myPort.write('6');
+  //myPort.write('6');
   println("user input 6");
 }
 
 void _7_(){
-  myPort.write('7');
+  //myPort.write('7');
   println("user input 7");
 }
 
@@ -129,7 +129,7 @@ void _9_(){
 
 void Done(){
   //myPort.write('x');  // sends the 'x' to signal that we're done getting the age
-  println("done getting age");
+  println("done getting age: 24");
   hideKeypad();
 }
 

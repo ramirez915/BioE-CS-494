@@ -53,27 +53,32 @@ void updateSec3(float dir){
   displaySec3Text();
   // standing still
   if(dir == 0.0){
-    image(footTypes[5],900,425,width/8,width/8);
+    image(footTypes[5],900,425,width/10,width/10);
   }
   // up
   else if(dir == 1.0){
-    image(footTypes[5],900,200,width/8,width/8);
+    image(footTypes[5],900,200,width/10,width/10);
+    up.setColorValue(color(0,255,0));
   }
   // right
   else if(dir == 0.5){
-    image(footTypes[5],1300,450,width/8,width/8);
+    image(footTypes[5],1300,450,width/10,width/10);
+    right.setColorValue(color(0,255,0));
   }
   //down
   else if(dir == -1.0){
-    image(footTypes[5],900,800,width/8,width/8);
+    image(footTypes[5],900,800,width/10,width/10);
+    down.setColorValue(color(0,255,0));
   }
   //left
   else if(dir == -0.5){
-    image(footTypes[5],600,450,width/8,width/8);
+    image(footTypes[5],600,450,width/10,width/10);
+    left.setColorValue(color(0,255,0));
   }
 }
 
 void resetSec3(){
   background(100);
   firstRun = true;
+  sec3Cp5.hide();
 }

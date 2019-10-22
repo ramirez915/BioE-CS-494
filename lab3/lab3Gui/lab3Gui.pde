@@ -59,19 +59,11 @@ recieving flags form arduino so just display image
 */
 
 ControlP5 sec2Cp5;
-Textlabel fiveFrame;
-Textlabel f1;
-Textlabel f2;
-Textlabel f3;
-Textlabel f4;
-Textlabel f5;
+Textlabel currFrame;
 
 Textlabel qmarkLbl;
-Textlabel mfn1;
-Textlabel mfn2;
-Textlabel mfn3;
-Textlabel mfn4;
-Textlabel mfn5;
+Textlabel mfn;
+float mfnVal;
 
 int timeFrames[] = new int[5];  // contains all the time frames
 float MFNs[] = new float[5];
@@ -123,7 +115,7 @@ void setup(){
   timer = new ControlTimer();
   timer.setSpeedOfTime(1);
   
-  colorMode(HSB);
+  //colorMode(HSB);
   blobs[0] = new Blob(200,200);      // mf
   blobs[1] = new Blob(360,400);      //lf
   blobs[2] = new Blob(160,550);      //mm
@@ -252,7 +244,7 @@ void draw(){  //same as loop in arduino
       oldSec = 2;
     }
     else{
-      updateSec2Tbl(timeFrames);
+      updateSec2Tbl(1);
       //------------------------------------------------ testing image change
       println("wait for update");
       timeFrames[testCount] = int(random(1,6));
