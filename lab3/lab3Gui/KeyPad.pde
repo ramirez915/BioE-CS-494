@@ -63,37 +63,49 @@ void setupKeypad(){
     .setSize(50,70)
     .setFont(f)
   ;
+  
+  sec4Inst = numPadCp5.addTextlabel("sec4Inst")
+    .setText("Please enter your age")
+    .setPosition(1000,600)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",30));
+  
+  sec1Inst = numPadCp5.addTextlabel("sec1Inst")
+    .setText("Please enter your total distance traveled")
+    .setPosition(1000,600)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",30));
 }
 
 void showKeypad(){
-  background(51);
+  background(100);
   numPadCp5.show();
 }
 
 void hideKeypad(){
-  background(51);
+  background(100);
   numPadCp5.hide();
 }
 
 
 //-------------------------------------------------------------------- button functions
 void _0_(){
-  //myPort.write('0');
+  myPort.write('0');
   println("user input 0");
 }
 
 void _1_(){
-  //myPort.write('1');
+  myPort.write('1');
   println("user input 1");
 }
 
 void _2_(){
-  //myPort.write('2');
+  myPort.write('2');
   println("user input 2");
 }
 
 void _3_(){
-  //myPort.write('3');
+  myPort.write('3');
   println("user input 3");
 }
 
@@ -128,7 +140,7 @@ void _9_(){
 }
 
 void Done(){
-  //myPort.write('x');  // sends the 'x' to signal that we're done getting the age
+  myPort.write('x');  // sends the 'x' to signal that we're done getting the age
   println("done getting age");
   hideKeypad();
 }

@@ -10,8 +10,6 @@ ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons 
 ControlTimer timer;
 Textlabel timerVal;
 
-ControlP5 sec4Cp5;
-
 PFont font;
 int x1 = 0;    // starting position of the graph
 
@@ -39,11 +37,6 @@ float walkingSpd = 0.0;
 int stepCount = 0;
 boolean twoMin = false;
 boolean noValues = true;
-
-
-Textlabel stepLenLbl;
-Textlabel strideLenLbl;
-Textlabel cadenceLbl;
 
 Textlabel sec1Inst;
 //---------------------------------------------------------------------------------------------------------------
@@ -114,8 +107,10 @@ Textlabel left;
 //---------------------------------------------------------------------------------------------------------------------------------------------- section 4
 // used to display user health
 int health = -1;
+ControlP5 sec4Cp5;
 Textlabel healthLbl;
 Textlabel notHealthLbl;
+Textlabel waitingLbl;
 Textlabel sec4Inst;
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -237,6 +232,7 @@ void draw(){  //same as loop in arduino
     else{
       if(!twoMin){
         drawHeatMap();
+        //waitingLbl.show();
       }
     }
     int time= (int)timer.time()/1000;
@@ -246,13 +242,13 @@ void draw(){  //same as loop in arduino
       twoMin = true;
     }
     if(twoMin){
+      waitingLbl.hide();
       showKeypad();
       sec1Inst.show();
       displaySec1Tbl();
     }
     setDataArrZeros();
   }
-  
   
   else if(sec == 2){
     if(firstRun){
@@ -301,15 +297,27 @@ void draw(){  //same as loop in arduino
       sec4Inst.show();
       firstRun = false;
       oldSec = 4;
+      health = 1;
     }
     // do what is meant to do in sec 4
     else{
-      
+      if(health == 1){
+        waitingLbl.hide();
+        healthLbl.show();
+      }
+      else if(health == 0){
+        waitingLbl.hide();
+        notHealthLbl.show();
+      }
+      else{
+        waitingLbl.show();
+      }
     }
   }
   // resets any given mode
   else if(sec == -2){
     resetGivenMode(oldSec);
+    waitingLbl.hide();
     oldSec = -1;
   }
 }

@@ -49,7 +49,7 @@ void drawHeatMap(){
         float d = dist(x, y, b.pos.x, b.pos.y);
         //float w = valueArr[i];                  // get values from valueArr to display
         //sum += 100 * w / d;
-        sum += 100 * b.r / d;
+        sum += 100 * b.r / d;                      // updates depending on the radius
         //i++;    // go to next value in array
       }
       //i = 0; // start from the beginning

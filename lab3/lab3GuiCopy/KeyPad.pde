@@ -65,8 +65,8 @@ void setupKeypad(){
   ;
   
   sec4Inst = numPadCp5.addTextlabel("sec4Inst")
-    .setText("Please enter your age")
-    .setPosition(1000,600)
+    .setText("Please enter your age and hit done when ready to continue")
+    .setPosition(1000,800)
     .setColorValue(color(255))
     .setFont(createFont("Cambria",30));
     
@@ -112,32 +112,32 @@ void _3_(){
 }
 
 void _4_(){
-  myPort.write('4');
+  //myPort.write('4');
   println("user input 4");
 }
 
 void _5_(){
-  myPort.write('5');
+  //myPort.write('5');
   println("user input 5");
 }
 
 void _6_(){
-  myPort.write('6');
+  //myPort.write('6');
   println("user input 6");
 }
 
 void _7_(){
-  myPort.write('7');
+  //myPort.write('7');
   println("user input 7");
 }
 
 void _8_(){
-  myPort.write('8');
+  //myPort.write('8');
   println("user input 8");
 }
 
 void _9_(){
-  myPort.write('9');
+  //myPort.write('9');
   println("user input 9");
 }
 
