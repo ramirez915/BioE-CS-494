@@ -35,12 +35,56 @@ void setupSec2(){
 
 //displays data for section 2 as table
 void displaySec2Tbl(){
-  text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
-  text("1",800,100);
-  text("2",1300,100);
-  text("3",800,700);
-  text("4",1300,700);
-  text("5",1750,700);
+  sec2Cp5 = new ControlP5(this);
+  //text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
+  fiveFrame = sec2Cp5.addLabel("5 Frame")
+    .setText("5 Frame")
+    .setPosition(1000,30)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
+    
+  //text("1",800,100);
+  f1 = sec2Cp5.addLabel("f1")
+    .setText("1")
+    .setPosition(800,100)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
+  //text("2",1300,100);
+  f2 = sec2Cp5.addLabel("f2")
+    .setText("2")
+    .setPosition(1300,100)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
+  //text("3",800,700);
+  f3 = sec2Cp5.addLabel("f3")
+    .setText("3")
+    .setPosition(800,700)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
+  //text("4",1300,700);
+  f4 = sec2Cp5.addLabel("f4")
+    .setText("4")
+    .setPosition(1300,700)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
+  //text("5",1750,700);
+  f5 = sec2Cp5.addLabel("f5")
+    .setText("5")
+    .setPosition(1750,700)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",50))
+    .show();
+    ;
 }
 
 // resets the canvas after sec 2 is done
@@ -51,6 +95,7 @@ void resetSec2(){
     timeFrames[i] = 0;
     MFNs[i] = 0;
   }
+  sec2Cp5.hide();
 }
 
 // updates the table according to what is being read from the arduino. so it all depends on what was recognized

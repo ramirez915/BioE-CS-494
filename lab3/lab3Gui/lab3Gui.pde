@@ -57,6 +57,13 @@ recieving flags form arduino so just display image
 4 = out toeing
 5 = normal
 */
+ControlP5 sec2Cp5;
+Textlabel fiveFrame;
+Textlabel f1;
+Textlabel f2;
+Textlabel f3;
+Textlabel f4;
+Textlabel f5;
 
 int timeFrames[] = new int[5];  // contains all the time frames
 float MFNs[] = new float[5];
@@ -135,9 +142,9 @@ void setup(){
   
   drawFoot();
   
-  printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  //printArray(Serial.list());   //prints all available serial ports
+  //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
                                                                               //************************************ and change the index to the port where the arduino is connected
@@ -147,7 +154,7 @@ void setup(){
                                                                               //*** String portName = Serial.list()[2];
   
   // starts serialEvent function when a newline character is read
-  myPort.bufferUntil('\n');
+  //myPort.bufferUntil('\n');
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -232,13 +239,13 @@ void draw(){  //same as loop in arduino
     else{
       updateSec2Tbl(timeFrames);
       //------------------------------------------------ testing image change
-      //println("wait for update");
-      //timeFrames[testCount] = int(random(1,6));
-      //testCount++;
-      //if(testCount == 5){
-      //  testCount = 0;
-      //}
-      //delay(1000);
+      println("wait for update");
+      timeFrames[testCount] = int(random(1,6));
+      testCount++;
+      if(testCount == 5){
+        testCount = 0;
+      }
+      delay(1000);
       //--------------------------------------------------------------
     }
     //-------------- how are we going to end this????
@@ -253,8 +260,8 @@ void draw(){  //same as loop in arduino
     else{
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
-      //dir = testDir[int(random(0,5))];
-      //delay(1000);
+      dir = testDir[int(random(0,5))];
+      delay(1000);
       //----------------------------------------------------
     }
   }
@@ -281,7 +288,7 @@ void draw(){  //same as loop in arduino
 //so whe you press any button, it sends perticular char over serial port
 
 void Walking_Stats(){
-  myPort.write('1');
+  //myPort.write('1');
   sec = 1;
   println("Walking Stats");
 }
@@ -306,52 +313,52 @@ void sec4(){
 void Main_Menu(){
   sec = -2;
   testCount = 0;
-  myPort.write('5');
+  //myPort.write('5');
   hideKeypad();
 }
 
-// checks what is being printed by the micro controller
-void serialEvent (Serial myPort) {
-  // check for incoming numbers on the serial monitor
-  if (myPort.available() >= 0) {
-    valueFromArduino = myPort.readStringUntil('\n');
+//// checks what is being printed by the micro controller
+//void serialEvent (Serial myPort) {
+//  // check for incoming numbers on the serial monitor
+//  if (myPort.available() >= 0) {
+//    valueFromArduino = myPort.readStringUntil('\n');
     
-    try{
-      setDataArrZeros();
-      dataArr = float(split(valueFromArduino,"-"));
-      println(valueFromArduino);
-      //should have 13 values from arduino
-//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
-      if(dataArr.length == 22){
-        int sec = int(dataArr[0]);
+//    try{
+//      setDataArrZeros();
+//      dataArr = float(split(valueFromArduino,"-"));
+//      println(valueFromArduino);
+//      //should have 13 values from arduino
+////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
+//      if(dataArr.length == 22){
+//        int sec = int(dataArr[0]);
         
-        // parse out data according to section
-        if(sec == 1){
-          setSec1Data(dataArr);
-          println("sec1");
-          delay(100);
-        }
-        else if(sec == 2){
-          setSec2Data(dataArr);
-        }
-        else if(sec == 3){
-          dir = dataArr[20];
-          println("dir: " + dir);
-        }
-        else if(sec == 4){
+//        // parse out data according to section
+//        if(sec == 1){
+//          setSec1Data(dataArr);
+//          println("sec1");
+//          delay(100);
+//        }
+//        else if(sec == 2){
+//          setSec2Data(dataArr);
+//        }
+//        else if(sec == 3){
+//          dir = dataArr[20];
+//          println("dir: " + dir);
+//        }
+//        else if(sec == 4){
           
-        }
-        // exit mode reset values
-        else if(sec == 5){
+//        }
+//        // exit mode reset values
+//        else if(sec == 5){
           
-        }
-      }
-      setDataArrZeros();
-    }catch(RuntimeException e){
-      e.printStackTrace();
-    }
-  }
-}
+//        }
+//      }
+//      setDataArrZeros();
+//    }catch(RuntimeException e){
+//      e.printStackTrace();
+//    }
+//  }
+//}
 
 
 void drawFoot(){
