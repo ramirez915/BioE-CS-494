@@ -67,6 +67,16 @@ PImage tiptoe;
 PImage intoe;
 PImage outtoe;
 PImage normal;
+PImage arrowLeft;
+PImage arrowRight;
+PImage arrowUp;
+PImage arrowDown;
+PImage greenArrowDown;
+PImage greenArrowUp;
+PImage greenArrowLeft;
+PImage greenArrowRight;
+
+
 
 int testCount = 0;        // for testing the live update of the time frames
 
@@ -106,7 +116,8 @@ Textlabel sec4Inst;
 PShape foot;
 
 void setup(){
-  size(2000, 1200);    //window size, (width, height)  1200
+  fullScreen();
+  //size(2000, 1200);    //window size, (width, height)  1200
   
   timer = new ControlTimer();
   timer.setSpeedOfTime(1);
@@ -149,8 +160,8 @@ void setup(){
   drawFoot();
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
                                                                               //************************************ and change the index to the port where the arduino is connected
@@ -160,38 +171,38 @@ void setup(){
                                                                               //*** String portName = Serial.list()[2];
   
   // starts serialEvent function when a newline character is read
-  myPort.bufferUntil('\n');
+ // myPort.bufferUntil('\n');
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
   font = createFont("Arial", 20);    // custom fonts for buttons and title
   
   cp5.addButton("Walking_Stats")     //"red" is the name of button
-    .setPosition(1700, 50)  //x and y coordinates of upper left corner of button
+    .setPosition(1600, 50)  //x and y coordinates of upper left corner of button
     .setSize(220, 70)      //(width, height)
     .setFont(font)
   ;
   
   cp5.addButton("sec2")
-    .setPosition(1700,150)
+    .setPosition(1600,150)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("sec3")
-  .setPosition(1700,250)
+  .setPosition(1600,250)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("sec4")
-  .setPosition(1700,350)
+  .setPosition(1600,350)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("Main_Menu")     //"alloff" is the name of button
-    .setPosition(1700, 450)  //x and y coordinates of upper left corner of button
+    .setPosition(1600, 450)  //x and y coordinates of upper left corner of button
     .setSize(150, 70)      //(width, height)
     .setFont(font)
   ;
@@ -247,13 +258,13 @@ void draw(){  //same as loop in arduino
     else{
       updateSec2Tbl(1);
       //------------------------------------------------ testing image change
-      //println("wait for update");
-      //timeFrames[testCount] = int(random(1,6));
-      //testCount++;
-      //if(testCount == 5){
-      //  testCount = 0;
-      //}
-      //delay(1000);
+      println("wait for update");
+      timeFrames[testCount] = int(random(1,6));
+      testCount++;
+      if(testCount == 5){
+        testCount = 0;
+      }
+      delay(1000);
       //--------------------------------------------------------------
     }
   }
@@ -267,8 +278,8 @@ void draw(){  //same as loop in arduino
     else{
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
-      //dir = testDir[int(random(0,5))];
-      //delay(1000);
+      dir = testDir[int(random(0,5))];
+      delay(1000);
       //----------------------------------------------------
     }
   }
@@ -311,13 +322,13 @@ void Walking_Stats(){
 }
 
 void sec2(){
-  myPort.write('2');
+  //myPort.write('2');
   sec = 2;
   println("sec2");
 }
 
 void sec3(){
-  myPort.write('3');
+  //myPort.write('3');
   sec = 3;
   println("sec3");
 }

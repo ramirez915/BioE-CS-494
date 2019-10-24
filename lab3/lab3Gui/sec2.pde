@@ -5,11 +5,11 @@ void setupSec2(){
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
     MFNs[i] = 0;
-  }
+  } 
   // loading images to be placed in array
-  qmark = loadImage("qmark.jpg");
-  heelImg = loadImage("heelImg.jpg");
-  tiptoe = loadImage("tiptoe.jpg");
+  //qmark = loadImage("qmark.jpg");
+  heelImg = loadImage("heel toeing.v2.png");
+  tiptoe = loadImage("tip toeing.png");
   intoe = loadImage("In-toeing.jpg");
   outtoe = loadImage("Out toeing.jpg");
   normal = loadImage("Straight Walking.png");
@@ -44,6 +44,20 @@ void displaySec2Tbl(){
     .setFont(createFont("Cambria",50))
     .show();
     ;
+    
+    cp5.addButton("Button 1")
+    .setPosition(1000,600)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
+  
+  cp5.addButton("Button 2")
+    .setPosition(1000,500)
+    .setSize(120, 70)
+    .setFont(font)
+  ;
+    
+   
 }
 
 // resets the canvas after sec 2 is done
@@ -64,11 +78,11 @@ void updateSec2Tbl(int walkingType){
   switch(walkingType){
     // ? mark
     case 0:
-      image(footTypes[0],width/2,height/2,width/6,width/6);
+      image(footTypes[0],width,height,width,width);
       break;
     // heel
     case 1:
-      image(footTypes[1],width/2,height/2,width/6,width/6);
+      image(footTypes[1],700,500,700,700);
       break;
     // tip toe
     case 2:
