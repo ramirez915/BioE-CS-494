@@ -7,8 +7,9 @@ Serial myPort;
 ControlP5 cp5; //create ControlP5 object for the main menu buttons
 
 ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input and the distance
-ControlTimer timer;
-Textlabel timerVal;
+
+StopWatchTimer watch = new StopWatchTimer();    // stopWatch
+Textlabel watchVal;                          // label used to display time
 
 PFont font;
 float dataArr[] = new float[22];      // array that will store the data      // size determined by the number of data coming in from arduino
@@ -119,10 +120,9 @@ void setup(){
   fullScreen();
   //size(2000, 1200);    //window size, (width, height)  1200
   
-  timer = new ControlTimer();
-  timer.setSpeedOfTime(1);
   
   //colorMode(HSB);
+  background(0,100,100);
   blobs[0] = new Blob(200,200);      // mf
   blobs[1] = new Blob(360,400);      //lf
   blobs[2] = new Blob(160,550);      //mm
@@ -171,7 +171,7 @@ void setup(){
                                                                               //*** String portName = Serial.list()[2];
   
   // starts serialEvent function when a newline character is read
- // myPort.bufferUntil('\n');
+  //myPort.bufferUntil('\n');
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -207,13 +207,13 @@ void setup(){
     .setFont(font)
   ;
   
-  timerVal = cp5.addTextlabel("timerVal")
-                 .setText("30"+"s")
-                 .setPosition(700,1200)
-                 .setColorValue(color(61))
-                 .setFont(createFont("Cambria",50))
-                 .hide()
-                 ;
+  watchVal = cp5.addTextlabel("watchVal")
+   .setText("TIME")
+   .setPosition(1700,900)
+   .setColorValue(color(225,0,0))
+   .setFont(createFont("Cambria",50))
+   .show()
+   ;
   
   setDataArrZeros();
 }  // end of setup
@@ -226,7 +226,7 @@ void draw(){  //same as loop in arduino
       displaySec1Tbl();
       firstRun = false;
       oldSec = 1;
-      timer.reset();
+      //timer.reset();
     }
     else{
       if(!twoMin){
@@ -234,9 +234,13 @@ void draw(){  //same as loop in arduino
         waitingLbl.show();
       }
     }
-    int time= (int)timer.time()/1000;
-    timerVal.setValue(Integer.toString((time))+"s");
-    timerVal.show();
+    
+    //update watch time on screen
+    int time= watch.second();
+    watchVal.setValue(Integer.toString((time))+"s");
+    watchVal.show();
+    
+    println("time " + time);
     if(time == 120){
       twoMin = true;
     }
@@ -316,7 +320,7 @@ void draw(){  //same as loop in arduino
 //so whe you press any button, it sends perticular char over serial port
 
 void Walking_Stats(){
-  myPort.write('1');
+  //myPort.write('1');
   sec = 1;
   println("Walking Stats");
 }
@@ -334,57 +338,58 @@ void sec3(){
 }
 
 void sec4(){
-  myPort.write('4');
+  //myPort.write('4');
   sec = 4;
   println("sec4");
 }
 void Main_Menu(){
   sec = -2;
   testCount = 0;
-  myPort.write('5');
+  //myPort.write('5');
+  println("exiting");
   hideKeypad();
 }
 
-// checks what is being printed by the micro controller
-void serialEvent (Serial myPort) {
-  // check for incoming numbers on the serial monitor
-  if (myPort.available() >= 0) {
-    valueFromArduino = myPort.readStringUntil('\n');
+//// checks what is being printed by the micro controller
+//void serialEvent (Serial myPort) {
+//  // check for incoming numbers on the serial monitor
+//  if (myPort.available() >= 0) {
+//    valueFromArduino = myPort.readStringUntil('\n');
     
-    try{
-      setDataArrZeros();
-      dataArr = float(split(valueFromArduino,"-"));
-      println(valueFromArduino);
-      //should have 22 values from arduino
-//sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
-      if(dataArr.length == 22){
-        int sec = int(dataArr[0]);
+//    try{
+//      setDataArrZeros();
+//      dataArr = float(split(valueFromArduino,"-"));
+//      println(valueFromArduino);
+//      //should have 22 values from arduino
+////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
+//      if(dataArr.length == 22){
+//        int sec = int(dataArr[0]);
         
-        // parse out data according to section
-        if(sec == 1){
-          setSec1Data(dataArr);
-          println("sec1");
-          //delay(100);
-        }
-        else if(sec == 2){
-          setSec2Data(dataArr);
-          println("sec2");
-        }
-        else if(sec == 3){
-          dir = dataArr[20];
-          println("dir: " + dir);
-        }
-        else if(sec == 4){
-          health = int(dataArr[21]);
-          println("health is " + health);
-        }
-      }
-      setDataArrZeros();
-    }catch(RuntimeException e){
-      e.printStackTrace();
-    }
-  }
-}
+//        // parse out data according to section
+//        if(sec == 1){
+//          setSec1Data(dataArr);
+//          println("sec1");
+//          //delay(100);
+//        }
+//        else if(sec == 2){
+//          setSec2Data(dataArr);
+//          println("sec2");
+//        }
+//        else if(sec == 3){
+//          dir = dataArr[20];
+//          println("dir: " + dir);
+//        }
+//        else if(sec == 4){
+//          health = int(dataArr[21]);
+//          println("health is " + health);
+//        }
+//      }
+//      setDataArrZeros();
+//    }catch(RuntimeException e){
+//      e.printStackTrace();
+//    }
+//  }
+//}
 
 
 void drawFoot(){
@@ -455,5 +460,8 @@ void resetGivenMode(int oldSec){
       resetSec4();
       break;
   }
-  timer.reset();
+  watch.stop();
+  watch.reset();
+  watchVal.setValue("TIME");
+  watchVal.hide();
 }

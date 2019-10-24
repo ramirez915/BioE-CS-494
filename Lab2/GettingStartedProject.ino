@@ -22,7 +22,7 @@
 
 //  Variables
 int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
-int LED13 = 13;   //  The on-board Arduion LED
+int LED13 = 4;   //  The on-board Arduion LED
 
 
 int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
@@ -32,7 +32,7 @@ int Threshold = 550;            // Determine which Signal to "count as a beat", 
 // The SetUp Function:
 void setup() {
   pinMode(LED13,OUTPUT);         // pin that will blink to your heartbeat!
-   Serial.begin(9600);         // Set's up Serial Communication at certain speed.
+   Serial.begin(115200);         // Set's up Serial Communication at certain speed.
 
 }
 

@@ -26,7 +26,7 @@ void sec4setup(){
 }
 
 void resetSec4(){
-  background(100);
+  background(0,100,255);
   hideKeypad();
   firstRun = true;
   

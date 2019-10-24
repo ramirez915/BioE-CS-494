@@ -12,7 +12,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("UP",1000,100);
   up = sec3Cp5.addLabel("up")
     .setText("UP")
@@ -20,7 +20,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("RIGHT",1600,550);
   right = sec3Cp5.addLabel("right")
     .setText("RIGHT")
@@ -28,7 +28,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("DOWN",1000,1100);
   down = sec3Cp5.addLabel("down")
     .setText("DOWN")
@@ -36,7 +36,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("LEFT",500,550);
   left = sec3Cp5.addLabel("left")
     .setText("LEFT")
@@ -62,13 +62,12 @@ void displaySec3Text(){
     
     arrowLeft = loadImage("white_arrowdown.png");
     image(arrowLeft,970,600);
-        
 }
 
 
 void updateSec3(float dir){
   //reset canvas
-  background(100);
+  background(0,100,255);
   displaySec3Text();
   // standing still
   image(footTypes[5],973,500,width/15,width/15);
@@ -97,28 +96,10 @@ void updateSec3(float dir){
     greenArrowLeft = loadImage("green_arrowleft.png");
     image(greenArrowLeft,600,500);
   }
-  
-  
-//  arrowLeft = loadImage("white_arrow.png");
-//    image(arrowLeft,650,500);
-    
-    
-    
-//    arrowRight = loadImage("white_arrowright.png");
-//    image(arrowRight,1000,1000);
-    
-    
-    
-//    arrowUp = loadImage("white_arrowup.png");
-//    image(arrowUp,800,1200);
-    
-    
-//    arrowLeft = loadImage("white_arrowdown.png");
-//    image(arrowLeft,800,1400);
 }
 
 void resetSec3(){
-  background(100);
+  background(0,100,255);
   firstRun = true;
   sec3Cp5.hide();
 }

@@ -62,7 +62,7 @@ void displaySec2Tbl(){
 
 // resets the canvas after sec 2 is done
 void resetSec2(){
-  background(51);
+  background(0,100,255);
   firstRun = true;
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
