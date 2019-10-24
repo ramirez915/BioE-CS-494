@@ -34,6 +34,8 @@ void updateValues(){
 void resetSec1(){
   background(0,100,255);
   firstRun = true;
+  waitingLbl.hide();
+  
 }
 
 // draw heat map
