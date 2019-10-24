@@ -78,12 +78,12 @@ void setupKeypad(){
 }
 
 void showKeypad(){
-  background(100);
+  background(0,100,255);
   numPadCp5.show();
 }
 
 void hideKeypad(){
-  background(100);
+  background(0,100,255);
   numPadCp5.hide();
 }
 
