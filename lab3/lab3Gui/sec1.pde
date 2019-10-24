@@ -32,7 +32,7 @@ void updateValues(){
 
 //reset
 void resetSec1(){
-  background(100);
+  background(0,100,255);
   firstRun = true;
 }
 

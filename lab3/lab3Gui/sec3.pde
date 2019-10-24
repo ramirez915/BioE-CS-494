@@ -12,7 +12,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("UP",1000,100);
   up = sec3Cp5.addLabel("up")
     .setText("UP")
@@ -20,7 +20,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("RIGHT",1600,550);
   right = sec3Cp5.addLabel("right")
     .setText("RIGHT")
@@ -28,7 +28,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("DOWN",1000,1100);
   down = sec3Cp5.addLabel("down")
     .setText("DOWN")
@@ -36,7 +36,7 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
+    
   //text("LEFT",500,550);
   left = sec3Cp5.addLabel("left")
     .setText("LEFT")
@@ -44,12 +44,11 @@ void displaySec3Text(){
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
-    ;
 }
 
 void updateSec3(float dir){
   //reset canvas
-  background(100);
+  background(0,100,255);
   displaySec3Text();
   // standing still
   if(dir == 0.0){
@@ -78,7 +77,7 @@ void updateSec3(float dir){
 }
 
 void resetSec3(){
-  background(100);
+  background(0,100,255);
   firstRun = true;
   sec3Cp5.hide();
 }
