@@ -3,8 +3,6 @@
 
 //displays data for section 2 as table
 void displaySec3Text(){
-  sec3Cp5 = new ControlP5(this);
-  
   //text("DIRECTION OF MOVEMENT", 800, 30);  // ("text", x coordinate, y coordinate)
   sec3Lbl = sec3Cp5.addLabel("sec3Lbl")
     .setText("Direction of Movement")
@@ -24,7 +22,7 @@ void displaySec3Text(){
   //text("RIGHT",1600,550);
   right = sec3Cp5.addLabel("right")
     .setText("RIGHT")
-    .setPosition(1600,550)
+    .setPosition(1500,550)
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
@@ -32,7 +30,7 @@ void displaySec3Text(){
   //text("DOWN",1000,1100);
   down = sec3Cp5.addLabel("down")
     .setText("DOWN")
-    .setPosition(1000,1100)
+    .setPosition(960,1000)
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
@@ -40,39 +38,61 @@ void displaySec3Text(){
   //text("LEFT",500,550);
   left = sec3Cp5.addLabel("left")
     .setText("LEFT")
-    .setPosition(500,550)
+    .setPosition(450,550)
     .setColorValue(color(255))
     .setFont(createFont("Cambria",50))
     .show();
+    ;
+    
+    arrowLeft = loadImage("white_arrow.png");
+    image(arrowLeft,600,500);
+    
+    
+    
+    arrowRight = loadImage("white_arrowright.png");
+    image(arrowRight,1103,500);
+    
+    
+    
+    arrowUp = loadImage("white_arrowup.png");
+    image(arrowUp,970,170);
+    
+    
+    arrowLeft = loadImage("white_arrowdown.png");
+    image(arrowLeft,970,600);
 }
+
 
 void updateSec3(float dir){
   //reset canvas
   background(0,100,255);
   displaySec3Text();
   // standing still
-  if(dir == 0.0){
-    image(footTypes[5],900,425,width/10,width/10);
-  }
+  image(footTypes[5],973,500,width/15,width/15);
   // up
-  else if(dir == 1.0){
-    image(footTypes[5],900,200,width/10,width/10);
+  if(dir == 1.0){
     up.setColorValue(color(0,255,0));
+    greenArrowUp = loadImage("green_arrowup.png");
+    image(greenArrowUp,970,170);
   }
+  
   // right
   else if(dir == 0.5){
-    image(footTypes[5],1300,450,width/10,width/10);
     right.setColorValue(color(0,255,0));
+    greenArrowRight = loadImage("green_arrowright.png");
+    image(greenArrowRight,1103,500);
   }
   //down
   else if(dir == -1.0){
-    image(footTypes[5],900,800,width/10,width/10);
     down.setColorValue(color(0,255,0));
+    greenArrowDown = loadImage("green_arrowdown.png");
+    image(greenArrowDown,970,600);
   }
   //left
   else if(dir == -0.5){
-    image(footTypes[5],600,450,width/10,width/10);
     left.setColorValue(color(0,255,0));
+    greenArrowLeft = loadImage("green_arrowleft.png");
+    image(greenArrowLeft,600,500);
   }
 }
 

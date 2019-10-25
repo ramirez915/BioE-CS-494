@@ -1,15 +1,17 @@
 //size of GUI size(2000, 1200);
 
 void setupSec2(){
+  sec2Cp5 = new ControlP5(this);
+  
   // setting up default time frames
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
     MFNs[i] = 0;
-  }
+  } 
   // loading images to be placed in array
-  qmark = loadImage("qmark.jpg");
-  heelImg = loadImage("heelImg.jpg");
-  tiptoe = loadImage("tiptoe.jpg");
+  //qmark = loadImage("qmark.jpg");
+  heelImg = loadImage("heel toeing.v2.png");
+  tiptoe = loadImage("tip toeing.png");
   intoe = loadImage("In-toeing.jpg");
   outtoe = loadImage("Out toeing.jpg");
   normal = loadImage("Straight Walking.png");
@@ -35,15 +37,28 @@ void setupSec2(){
 
 //displays data for section 2 as table
 void displaySec2Tbl(){
-  sec2Cp5 = new ControlP5(this);
   //text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
   currFrame = sec2Cp5.addLabel("curr Frame")
     .setText("Current Walking Pattern")
-    .setPosition(1000,30)
-    .setColorValue(color(255,255,0))
-    .setFont(createFont("Cambria",50))
+    .setPosition(600,50)
+    .setColorValue(color(0,0,0))
+    .setFont(createFont("Candara",65))
     .show();
     ;
+    
+    cp5.addButton("Button 1")
+    .setPosition(680,150)
+    .setSize(200, 70)
+    .setFont(createFont("MS Gothic",35))
+  ;
+  
+  cp5.addButton("Button 2")
+    .setPosition(980,150)
+    .setSize(200, 70)
+    .setFont(createFont("MS Gothic",35))
+  ;
+    
+   
 }
 
 // resets the canvas after sec 2 is done
@@ -64,11 +79,11 @@ void updateSec2Tbl(int walkingType){
   switch(walkingType){
     // ? mark
     case 0:
-      image(footTypes[0],width/2,height/2,width/6,width/6);
+      image(footTypes[0],width,height,width,width);
       break;
     // heel
     case 1:
-      image(footTypes[1],width/2,height/2,width/6,width/6);
+      image(footTypes[1],700,500,700,700);
       break;
     // tip toe
     case 2:

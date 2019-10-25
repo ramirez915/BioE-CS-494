@@ -39,7 +39,7 @@ void loop() {
   force[2]=analogRead(f_s2);
   force[3]=analogRead(f_s3);
 
-  Serial.println(force[0]);
+//  Serial.println(force[0]);
 //  Serial.print(",");
 //  Serial.println(force[1]);
 //  Serial.print(",");
@@ -53,14 +53,14 @@ void loop() {
     mappedForce[i] = map(force[i],0,1023,0,255);
   }
 
-//  Serial.println("white-1");
-//  Serial.println(mappedForce[0]);
-//  Serial.println("green");
-//  Serial.println(mappedForce[1]);
-//  Serial.println("white-2");
-//  Serial.println(mappedForce[2]);
-//  Serial.println("red");
-//  Serial.println(mappedForce[3]);
+  Serial.println("white-1");
+  Serial.println(mappedForce[0]);
+  Serial.println("green");
+  Serial.println(mappedForce[1]);
+  Serial.println("white-2");
+  Serial.println(mappedForce[2]);
+  Serial.println("red");
+  Serial.println(mappedForce[3]);
 
   
   analogWrite(led_w1,mappedForce[0]);
