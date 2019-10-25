@@ -207,12 +207,12 @@ void setup(){
     
   // adds buttons to the window
   cp5 = new ControlP5(this);
-  font = createFont("Arial", 20);    // custom fonts for buttons and title
+  font = createFont("MS Gothic", 35);    // custom fonts for buttons and title
   
   cp5.addButton("Walking_Stats")     //"red" is the name of button
     .setPosition(1800, 50)  //x and y coordinates of upper left corner of button
     .setSize(220, 70)      //(width, height)
-    .setFont(font)
+    .setFont(createFont("MS Gothic",30))
   ;
   
   cp5.addButton("sec2")
@@ -231,6 +231,7 @@ void setup(){
   .setPosition(1800,350)
     .setSize(120, 70)
     .setFont(font)
+    //.setColorActive(60); // color for mouse-over
   ;
   
   cp5.addButton("Main_Menu")     //"alloff" is the name of button
@@ -243,7 +244,7 @@ void setup(){
    .setText("TIME")
    .setPosition(1750,600)
    .setColorValue(color(225,0,0))
-   .setFont(createFont("Cambria",50))
+   .setFont(createFont("MS Gothic",50))
    .show()
    ;
    
