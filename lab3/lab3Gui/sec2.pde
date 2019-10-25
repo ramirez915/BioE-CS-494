@@ -39,22 +39,22 @@ void displaySec2Tbl(){
   //text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
   currFrame = sec2Cp5.addLabel("curr Frame")
     .setText("Current Walking Pattern")
-    .setPosition(1000,30)
-    .setColorValue(color(255,255,0))
-    .setFont(createFont("Cambria",50))
+    .setPosition(600,50)
+    .setColorValue(color(0,0,0))
+    .setFont(createFont("Candara",65))
     .show();
     ;
     
     cp5.addButton("Button 1")
-    .setPosition(1000,600)
-    .setSize(120, 70)
-    .setFont(font)
+    .setPosition(680,150)
+    .setSize(200, 70)
+    .setFont(createFont("MS Gothic",35))
   ;
   
   cp5.addButton("Button 2")
-    .setPosition(1000,500)
-    .setSize(120, 70)
-    .setFont(font)
+    .setPosition(980,150)
+    .setSize(200, 70)
+    .setFont(createFont("MS Gothic",35))
   ;
     
    

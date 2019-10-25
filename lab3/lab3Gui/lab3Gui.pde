@@ -180,38 +180,39 @@ void setup(){
   cp5.addButton("Walking_Stats")     //"red" is the name of button
     .setPosition(1600, 50)  //x and y coordinates of upper left corner of button
     .setSize(220, 70)      //(width, height)
-    .setFont(font)
+    .setFont(createFont("MS Gothic",30))
   ;
   
   cp5.addButton("sec2")
     .setPosition(1600,150)
-    .setSize(120, 70)
-    .setFont(font)
+    .setSize(220, 70)
+    .setFont(createFont("MS Gothic",35))
+    //.setColorActive(60); // color for mouse-over
   ;
   
   cp5.addButton("sec3")
   .setPosition(1600,250)
-    .setSize(120, 70)
-    .setFont(font)
+    .setSize(220, 70)
+    .setFont(createFont("MS Gothic",35))
   ;
   
   cp5.addButton("sec4")
   .setPosition(1600,350)
-    .setSize(120, 70)
-    .setFont(font)
+    .setSize(220, 70)
+    .setFont(createFont("MS Gothic",35))
   ;
   
   cp5.addButton("Main_Menu")     //"alloff" is the name of button
     .setPosition(1600, 450)  //x and y coordinates of upper left corner of button
-    .setSize(150, 70)      //(width, height)
-    .setFont(font)
+    .setSize(220, 70)      //(width, height)
+    .setFont(createFont("MS Gothic",35))
   ;
   
   watchVal = cp5.addTextlabel("watchVal")
    .setText("TIME")
    .setPosition(1700,900)
    .setColorValue(color(225,0,0))
-   .setFont(createFont("Cambria",50))
+   .setFont(createFont("MS Gothic",50))
    .show()
    ;
   
