@@ -16,9 +16,16 @@ void sec4setup(){
     
   waitingLbl = sec4Cp5.addTextlabel("waiting")
     .setText("Waiting for data")
-    .setPosition(1000,600)
+    .setPosition(1700,00)
     .setColorValue(color(255))
     .setFont(createFont("Cambria",20));
+    
+  sec4Inst = sec4Cp5.addTextlabel("sec4Inst")
+    .setText("Please enter your age")
+    .setPosition(1700,1000)
+    .setColorValue(color(255))
+    .setFont(createFont("Cambria",30))
+    .hide();
     
   healthLbl.hide();
   notHealthLbl.hide();

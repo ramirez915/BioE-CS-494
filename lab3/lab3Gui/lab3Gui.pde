@@ -1,6 +1,5 @@
 import controlP5.*; // import ControlP5 library
 import grafica.*;    // for graphing
-import processing.sound.*;    // for music
 import processing.serial.*;
 
 Serial myPort;
@@ -9,6 +8,8 @@ ControlP5 cp5; //create ControlP5 object for the main menu buttons
 ControlP5 numPadCp5;    // another CP5 object that will conatin all the buttons for the age input and the distance
 
 StopWatchTimer watch = new StopWatchTimer();    // stopWatch
+int seconds = 0;
+int min = 0;
 Textlabel watchVal;                          // label used to display time
 
 PFont font;
@@ -25,19 +26,38 @@ boolean firstRun = true;      // used as a flag to set up section display only o
 
 // ------------------------------------------------------------------------------------------------------------------------------------- section 1
 // place table in the middle of the screen to display values
-float mf = 0.0;    // blob[0]
-float lf = 0.0;    // blob[1]
-float mm = 0.0;    // blob[2]
-float heelSens = 0.0;  // blob[3]
+float mfVal = 0.0;    // blob[0]
+float lfVal = 0.0;    // blob[1]
+float mmVal = 0.0;    // blob[2]
+float heelVal = 0.0;  // blob[3]
 float stepLen = 0.0;
 float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
 int stepCount = 0;
 boolean twoMin = false;
-boolean noValues = true;
+boolean noUserInput = true;          // used to keep track if the user has finished giving info    //----------------------------------------------------------- should be used for sec 4
+String userInputStr = "";            // distance will be converted to an int when needed           //---------------------------------------------------------- should be used for sec 4
+
+boolean calculate = true;            // used to calcluate ONCE
+
 
 Textlabel sec1Inst;
+// labels
+Textlabel stepLenLbl;
+Textlabel strideLenLbl;
+Textlabel cadenceLbl;
+Textlabel walkingSpdLbl;
+Textlabel stepCountLbl;
+
+// values
+Textlabel stepLenVal;
+Textlabel strideLenVal;
+Textlabel cadenceVal;
+Textlabel walkingSpdVal;
+Textlabel stepCountVal;
+
+ControlP5 sec1Cp5;
 //---------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------- section 2
@@ -116,13 +136,19 @@ Textlabel sec4Inst;
 
 PShape foot;
 
+//------------------------------------------------------------------------grafica
+GPlot mfPlot, lfPlot, mmPlot, heelPlot;
+int x1 = 0;    // starting position of the graph
+
+//-------------------------------------------------------------------
+
 void setup(){
   fullScreen();
   //size(2000, 1200);    //window size, (width, height)  1200
   
   
-  //colorMode(HSB);
-  background(0,100,100);
+  colorMode(HSB);                                // this needs to be ON so that the heat map works as intended        // not sure how I got the color of the background
+  //background(0,100,100);
   blobs[0] = new Blob(200,200);      // mf
   blobs[1] = new Blob(360,400);      //lf
   blobs[2] = new Blob(160,550);      //mm
@@ -140,8 +166,14 @@ void setup(){
   newVals[2] = 0;
   newVals[3] = 0;
   
+  //sec 1
+  setupSec1();
+  
   //sec 2 variables
   setupSec2();
+  
+  // setup sec 3
+  sec3Cp5 = new ControlP5(this);
  
   // test sec 3
   testDir[0] = 0.0;
@@ -178,43 +210,84 @@ void setup(){
   font = createFont("Arial", 20);    // custom fonts for buttons and title
   
   cp5.addButton("Walking_Stats")     //"red" is the name of button
-    .setPosition(1600, 50)  //x and y coordinates of upper left corner of button
+    .setPosition(1800, 50)  //x and y coordinates of upper left corner of button
     .setSize(220, 70)      //(width, height)
     .setFont(font)
   ;
   
   cp5.addButton("sec2")
-    .setPosition(1600,150)
+    .setPosition(1800,150)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("sec3")
-  .setPosition(1600,250)
+  .setPosition(1800,250)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("sec4")
-  .setPosition(1600,350)
+  .setPosition(1800,350)
     .setSize(120, 70)
     .setFont(font)
   ;
   
   cp5.addButton("Main_Menu")     //"alloff" is the name of button
-    .setPosition(1600, 450)  //x and y coordinates of upper left corner of button
+    .setPosition(1800, 450)  //x and y coordinates of upper left corner of button
     .setSize(150, 70)      //(width, height)
     .setFont(font)
   ;
   
   watchVal = cp5.addTextlabel("watchVal")
    .setText("TIME")
-   .setPosition(1700,900)
+   .setPosition(1750,600)
    .setColorValue(color(225,0,0))
    .setFont(createFont("Cambria",50))
    .show()
    ;
+   
+   //---------------------------------------------------------------- grafica
+   // Create a new plot and set its position on the screen
+  // ecg and respPlots    regular plots to see signal from device
+  mfPlot = new GPlot(this,510,50);        //graph positioned at 300,0
+  mfPlot.setTitleText("MF Monitor");
+  mfPlot.getXAxis().setAxisLabelText("x axis");
+  mfPlot.getYAxis().setAxisLabelText("y axis");
+  mfPlot.setDim(450,300);     // one graph alone is 1500,500
+  mfPlot.setXLim(0,50);    // x axis must stay the same
+  mfPlot.setYLim(0,260);    // y axis
+  mfPlot.activateZooming(2.0,CENTER,CENTER);
   
+  lfPlot = new GPlot(this,1100,50);        //graph positioned at 300,600
+  lfPlot.setTitleText("LF Monitor");
+  lfPlot.getXAxis().setAxisLabelText("x axis");
+  lfPlot.getYAxis().setAxisLabelText("y axis");
+  lfPlot.setDim(450,300);
+  lfPlot.setXLim(0,50);    // x axis must stay at 300
+  lfPlot.setYLim(0,260);
+  lfPlot.activateZooming(2.0,CENTER,CENTER);
+  
+  mmPlot = new GPlot(this,510,480);        //graph positioned at 300,0
+  mmPlot.setTitleText("MM Monitor");
+  mmPlot.getXAxis().setAxisLabelText("x axis");
+  mmPlot.getYAxis().setAxisLabelText("y axis");
+  mmPlot.setDim(450,300);              // one graph alone is 1500,500
+  mmPlot.setXLim(0,50);    // x axis must stay the same
+  mmPlot.setYLim(0,260);    // y axis
+  mmPlot.activateZooming(2.0,CENTER,CENTER);
+  
+  heelPlot = new GPlot(this,1100,480);        //graph positioned at 300,600
+  heelPlot.setTitleText("HEEL Monitor");
+  heelPlot.getXAxis().setAxisLabelText("x axis");
+  heelPlot.getYAxis().setAxisLabelText("y axis");
+  heelPlot.setDim(450,300);
+  heelPlot.setXLim(0,50);    // x axis must stay at 300
+  heelPlot.setYLim(0,260);
+  heelPlot.activateZooming(2.0,CENTER,CENTER);
+   
+  //---------------------------------------------------------------------------------
+   
   setDataArrZeros();
 }  // end of setup
 
@@ -223,34 +296,53 @@ void draw(){  //same as loop in arduino
   
   if(sec == 1){
     if(firstRun){
-      displaySec1Tbl();
+      showSec1Vals();
       firstRun = false;
       oldSec = 1;
-      //timer.reset();
+      watch.start();
     }
-    else{
-      if(!twoMin){
-        drawHeatMap();
-        waitingLbl.show();
-      }
+    if(!twoMin){
+      drawHeatMap();
+      plotData();
+      waitingLbl.show();
+      
+      //update watch time on screen
+      seconds = watch.second();
+      min = watch.minute();
+      watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
+      watchVal.show();
+      println("time: " + min + " min " + seconds + "s");
     }
     
-    //update watch time on screen
-    int time= watch.second();
-    watchVal.setValue(Integer.toString((time))+"s");
-    watchVal.show();
-    
-    println("time " + time);
-    if(time == 120){
+    // for testing... change min == 2 to seconds == 2 ro something low
+    if(seconds == 2 && twoMin == false){        //-------------------------------------------------------------- if were at 2 minutes... min== 2
       twoMin = true;
-    }
-    if(twoMin){
+      
+      resetPlots();    // reset plots and hide them in order to have space for the number pad
       waitingLbl.hide();
       showKeypad();
       sec1Inst.show();
-      displaySec1Tbl();
+      delay(700);
     }
-    setDataArrZeros();
+    if(twoMin){
+      // get input
+      // this if is only for testing
+      if(noUserInput){
+        println("waiting for distance");
+      }
+
+      //calculate the stuff with the distance when user input is acquired**************
+      if(!noUserInput){          // if user input something by hitting done on the keypad
+        println("done! distance is: " + int(userInputStr));
+        
+        if(calculate){     //---------------------------------------------------------------------------------------------------------------------------------- finish calcuations******
+          
+          calculate = false;
+        }
+        println("we are out of the calculate");
+        showSec1Vals();          // to update values with the calculated values
+      }
+    }
   }
   
   else if(sec == 2){
@@ -448,6 +540,8 @@ void resetGivenMode(int oldSec){
     //resetting sec 1
     case 1:
       resetSec1();
+      resetPlots();
+      waitingLbl.hide();
       twoMin = false;
       break;
     case 2:
@@ -455,11 +549,15 @@ void resetGivenMode(int oldSec){
       break;
     case 3:
       resetSec3();
+      println("exiting sec 3");
       break;
     case 4:
       resetSec4();
       break;
   }
+  seconds = 0;
+  min = 0;
+  userInputStr = "";              // reset user str
   watch.stop();
   watch.reset();
   watchVal.setValue("TIME");

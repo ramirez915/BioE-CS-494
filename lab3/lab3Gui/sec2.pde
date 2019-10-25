@@ -1,6 +1,8 @@
 //size of GUI size(2000, 1200);
 
 void setupSec2(){
+  sec2Cp5 = new ControlP5(this);
+  
   // setting up default time frames
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
@@ -35,7 +37,6 @@ void setupSec2(){
 
 //displays data for section 2 as table
 void displaySec2Tbl(){
-  sec2Cp5 = new ControlP5(this);
   //text("5 FRAME", 1000, 30);  // ("text", x coordinate, y coordinate)
   currFrame = sec2Cp5.addLabel("curr Frame")
     .setText("Current Walking Pattern")

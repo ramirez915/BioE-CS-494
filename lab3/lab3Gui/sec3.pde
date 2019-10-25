@@ -3,8 +3,6 @@
 
 //displays data for section 2 as table
 void displaySec3Text(){
-  sec3Cp5 = new ControlP5(this);
-  
   //text("DIRECTION OF MOVEMENT", 800, 30);  // ("text", x coordinate, y coordinate)
   sec3Lbl = sec3Cp5.addLabel("sec3Lbl")
     .setText("Direction of Movement")
