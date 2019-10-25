@@ -40,5 +40,6 @@ void resetSec4(){
   healthLbl.hide();
   notHealthLbl.hide();
   waitingLbl.hide();
+  sec4Inst.hide();
 
 }

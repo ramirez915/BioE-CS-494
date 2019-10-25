@@ -146,25 +146,9 @@ void hideSec1Vals(){
   cadenceVal.hide();
   walkingSpdVal.hide();
   stepCountVal.hide();
-}
-
-//// display the text
-//void displaySec1Tbl(){
-//  drawFoot();
-//  // labels
-//  //text("Step Length",500,1000);
-//  //text("Stride Length",500,1100);
-//  //text("Cadence",500,1200);
-//  //text("Walking Speed",1200,1000);
-//  //text("Step Count",1200,1100);
   
-//  // values
-//  //text(stepLen,900,1000);
-//  //text(strideLen,900,1100);
-//  //text(cadence,900,1200);
-//  //text(walkingSpd,1600,1000);
-//  //text(stepCount,1600,1100);
-//}
+  sec1Inst.hide();
+}
 
 //reset
 void resetSec1(){
