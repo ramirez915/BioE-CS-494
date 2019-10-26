@@ -25,11 +25,11 @@ float average_bpm=0;             // the average
 
 //  Variables
 int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
-int LED13 = 13;   //  The on-board Arduion LED
+int LED = 11;   //  The on-board Arduion LED
 
 
 int seg;                // holds the incoming raw data. Signal value can range from 0-1024
-int thr = 550;            // Determine which Signal to "count as a beat", and which to ingore.
+int thr = 670;            // Determine which Signal to "count as a beat", and which to ingore.
 
 
 int colorFlag;
@@ -96,7 +96,7 @@ seg=analogRead(PulseSensorPurplePin);
 Serial.println(seg); 
 
 if(seg>thr) {
-       digitalWrite(LED13,HIGH);
+       digitalWrite(LED,HIGH);
        
        //R-peak detected, save time instant
       //t must be current time
@@ -114,7 +114,7 @@ if(seg>thr) {
     } 
 
     else{
-      digitalWrite(LED13,LOW); 
+      digitalWrite(LED,LOW); 
     }
 
     delay(30);
@@ -175,11 +175,9 @@ int getBaseLine(){
 void sendData(int mode, int colorFlag, float heartReading, float respReading){
   Serial.print(mode);
   Serial.print("-");
-  Serial.print(colorFlag);
-  Serial.print("-");
   Serial.print(heartReading);
-  Serial.print("-");
-  Serial.println(respReading);
+//  Serial.print("-");
+//  Serial.println(respReading);
 }
 
 //////////////////////////////////////////////////////
@@ -281,7 +279,7 @@ void stress () {
 void setup() {
   // initialize the serial communication:
   Serial.begin(115200);
-  pinMode(LED13,OUTPUT);
+  pinMode(LED,OUTPUT);
 }
 
 
