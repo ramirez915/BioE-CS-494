@@ -13,7 +13,7 @@ int min = 0;
 Textlabel watchVal;                          // label used to display time
 
 PFont font;
-float dataArr[] = new float[22];      // array that will store the data      // size determined by the number of data coming in from arduino
+float dataArr[] = new float[4];      // array that will store the data      // size determined by the number of data coming in from arduino
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
@@ -131,6 +131,7 @@ Textlabel healthLbl;
 Textlabel notHealthLbl;
 Textlabel waitingLbl;
 Textlabel sec4Inst;
+boolean startWatch = true;              // starts timer for this part
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -143,8 +144,8 @@ int x1 = 0;    // starting position of the graph
 //-------------------------------------------------------------------
 
 void setup(){
-  fullScreen();
-  //size(2000, 1200);    //window size, (width, height)  1200
+  //fullScreen();
+  size(2000, 1200);    //window size, (width, height)  1200
   
   
   colorMode(HSB);                                // this needs to be ON so that the heat map works as intended        // not sure how I got the color of the background
@@ -295,6 +296,7 @@ void setup(){
 void draw(){  //same as loop in arduino
   //get data from serial event then draw on heat map
   
+  //-------------------------------------------------------------------------------------------------------------------------------------------- SECTION 1
   if(sec == 1){
     if(firstRun){
       showSec1Vals();
@@ -316,7 +318,7 @@ void draw(){  //same as loop in arduino
     }
     
     // for testing... change min == 2 to seconds == 2 ro something low
-    if(seconds == 2 && twoMin == false){        //-------------------------------------------------------------- if were at 2 minutes... min== 2
+    if(seconds == 5 && twoMin == false){        //-------------------------------------------------------------- if were at 2 minutes... min== 2
       twoMin = true;
       
       resetPlots();    // reset plots and hide them in order to have space for the number pad
@@ -345,7 +347,9 @@ void draw(){  //same as loop in arduino
       }
     }
   }
+  //---------------------------------------------------------------------------------------------------------------------------- END OF SECTION 1
   
+  //------------------------------------------------------------------------------------------------------------------------------------------------ SECTION 2
   else if(sec == 2){
     if(firstRun){
       displaySec2Tbl();
@@ -365,7 +369,9 @@ void draw(){  //same as loop in arduino
       //--------------------------------------------------------------
     }
   }
+  //------------------------------------------------------------------------------------------------------------------------------------------ END OF SECTION 2
   
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------- SECION 3
   else if(sec == 3){
     if(firstRun){
       displaySec3Text();
@@ -380,7 +386,9 @@ void draw(){  //same as loop in arduino
       //----------------------------------------------------
     }
   }
-  
+  //------------------------------------------------------------------------------------------------------------------------------------ END OF SECTION 3
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------ SECTION 4
   else if(sec == 4){
     if(firstRun){
       showKeypad();
@@ -388,21 +396,44 @@ void draw(){  //same as loop in arduino
       firstRun = false;
       oldSec = 4;
     }
-    // do what is meant to do in sec 4
-    else{
-      if(health == 1){
-        waitingLbl.hide();
-        healthLbl.show();
+    //------------------------------------------------------------------------------------------------ will not go in until we get user age (got agee so start doing what we have to do)
+    if(!noUserInput){          // if user input something by hitting done on the keypad
+      
+      // start 2 minute timer
+      if(startWatch){
+        println("done! age is: " + int(userInputStr));
+        watch.start();
+        startWatch = false;
       }
-      else if(health == 0){
-        notHealthLbl.show();
+      
+      if(!twoMin){
+        drawHeatMap();              // draw heat map and get data to calculate sec 4 stuff
+        seconds = watch.second();
+        min = watch.minute();
+        watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
+        watchVal.show();
+        // *********************************************************************************************collect data for sec 4
+        println("collecting data for sec4");
       }
-      else{
-        waitingLbl.show();
+      // if at two minutes
+      if(seconds == 5 && twoMin == false){      // change back to min == 2
+        twoMin = true;
+        println("done! calculating");
+        // calculate sec4 stuff and display results**************************************************************
+        
+        if(health == 1){
+          waitingLbl.hide();
+          healthLbl.show();
+        }
+        else if(health == 0){
+          notHealthLbl.show();
+        }
       }
     }
   }
-  // resets any given mode
+  
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------- SECTION 4
+  // resets any given mode              // mode reset
   else if(sec == -2){
     resetGivenMode(oldSec);
     oldSec = -1;
@@ -453,19 +484,18 @@ void Main_Menu(){
 //      setDataArrZeros();
 //      dataArr = float(split(valueFromArduino,"-"));
 //      println(valueFromArduino);
-//      //should have 22 values from arduino
-////sec-mf-lf-mm-heel-stepLen-strideLen-cadence-walkingSpeed-stepCount-timeWin0-MFN0-timeWin1-MFN1-timeWin2-MFN2-timeWin3-MFN3-timeWin4-MFN4-dir-health
-//      if(dataArr.length == 22){
+//      //should have 22 values from arduino           sec-mf-lf-mm-heel
+//      if(dataArr.length == 4){
 //        int sec = int(dataArr[0]);
         
 //        // parse out data according to section
 //        if(sec == 1){
-//          setSec1Data(dataArr);
+//          setSec1Data();
 //          println("sec1");
 //          //delay(100);
 //        }
 //        else if(sec == 2){
-//          setSec2Data(dataArr);
+//          setSec2Data();
 //          println("sec2");
 //        }
 //        else if(sec == 3){
@@ -536,6 +566,7 @@ void resetValues(){
 }
 
 
+// resets a given mode based on the current mode
 void resetGivenMode(int oldSec){
   switch(oldSec){
     //resetting sec 1
@@ -554,11 +585,13 @@ void resetGivenMode(int oldSec){
       break;
     case 4:
       resetSec4();
+      startWatch = true;
       break;
   }
+  userInputStr = "";              // reset user str
+  // resetting stopwatch variables
   seconds = 0;
   min = 0;
-  userInputStr = "";              // reset user str
   watch.stop();
   watch.reset();
   watchVal.setValue("TIME");
