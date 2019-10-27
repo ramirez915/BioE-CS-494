@@ -19,6 +19,22 @@ try{
    if (inData.charAt(0) == 'Q'){          // leading 'Q' means time between beats in milliseconds
      inData = inData.substring(1);        // cut off the leading 'Q'
      IBI = int(inData);                   // convert ascii string to integer IBI
+     
+   
+     //save values of ibi to compute bpm only if we are in stress and meditation modes:
+    
+     if(stress_f==true) {
+     bpm=60/IBI;
+     
+     for (int i = 0; i < bpm_arr.length-1; i++){
+       bpm_arr[i] = bpm_arr[i+1];   // new data enters on the right at pulseY.length-1
+     }
+     
+     // scale and constrain incoming Pulse Sensor value to fit inside the pulse window
+     bpm_arr[bpm_arr.length-1] = int(map(bpm,50,950,(height/2+15)+225,(height/2+15)-225));
+     return;
+     }
+     
      pulse = true;                        // set the pulse flag
      return;
    }

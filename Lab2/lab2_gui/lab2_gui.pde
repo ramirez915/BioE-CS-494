@@ -10,17 +10,20 @@ int x1 = 0;    // starting position of the graph
 int xMid = 1;    // pos for histograms
 int histLim = 0;
 boolean bpmHasVal = false;    // flag to see if bpm has a value (used when resetting)
-float ecgRateVal;    // will store the values from readings for heart rate
 float bpm;
 float modeType = -1;      // used to determine which mode the data is coming from
 float dataArr[];      // array that will store the data
 String valueFromArduino;  // value from the analog device
 
+int r = color(0);
+int g = color(5);
+int b = color(50);
+
 // grafica 
 GPlot bpmPlot;
 
 
-// music variable  *************************************************************************************************************** uncomment when ready with the song
+// music variable  
 SoundFile song;
 int songCounter = 0;      // used to play the song when starting the stress mode
 
@@ -28,7 +31,7 @@ void setup(){
   size(2000, 1200);    //window size, (width, height)  1200
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[13];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
                                                                               //************************************** to see the indecies of the COM ports
                                                                               //************************************ then verify where the arduino is connected in the arduino IDE
@@ -37,12 +40,12 @@ void setup(){
                                                                               //*** when I run this code the printed ports are [0] "COM3", [1] "COM4", [2] "COM13"
                                                                               //*** so I change line 29 to say
                                                                               //*** String portName = Serial.list()[2];
-  
+ // printArray(PFont.list());
   // starts serialEvent function when a newline character is read
   myPort.bufferUntil('\n');
   
-  background(0,255,0); // background color of window (r, g, b) or (0 to 255)
-  
+  //background(0,255,0); // background color of window (r, g, b) or (0 to 255)
+  background(r,g,b);
   // setting song variable    *************************************************************************************************** make sure song is in the same folder as this file
   song = new SoundFile(this,sketchPath("CarelessWhisper2.mp3"));
   
@@ -62,8 +65,8 @@ void setup(){
   
   // adds buttons to the window
   cp5 = new ControlP5(this);
-  font = createFont("Arial", 20);    // custom fonts for buttons and title
-  
+  font = createFont("SignPainter-HouseScriptSemibold", 20);    // custom fonts for buttons and title
+  //font = createFont("Arial", 20);    // custom fonts for buttons and title
 
   
   cp5.addButton("Stress")

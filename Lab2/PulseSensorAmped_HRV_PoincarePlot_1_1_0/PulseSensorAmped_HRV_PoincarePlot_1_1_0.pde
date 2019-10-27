@@ -15,10 +15,17 @@ Or that it will work at all, for that matter. I hereby disclaim.
 */
 
 import processing.serial.*;  // Serial library makes it possible to talk to Arduino
+import controlP5.*; // import ControlP5 library
+import grafica.*;    // for graphing
+import processing.sound.*;    // for music
+
+ControlP5 cp5;
 PFont font;                  // we will use text in this sketch
 Serial port;                 // instantiate the Serial port
 
 int IBI;                  // length of time between heartbeats in milliseconds (updated in serialEvent)
+int[] bpm_arr;
+int bpm;
 int[] PPG;                // array of live PPG datapoints
 int[] beatTimeX;          // array of X coordinates of Poincare Plot
 int[] beatTimeY;          // array of Y coordinates of Poincare Plot
@@ -36,8 +43,26 @@ Radio[] button = new Radio[Serial.list().length*2];
 int numPorts = serialPorts.length;
 boolean refreshPorts = false;
 
+//stress/med vars:
+
+boolean stress_f=false;
+boolean med_f=false;
+int savedTime;
+int song_Time=30000;
+int songCounter=0;
+boolean stressed=false;
+int thr_stressed=55; //set to 70
+int thr_med=40;
+int count=0;
+
+SoundFile song;
+
+
+
 void setup() {                     // do all the sett'n up in the setup
-size(800,650);                     // Stage size
+//size(800,650);                     // Stage size
+fullScreen();
+
 frameRate(60);
 beatTimeX = new int[numPoints];    // these two arrays hold the Poincare Plot data
 beatTimeY = new int[numPoints];    // size of numPoints determines number of displayed points
@@ -50,7 +75,7 @@ textFont(font);                    // general house-keeping in Processing
 textAlign(CENTER);                 // text and shapes will be referenced to their center point
 rectMode(CENTER);
 
-background(0);
+background(120,0,0);
 drawDataWindows();
 
 // GO FIND THE ARDUINO
@@ -62,64 +87,36 @@ drawDataWindows();
 
 
 void draw(){
+  
 if(serialPortFound){
 
    background(0);
 //  DRAW THE BACKGROUND ELEMENTS AND TEXT
+
+
+//it is better to first check the condition and then draw otherwise you draw and then have to modify the window
+if(stress_f==true){
+  
+  stress_draw();
+  stress_manage();
+ 
+  
+}
+if(med_f==true){
+  
+  med_draw();
+  med_manage();
+  
+}
+
+else{
+  main_menu();
+}
+
   drawDataWindows();
   writeAxisLabels();
-
-
-//    DRAW THE POINCARE PLOT
-  if (pulse == true){                    // check for new data from arduino
-    pulse = false;                       // drop the pulse flag. it gets set in serialEvent
-    for (int i=numPoints-1; i>0; i--){   // shift the data in n and n-1 arrays
-      beatTimeY[i] = beatTimeY[i-1];
-      beatTimeX[i] = beatTimeX[i-1];     // shift the data point through the array
-    }
-      beatTimeY[0] = beatTimeX[1];       // toss the old n into the n-1 spot
-      beatTimeX[0] = IBI;                // update n with the current IBI value
-    }
-
-  fill(0,0,255);                         //  draw a history of the data points as blue dots
-  for (int i=1; i<numPoints; i++){
-    beatTimeX[i] = constrain(beatTimeX[i],0,1500);  // keep the values from escaping the Plot window!
-    beatTimeY[i] = constrain(beatTimeY[i],0,1500);
-    float  x = map(beatTimeX[i],0,1500,75,600);  // scale the data to fit the screen
-    float  y = map(beatTimeY[i],0,1500,615,25);  // invert Y so it looks normal
-    ellipse(x,y,2,2);                            // print datapoints as dots 2 pixel diameter
- }
-   fill(250,0,0);                               // draw the most recent data point as a red dot
-   float  x = map(beatTimeX[0],0,1500,75,600);  // scale the data to fit the screen
-   float  y = map(beatTimeY[0],0,1500,615,25);  // invert Y so it looks normal
-   ellipse(x,y,5,5);                            // print datapoint as a dot 5 pixel diameter
-   fill(255,253,248);                           // eggshell white
-   text("n: "+IBI+"mS",width-85,50);            // print the latest IBI value
-
-//  TRACE THE LAST 20 DATAPOINTS IF THE OPTION IS SELECTED
-  if(makeLine){                                         // toggle the makeLine flag by pressing 'L'
-  stroke(0,0,255);                                      // trace the points in blue line
-  noFill();
-  beginShape();
-  for (int i=0; i<20; i++){                             // trace the arc of n/n-1 for the last 20 points
-    if(beatTimeX[i] == 0 || beatTimeY[i] == 0){break;}  // this solves for small data sets or long lines
-    x = map(beatTimeX[i],0,1500,75,600);                // scale the data to fit the screen
-    y = map(beatTimeY[i],0,1500,615,25);                // invert Y so it looks normal
-    vertex(x,y);                                        // set the vertex coordinates
-  }
-  endShape();                                           // connect the vertices
-  }
-
-//   GRAPH THE PULSE SENSOR DATA
- stroke(250,0,0);                                       // use red for the pulse wave
-  beginShape();                                         // beginShape is a fast way to draw lines!
-  for (int i=1; i<PPG.length-1; i++){                   // scroll through the PPG array
-    x = width-160+i;
-    y = PPG[i];
-    vertex(x,y);                                        // set the vertex coordinates
-  }
-  endShape();                                           // connect the vertices
-  noStroke();
+  
+  point_care();
 
 } else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
@@ -143,7 +140,7 @@ if(serialPortFound){
 void drawDataWindows(){
   noStroke();
   fill(eggshell);
-  rect(width/2-50,height/2+15,550,550);     // draw Poincare Plot window
+  rect(width/2-50,height/2+15,550,550);     // draw Poincare Plot window  FIRST POSITION THAN SIZE
   rect(width-85,(height/2)+15,150,550);     // draw the Pulse Sensor data window
 
 }
@@ -151,11 +148,11 @@ void drawDataWindows(){
 void writeAxisLabels(){
   noStroke();
   fill(eggshell);                        // eggshell white
-  text("Pulse Sensor HRV Poincare Plot",width/2-50,40);  // title
+  text("HRV Poincare Plot",width/2-50,40);  // title
   fill(200);                                // draw the Plot coordinate values in grey
-  text("0mS",40,height-25);                 // origin, scaled in mS
+  text("0mS",width/2-50-275,height/2+15+275+15);                 // origin, scaled in mS
   for (int i=500; i<=1500; i+=500){         // print x axis values
-    text(i, 40,map(i,0,1500,615,75));
+    text(i, width/2-50-275,map(i,0,1500,615,75));
   }
   for (int i=500; i<=1500; i+=500){         // print  Y axis values
     text(i, 75+map(i,0,1500,0,550), height-10);
