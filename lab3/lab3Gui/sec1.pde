@@ -18,7 +18,6 @@ void setupSec1(){
     .setPosition(500,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -27,7 +26,6 @@ void setupSec1(){
     .setPosition(500,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -36,7 +34,6 @@ void setupSec1(){
     .setPosition(500,1200)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -45,7 +42,6 @@ void setupSec1(){
     .setPosition(1200,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -54,26 +50,23 @@ void setupSec1(){
     .setPosition(1200,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
 //-------------------------------------------------------------- value labels (what is going to display values)
   stepLenVal = sec1Cp5.addLabel("stepLenVal")
-    .setValue(Float.toString((0.0)))
+    .setValue(stepLen)
     .setPosition(900,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
   strideLenVal = sec1Cp5.addLabel("strideLenVal")
-    .setValue(Float.toString((0.0)))
+    .setValue(strideLen)
     .setPosition(900,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -82,7 +75,6 @@ void setupSec1(){
     .setPosition(900,1200)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -91,7 +83,6 @@ void setupSec1(){
     .setPosition(1600,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
     
@@ -100,7 +91,6 @@ void setupSec1(){
     .setPosition(1600,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
-    //.show();
     .hide()
     ;
   
@@ -122,17 +112,20 @@ void showSec1Vals(){
   walkingSpdLbl.show();
   stepCountLbl.show();
   
-  // set values to correct values
-  stepLenVal.setValue(Float.toString(stepLen));
-  strideLenVal.setValue(Float.toString(strideLen));
-  cadenceVal.setValue(Float.toString(cadence));
-  walkingSpdVal.setValue(Float.toString(walkingSpd));
-  stepCountVal.setValue(Integer.toString(stepCount++));
   stepLenVal.show();
   strideLenVal.show();
   cadenceVal.show();
   walkingSpdVal.show();
   stepCountVal.show();
+}
+
+void updateSec1Vals(){
+  // set values to correct values
+  stepLenVal.setValue(Float.toString((stepLen)));
+  strideLenVal.setValue(Float.toString(strideLen));
+  cadenceVal.setValue(Float.toString(cadence));
+  walkingSpdVal.setValue(Float.toString(walkingSpd));
+  stepCountVal.setValue(Integer.toString(stepCount));        // this should be the only thing changing live
 }
 
 void hideSec1Vals(){
@@ -157,13 +150,20 @@ void resetSec1(){
   firstRun = true;
   noUserInput = true;
   calculate = true;
-  stepLenVal.setValue(Float.toString(0.0));
-  strideLenVal.setValue(Float.toString(0.0));
-  cadenceVal.setValue(Float.toString(0.0));
-  walkingSpdVal.setValue(Float.toString(0.0));
-  stepCountVal.setValue(Integer.toString(0));
+  stepLen = 0.0;
+  strideLen = 0.0;
+  cadence = 0.0;
+  walkingSpd = 0.0;
+  stepCount = 0;
+  stepLenVal.setValue(stepLen);
+  strideLenVal.setValue(strideLen);
+  cadenceVal.setValue(cadence);
+  walkingSpdVal.setValue(walkingSpd);
+  stepCountVal.setValue(stepCount);
   
   resetBlobValues();
+  
+  //sec1Cp5.hide();
   hideSec1Vals();
   
 }
@@ -190,9 +190,8 @@ void drawHeatMap(){
   }
   
   updatePixels();
-  
-  hideSec1Vals();    // added
-  showSec1Vals();
+  drawFoot();
+  updateSec1Vals();
   
   for(Blob b: blobs){
     b.update();

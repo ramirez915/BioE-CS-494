@@ -90,7 +90,7 @@ void reset_values(){
 //------------------------------------ end of reset_values()
 
 
-// will only send section, FSR values, and the direction
+// will only send section, FSR values, and the direction        done*******
 void sendData(){
   //mf
   Serial.print(force[0]);
@@ -109,7 +109,7 @@ void sendData(){
 }
 //----------------------------------- end of sendData()
 
-void calculate_IMU_error() {
+void calculate_IMU_error() {                              done******
   // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
   // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
   // Read accelerometer values 200 times
@@ -132,7 +132,7 @@ void calculate_IMU_error() {
 }
 //--------------------------------------- end of calculate_IMU_error()
 
-void read_IMU() {
+void read_IMU() {             done******
   // === Read acceleromter data === //
   Wire.beginTransmission(MPU);
   Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
@@ -205,7 +205,7 @@ void acquire_signal(){
 //------------------------------------------------ end of aqcuire_signal()
 
 
-float smoothing(float accx, float accy, float accz){
+float smoothing(float accx, float accy, float accz){      //done************
   
   static int readIndex = 0;
   static int readingsx[numReadings];
@@ -249,7 +249,7 @@ float smoothing(float accx, float accy, float accz){
 }
 //------------------------------------------------------------------- end of smoothing()
 
-float calcMep(float pmm,float pmf,float plf,float pheel){
+float calcMep(float pmm,float pmf,float plf,float pheel){     // done*****
 
   float totalMep; // cumulative value
   float MEP; //MEP value taken each step
@@ -262,9 +262,7 @@ float calcMep(float pmm,float pmf,float plf,float pheel){
 }
 
 
-void compute_reset() {
-   // Serial.println("in compute_Reset");
-    
+void compute_reset() {    
   float pmm;
   float pmf;
   float plf;
@@ -448,30 +446,18 @@ if(gait_timer.elapsed()>150000){
   
 
 void sect3 (){
-
-// Serial.print("in sect 3");
 //THE DATA SHOULD BE ALREADY BIAS CORRECTED BY THE FUNCTION FOR THE IMU ERROR
-
-
-//
-
 dir=0;
 
 //detect movement:
-
 while(Serial.read()!='5') {
 //while (1){
-  
-  //Serial.print("in while");
-  
   acquire_signal();
   
 if(abs(averagey)>thrmovem or abs(averagez)>thrmovem) {
 
 if(averagez>0){
-
   czr++;
-  
   if(czr>thrcount) {
     
   //move right
@@ -580,10 +566,6 @@ speed_age= 0.27;
  
 //execute sect 1 to acquire the speed:
 sect1();
- 
-//check speed
- 
- 
 if(walking_speed < speed_age) {
  
   health=0;
@@ -593,11 +575,6 @@ if(walking_speed < speed_age) {
 else{
   health=1;
  }
- 
- 
-sendData();
- 
-//
   }
 
 

@@ -15,7 +15,6 @@ void setDataArrZeros(){
   }
 }
 
-
 // parses out data for sec 1
 void parseDataRcvd(){
   // check for valid step

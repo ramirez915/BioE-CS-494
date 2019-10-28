@@ -35,7 +35,7 @@ float stepLen = 0.0;
 float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
-int stepCount = 0;
+int stepCount = 200;
 int thr_step = 500;                    // is this to detect a valid step??
 
 // used to detect a minute
@@ -138,6 +138,10 @@ Textlabel notHealthLbl;
 Textlabel waitingLbl;
 Textlabel sec4Inst;
 boolean startWatch = true;              // starts timer for this part
+
+float speedAge = 0.0;
+Textlabel speedAgeVal;
+Textlabel speedAgeLbl;
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -308,6 +312,8 @@ void draw(){  //same as loop in arduino
       firstRun = false;
       oldSec = 1;
       watch.start();          // start counting the 2 minutes
+      //showSec1Vals();            // THIS WAS THE PROBLEM SINCE IT WAS CALLED IT WAS NEVER HIDDEN SO NEED TO SPLIT IT UP
+                                 // need to somehow display the labels only and update the step counter live              // COME BACK TO THIS*******
     }
     if(!twoMin){
       drawHeatMap();
@@ -318,27 +324,23 @@ void draw(){  //same as loop in arduino
       seconds = watch.second();
       min = watch.minute();
       watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
-      watchVal.show();
       println("time: " + min + " min " + seconds + "s");
-      println("milliseconds elapsed " + watch.getElapsedTime());
     }
     
     // for testing... change min == 2 to seconds == 2 or something low
-    if(min == 2 && twoMin == false){        //-------------------------------------------------------------- if we're at 2 minutes... min== 2
+    if(seconds == 3 && twoMin == false){        //-------------------------------------------------------------- if we're at 2 minutes... min== 2
       twoMin = true;
       
       resetPlots();    // reset plots and hide them in order to have space for the number pad
       waitingLbl.hide();
       showKeypad();
       sec1Inst.show();
-      delay(100);
     }
     
     // to get cadence
     // Cadence: Number of steps in a minute
     if(min != currMin){          // when a new minute has passed
       println("hit a minute");
-      delay(20000);
       currMin = min;
       cadence = stepCount;
     }
@@ -353,11 +355,16 @@ void draw(){  //same as loop in arduino
           stepLen = float(userInputStr) / stepCount;
           strideLen = stepLen * 2;
           walkingSpd = cadence * stepLen;
+          
+          updateSec1Vals();
+          showSec1Vals();
+          delay(5000);
           calculate = false;
         }
         println("we are out of the calculate");
-        hideSec1Vals();
-        showSec1Vals();          // to update values with the calculated values
+        //updateSec1Vals();
+        //showSec1Vals();          // this needs to be here but there is another display somewhere...
+        noUserInput = true;
       }
     }
   }
@@ -418,6 +425,11 @@ void draw(){  //same as loop in arduino
         println("done! age is: " + int(userInputStr));
         watch.start();
         startWatch = false;
+        
+        calcSpeedAge();        // get speedAge
+        waitingLbl.show();
+        speedAgeLbl.show();
+        speedAgeVal.show();          // show speedAge
       }
       
       if(!twoMin){
@@ -432,11 +444,27 @@ void draw(){  //same as loop in arduino
       // if at two minutes
       if(seconds == 5 && twoMin == false){      // change back to min == 2
         twoMin = true;
-        println("done! calculating");
+        waitingLbl.hide();
+
+        println("done! calculating...");
         // calculate sec4 stuff and display results**************************************************************
         
+        // calc once
+        if(calculate){
+          stepLen = float(userInputStr) / stepCount;
+          strideLen = stepLen * 2;
+          walkingSpd = cadence * stepLen;
+          calculate = false;
+        }
+        
+        //now compare results to determine health
+        if(walkingSpd < speedAge) {
+          health=0;
+        }
+        else{
+          health=1;
+        }
         if(health == 1){
-          waitingLbl.hide();
           healthLbl.show();
         }
         else if(health == 0){
