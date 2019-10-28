@@ -13,7 +13,7 @@ int min = 0;
 Textlabel watchVal;                          // label used to display time
 
 PFont font;
-float dataArr[] = new float[4];      // array that will store the data      // size determined by the number of data coming in from arduino
+float dataArr[] = new float[5];      // array that will store the data      // size determined by the number of data coming in from arduino
 String valueFromArduino;  // value from the analog device
 Blob[] blobs = new Blob[4];
 float[] valueArr = new float[4];    // will contain practice values for heat map
@@ -30,11 +30,17 @@ float mfVal = 0.0;    // blob[0]
 float lfVal = 0.0;    // blob[1]
 float mmVal = 0.0;    // blob[2]
 float heelVal = 0.0;  // blob[3]
+int setpCount = 0;
 float stepLen = 0.0;
 float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
 int stepCount = 0;
+int thr_step = 500;                    // is this to detect a valid step??
+
+// used to detect a minute
+int currMin = 0;
+
 boolean twoMin = false;
 boolean noUserInput = true;          // used to keep track if the user has finished giving info    //----------------------------------------------------------- should be used for sec 4
 String userInputStr = "";            // distance will be converted to an int when needed           //---------------------------------------------------------- should be used for sec 4
@@ -242,10 +248,10 @@ void setup(){
   ;
   
   watchVal = cp5.addTextlabel("watchVal")
-   .setText("TIME")
+   .setText("Time displayed\n     here")
    .setPosition(1750,600)
    .setColorValue(color(225,0,0))
-   .setFont(createFont("MS Gothic",50))
+   .setFont(createFont("MS Gothic",45))
    .show()
    ;
    
@@ -299,10 +305,9 @@ void draw(){  //same as loop in arduino
   //-------------------------------------------------------------------------------------------------------------------------------------------- SECTION 1
   if(sec == 1){
     if(firstRun){
-      showSec1Vals();
       firstRun = false;
       oldSec = 1;
-      watch.start();
+      watch.start();          // start counting the 2 minutes
     }
     if(!twoMin){
       drawHeatMap();
@@ -315,34 +320,43 @@ void draw(){  //same as loop in arduino
       watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
       watchVal.show();
       println("time: " + min + " min " + seconds + "s");
+      println("milliseconds elapsed " + watch.getElapsedTime());
     }
     
-    // for testing... change min == 2 to seconds == 2 ro something low
-    if(seconds == 5 && twoMin == false){        //-------------------------------------------------------------- if were at 2 minutes... min== 2
+    // for testing... change min == 2 to seconds == 2 or something low
+    if(min == 2 && twoMin == false){        //-------------------------------------------------------------- if we're at 2 minutes... min== 2
       twoMin = true;
       
       resetPlots();    // reset plots and hide them in order to have space for the number pad
       waitingLbl.hide();
       showKeypad();
       sec1Inst.show();
-      delay(700);
+      delay(100);
     }
+    
+    // to get cadence
+    // Cadence: Number of steps in a minute
+    if(min != currMin){          // when a new minute has passed
+      println("hit a minute");
+      delay(20000);
+      currMin = min;
+      cadence = stepCount;
+    }
+    
+    // we've hit two minutes now get user input for distance and calculate values
     if(twoMin){
-      // get input
-      // this if is only for testing
-      if(noUserInput){
-        println("waiting for distance");
-      }
-
-      //calculate the stuff with the distance when user input is acquired**************
+      //calculate the stuff with the distance when user input is acquired************** (when done is hit on the keypad)
       if(!noUserInput){          // if user input something by hitting done on the keypad
         println("done! distance is: " + int(userInputStr));
         
         if(calculate){     //---------------------------------------------------------------------------------------------------------------------------------- finish calcuations******
-          
+          stepLen = float(userInputStr) / stepCount;
+          strideLen = stepLen * 2;
+          walkingSpd = cadence * stepLen;
           calculate = false;
         }
         println("we are out of the calculate");
+        hideSec1Vals();
         showSec1Vals();          // to update values with the calculated values
       }
     }
@@ -474,45 +488,27 @@ void Main_Menu(){
   hideKeypad();
 }
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      setDataArrZeros();
-//      dataArr = float(split(valueFromArduino,"-"));
-//      println(valueFromArduino);
-//      //should have 22 values from arduino           sec-mf-lf-mm-heel
-//      if(dataArr.length == 4){
-//        int sec = int(dataArr[0]);
-        
-//        // parse out data according to section
-//        if(sec == 1){
-//          setSec1Data();
-//          println("sec1");
-//          //delay(100);
-//        }
-//        else if(sec == 2){
-//          setSec2Data();
-//          println("sec2");
-//        }
-//        else if(sec == 3){
-//          dir = dataArr[20];
-//          println("dir: " + dir);
-//        }
-//        else if(sec == 4){
-//          health = int(dataArr[21]);
-//          println("health is " + health);
-//        }
-//      }
-//      setDataArrZeros();
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
+    try{
+      setDataArrZeros();
+      dataArr = float(split(valueFromArduino,"-"));
+      println(valueFromArduino);
+      //should have 6 values from arduino           sec-mf-lf-mm-heel-dir
+      if(dataArr.length == 5){
+        // set values from arduino to corresponding variables
+        parseDataRcvd();
+      }
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
+//---------------------------------------------- end of serialEvent
 
 
 void drawFoot(){
@@ -557,12 +553,15 @@ void drawFoot(){
   curveVertex(124,610);
   endShape();
 }
+//----------------------------------------- end of drawing foot
 
-void resetValues(){
+void resetBlobValues(){
   for(Blob b: blobs){
     b.reset();
   }
-  sec = -1;
+  
+  
+  
 }
 
 
@@ -575,6 +574,7 @@ void resetGivenMode(int oldSec){
       resetPlots();
       waitingLbl.hide();
       twoMin = false;
+      currMin = 0;
       break;
     case 2:
       resetSec2();
@@ -594,6 +594,5 @@ void resetGivenMode(int oldSec){
   min = 0;
   watch.stop();
   watch.reset();
-  watchVal.setValue("TIME");
-  watchVal.hide();
+  watchVal.setValue("Time displayed\n     here");
 }

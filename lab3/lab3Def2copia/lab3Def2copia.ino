@@ -6,22 +6,17 @@ int sect=0;
 float force[4];
 float mappedForce[4];
 
-
 //acquire_signal
-
-
 
 //int mf=A0;
 //int lf=A1;
 //int mm=A2;
 //int heel=A3;
 //
-//
 //int mf_led=9;
 //int lf_led=6;
 //int mm_led=5;
 //int heel_led=3;
-
 
 bool heel_s=0;
 bool mm_s=0;
@@ -40,9 +35,7 @@ float walking_speed=0;
 //int thr_step=100;
 int thr_step=500;
 
-
 //sect2 vars:
-
 StopWatch gait_timer;
 int rec[5];
 int state=0;
@@ -73,45 +66,27 @@ int czr=0;
 int thrcount=5;
 
 //sect 4:
-
 bool health=0;
 bool virt_age=0;
 int age;
 
 
 void reset_values(){
-
   for (int i=0; i< 4; i++){
-
     avg[i]=0;
-    
     for (int j=0; j<max_steps ; j++){
-
       data[i][j]=0;
-      
     }
-
   }
-
   for (int i=0; i< 5; i++){
-
     MFN[i]=0;
   }
-
   for (int i=0; i< 5; i++){
-
     rec[i]=0;
-
-}
-
-for (int i=0; i< 4; i++){
-
-    force[i]=0;
-
-}
-
-//set_readings();
-
+  }
+  for (int i=0; i< 4; i++){
+      force[i]=0;
+  }
 }
 
 
