@@ -1,4 +1,4 @@
-void main_menu(){
+void buttons_draw(){
   
   
   //// bpm Plot
@@ -23,18 +23,19 @@ void main_menu(){
   cp5.addButton("Stress")
     .setPosition(10,50)
     .setSize(120, 70)
-    .setFont(font)
-  ;
+    .setFont(font);
   
   cp5.addButton("Meditation")
     .setPosition(10,150)
     .setSize(120, 70)
-    .setFont(font)
-  ;
-  
+    .setFont(font);
+}
+
+
+
+void main_menu_draw(){
   cp5.addButton("MainMenu")     //"alloff" is the name of button
     .setPosition(10, 250)  //x and y coordinates of upper left corner of button
     .setSize(120, 70)      //(width, height)
-    .setFont(font)
-  ;
+    .setFont(font);
 }
