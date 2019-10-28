@@ -24,7 +24,7 @@ PFont font;                  // we will use text in this sketch
 Serial port;                 // instantiate the Serial port
 
 int IBI;                  // length of time between heartbeats in milliseconds (updated in serialEvent)
-int[] bpm_arr;
+int[] bpm_arr={60,50,70};
 int bpm;
 int[] PPG;                // array of live PPG datapoints
 int[] beatTimeX;          // array of X coordinates of Poincare Plot
@@ -54,9 +54,10 @@ boolean stressed=false;
 int thr_stressed=55; //set to 70
 int thr_med=40;
 int count=0;
-
+int bpmbase=0;
+int it=0;
 SoundFile song;
-
+int passedTime=0;
 
 
 void setup() {                     // do all the sett'n up in the setup
@@ -90,7 +91,7 @@ void draw(){
   
 if(serialPortFound){
 
-   background(0);
+   background(150);
 //  DRAW THE BACKGROUND ELEMENTS AND TEXT
 
 
@@ -99,24 +100,28 @@ if(stress_f==true){
   
   stress_draw();
   stress_manage();
- 
+  main_menu_draw();
+  writeAxisLabels_bpm();
   
 }
 if(med_f==true){
   
   med_draw();
   med_manage();
-  
+  main_menu_draw();
+  writeAxisLabels_bpm();
 }
 
 else{
-  main_menu();
+  buttons_draw();
 }
 
   drawDataWindows();
   writeAxisLabels();
   
   point_care();
+
+
 
 } else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
@@ -140,32 +145,59 @@ else{
 void drawDataWindows(){
   noStroke();
   fill(eggshell);
-  rect(width/2-50,height/2+15,550,550);     // draw Poincare Plot window  FIRST POSITION THAN SIZE
-  rect(width-85,(height/2)+15,150,550);     // draw the Pulse Sensor data window
+  rect(width/2-50,height/2+15,550,550,7);     // draw Poincare Plot window  FIRST POSITION THAN SIZE
+  rect(width-85,(height/2)+15,150,550,7);     // draw the Pulse Sensor data window
 
 }
 
 void writeAxisLabels(){
   noStroke();
   fill(eggshell);                        // eggshell white
-  text("HRV Poincare Plot",width/2-50,40);  // title
+  textSize(32);
+  text("HRV Poincare Plot",width/2-50,130);  // title
   fill(200);                                // draw the Plot coordinate values in grey
+  
   text("0mS",width/2-50-275,height/2+15+275+15);                 // origin, scaled in mS
-  for (int i=500; i<=1500; i+=500){         // print x axis values
-    text(i, width/2-50-275,map(i,0,1500,615,75));
+  for (int i=500; i<=1500; i+=500){         // print y axis values
+    text(i, width/2-50-275,map(i,0,1500,height/2+15+275+15,height/2+15+275+15-550));
   }
-  for (int i=500; i<=1500; i+=500){         // print  Y axis values
-    text(i, 75+map(i,0,1500,0,550), height-10);
+  for (int i=500; i<=1500; i+=500){         // print  x axis values
+    text(i, width/2-50-275+map(i,0,1500,0,550), height/2+15+275+15);
   }
   stroke(250,30,250);                       // draw gridlines in purple
   for (int i=0; i<1500; i+=100){            // draw grid lines on axes
-    line(75,map(i,0,1500,614,26),85,map(i,0,1500,614,26)); //y axis
-    line(75+map(i,0,1500,0,549),height-35,75+map(i,0,1500,0,549),height-45); // x axis
+    line(width/2-50-275,map(i,0,1500,height/2+15+275,height/2+15+275-550),width/2-50-275+10,map(i,0,1500,height/2+15+275,height/2+15+275-550)); //y axis
+    line(width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15,width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15-10); // x axis
   }
   noStroke();
   fill(255,253,10);                                    // print axes legend in yellow, for fun
-  text("n", 75+map(750,0,1500, 0, 550), height-10);    // n is the most recent IBI value
-  text("n-1",40,map(750,0,1500,615,75));               // n-1 is the one we got before n
+  text("n", width/2-50-275+map(750,0,1500, 0, 550), height/2+15+275+15+30);    // n is the most recent IBI value
+  text("n-1",width/2-50-275-30,map(750,0,1500,height/2+15+275+15,height/2+15+275+15-550));               // n-1 is the one we got before n
+}
+
+void writeAxisLabels_bpm(){
+  noStroke();
+  fill(eggshell);                        // eggshell white
+  textSize(32);
+  text("bpm plot",width-85,(height/2)+15-300);  // title
+  fill(200);                                // draw the Plot coordinate values in grey
+  
+  text("0mS",width/2-85-75,height/2+15+75);                 // origin, scaled in mS
+  for (int i=30; i<=120; i+=30){         // print y axis values
+    text(i, width-85-75-15,map(i,0,120,height/2+15+225,height/2+15+275-550));
+  }
+  for (int i=500; i<=1500; i+=500){         // print  x axis values
+    text(i, width/2-50-275+map(i,0,1500,0,550), height/2+15+275+15);
+  }
+  stroke(250,30,250);                       // draw gridlines in purple
+  for (int i=0; i<1500; i+=100){            // draw grid lines on axes
+    line(width/2-50-275,map(i,0,1500,height/2+15+275,height/2+15+275-550),width/2-50-275+10,map(i,0,1500,height/2+15+275,height/2+15+275-550)); //y axis
+    line(width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15,width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15-10); // x axis
+  }
+  noStroke();
+  fill(255,253,10);                                    // print axes legend in yellow, for fun
+  text("n", width/2-50-275+map(750,0,1500, 0, 550), height/2+15+275+15+30);    // n is the most recent IBI value
+  text("n-1",width/2-50-275-30,map(750,0,1500,height/2+15+275+15,height/2+15+275+15-550));               // n-1 is the one we got before n
 }
 
 
