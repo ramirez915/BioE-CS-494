@@ -104,7 +104,7 @@ void updateSec2Tbl(int walkingType){
     }
     
     mfn = sec2Cp5.addLabel("mfnlbl")
-        .setText(str(mfnVal))
+        .setValue(str(mfnVal))
         .setPosition(800,height/2 - 50)
         .setColorValue(color(255))
         .setFont(createFont("Cambria",50))

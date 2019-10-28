@@ -12,7 +12,7 @@ void setupSec1(){
   sec1Cp5 = new ControlP5(this);
   color sec1Color = color(255,0,0);
   
-//-------------------------------------------------- labels
+//-------------------------------------------------- labels for values
   stepLenLbl = sec1Cp5.addLabel("stepLen")
     .setText("Step Length")
     .setPosition(500,1000)
@@ -58,9 +58,9 @@ void setupSec1(){
     .hide()
     ;
     
-//------------------------------------------------------- values
+//-------------------------------------------------------------- value labels (what is going to display values)
   stepLenVal = sec1Cp5.addLabel("stepLenVal")
-    .setText(Float.toString((0.0)))
+    .setValue(Float.toString((0.0)))
     .setPosition(900,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
@@ -69,7 +69,7 @@ void setupSec1(){
     ;
     
   strideLenVal = sec1Cp5.addLabel("strideLenVal")
-    .setText(Float.toString((0.0)))
+    .setValue(Float.toString((0.0)))
     .setPosition(900,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
@@ -78,7 +78,7 @@ void setupSec1(){
     ;
     
   cadenceVal = sec1Cp5.addLabel("cadenceVal")
-    .setText(Float.toString((0.0)))
+    .setValue(Float.toString((0.0)))
     .setPosition(900,1200)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
@@ -87,7 +87,7 @@ void setupSec1(){
     ;
     
   walkingSpdVal = sec1Cp5.addLabel("walkingSpdVal")
-    .setText(Float.toString((0.0)))
+    .setValue("")
     .setPosition(1600,1000)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
@@ -96,7 +96,7 @@ void setupSec1(){
     ;
     
   stepCountVal = sec1Cp5.addLabel("stepCountVal")
-    .setText(Integer.toString((0)))
+    .setValue(Integer.toString((0)))
     .setPosition(1600,1100)
     .setColorValue(sec1Color)
     .setFont(createFont("Cambria",50))
@@ -111,6 +111,7 @@ void setupSec1(){
     .setFont(createFont("Cambria",50))
     .hide();
 }
+//------------------------------------------------------------------------ end of setupSec1
 
 void showSec1Vals(){
   drawFoot();
@@ -121,12 +122,12 @@ void showSec1Vals(){
   walkingSpdLbl.show();
   stepCountLbl.show();
   
-  // reset values
-  stepLenVal.setText(Float.toString(stepLen));
-  strideLenVal.setText(Float.toString(strideLen));
-  cadenceVal.setText(Float.toString(cadence));
-  walkingSpdVal.setText(Float.toString(walkingSpd));
-  stepCountVal.setText(Integer.toString(stepCount));
+  // set values to correct values
+  stepLenVal.setValue(Float.toString(stepLen));
+  strideLenVal.setValue(Float.toString(strideLen));
+  cadenceVal.setValue(Float.toString(cadence));
+  walkingSpdVal.setValue(Float.toString(walkingSpd));
+  stepCountVal.setValue(Integer.toString(stepCount++));
   stepLenVal.show();
   strideLenVal.show();
   cadenceVal.show();
@@ -150,18 +151,19 @@ void hideSec1Vals(){
   sec1Inst.hide();
 }
 
-//reset
+//reset all of sec1
 void resetSec1(){
   background(0,100,255);
   firstRun = true;
   noUserInput = true;
   calculate = true;
-  stepLenVal.setText(Float.toString(0.0));
-  strideLenVal.setText(Float.toString(0.0));
-  cadenceVal.setText(Float.toString(0.0));
-  walkingSpdVal.setText(Float.toString(0.0));
-  stepCountVal.setText(Integer.toString(0));
+  stepLenVal.setValue(Float.toString(0.0));
+  strideLenVal.setValue(Float.toString(0.0));
+  cadenceVal.setValue(Float.toString(0.0));
+  walkingSpdVal.setValue(Float.toString(0.0));
+  stepCountVal.setValue(Integer.toString(0));
   
+  resetBlobValues();
   hideSec1Vals();
   
 }
@@ -189,11 +191,11 @@ void drawHeatMap(){
   
   updatePixels();
   
+  hideSec1Vals();    // added
   showSec1Vals();
   
   for(Blob b: blobs){
     b.update();
     b.show();
   }
-  //showSec1Vals();        // not sure why this was here...
 }

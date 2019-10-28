@@ -17,43 +17,33 @@ void setDataArrZeros(){
 
 
 // parses out data for sec 1
-void calSec1Data(){
+void parseDataRcvd(){
+  // check for valid step
+  // based on values from FSR and thr_step
+  for(int i = 0; i < 4; i++){
+    if(dataArr[i] > thr_step){
+      // if just starting add one
+      if(stepCount == 0){
+        stepCount++;
+      }
+      // else add 2 steps
+      else{
+        stepCount += 2;
+      }
+      break;
+    }
+  }
+  
+  // now set values to blobs and dir to be used
   // map values to be placed as the radius for the blobs
-  //for(int i = 1; i < 5; i++){
-  //  println(i +" value " + dataArr[i]);
-  //  float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
-  //  //update blobs
-  //  blobs[i-1].updateR(mappedR);
-  //}
-  float mappedR0 = map(dataArr[1],0,1023,0,100);    // max radius 60-100...
-  println("0 " + mappedR0);
-  //update blobs
-  blobs[0].updateR(mappedR0);
-  float mappedR1 = map(dataArr[2],0,1023,0,100);    // max radius 60-100...
-  println("1 " + mappedR1);
-  //update blobs
-  blobs[1].updateR(mappedR1);
-  float mappedR2 = map(dataArr[3],0,1023,0,100);    // max radius 60-100...
-  println("2 " + mappedR2);
-  //update blobs
-  blobs[2].updateR(mappedR2);
-  float mappedR3 = map(dataArr[4],0,1023,0,100);    // max radius 60-100...
-  println("3 " + mappedR3);
-  //update blobs
-  blobs[3].updateR(mappedR3);
-}
-
-//parse out data for sec 2
-void setSec2Data(){
-  
-}
-
-void setSec3Data(){
-  
-}
-
-void setsec4Data(){
-  
+  for(int i = 0; i < 4; i++){
+    println(i +" value " + dataArr[i]);
+    float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
+    //update blobs
+    blobs[i].updateR(mappedR);
+  }
+  // lastly get the direction
+  dir = dataArr[4];
 }
 
 
@@ -130,7 +120,7 @@ void plotData(){
 }
 
 void resetPlots(){
-  println("exiting");
+  println("restting plots...");
   // removes all the points from the graphs
   for(int i = 0; i < x1; i++){
     mfPlot.removePoint(0);
