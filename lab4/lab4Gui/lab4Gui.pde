@@ -7,12 +7,19 @@ Serial port;
 ControlP5 cp5;
 String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
+int counter = 0;
 
-//--------------------------
+//--------------------------        // TOUNCHES IN AN AMOUNT OF TIME
 boolean C1 = false;
+int c1Counter = 0;        // keeping track of which is pressed
+StopWatch c1Watch = new StopWatch();
 boolean C2 = false;
+int c2Counter = 0;
+StopWatch c2Watch = new StopWatch();
 boolean C3 = false;
-//------------------------ capacitors
+int c3Counter = 0;
+StopWatch c3Watch = new StopWatch();
+//------------------------------------------------- capacitors
 
 //------------------------ SERIAL PORT STUFF TO HELP YOU FIND THE CORRECT SERIAL PORT
 String serialPort;
@@ -43,7 +50,7 @@ void setup(){
   
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   port = new Serial(this, portName, 115200);
   port.bufferUntil('\n');
 }
@@ -123,6 +130,8 @@ void parseData(){
         println("C3 pressed");
         break;
     }
+    //println(counter);
+    //counter++;
   }
 }
 
