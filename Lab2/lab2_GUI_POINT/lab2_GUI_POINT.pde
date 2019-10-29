@@ -59,10 +59,13 @@ int it=0;
 SoundFile song;
 int passedTime=0;
 
+GPlot bpmPlot;        // for grafica plot
+int x1 = 0;    // starting position of the graph
+int arduinoBPM = 0;
 
 void setup() {                     // do all the sett'n up in the setup
-//size(800,650);                     // Stage size
-fullScreen();
+size(2000,1300);                     // Stage size
+//fullScreen();
 
 frameRate(60);
 beatTimeX = new int[numPoints];    // these two arrays hold the Poincare Plot data
@@ -83,6 +86,20 @@ drawDataWindows();
   fill(eggshell);
   text("Select Your Serial Port",350,50);
   listAvailablePorts();
+
+
+
+
+// ecg and respPlots    regular plots to see signal from device
+  bpmPlot = new GPlot(this,510,50);        //graph positioned at 300,0
+  bpmPlot.setTitleText("BPM MONITOR");
+  bpmPlot.getXAxis().setAxisLabelText("x axis");
+  bpmPlot.getYAxis().setAxisLabelText("y axis");
+  bpmPlot.setDim(300,300);
+  bpmPlot.setXLim(0,50);
+  bpmPlot.setYLim(0,120);    // y axis
+  bpmPlot.activateZooming(2.0,CENTER,CENTER);
+
 
 }  // END OF SETUP
 
@@ -254,6 +271,35 @@ void resetDataTraces(){
     beatTimeX[i] = 0;
   }
 
+}
 
 
+
+
+
+// plots the data on the graph
+void plotData(){
+  // ADDING POINT TO PLOT
+  bpmPlot.addPoint(new GPoint(x1,arduinoBPM));
+  bpmPlot.setPoint(x1, new GPoint(x1,arduinoBPM));
+  bpmPlot.getTitle().setText("BPM Monitor     Signal: " + str(arduinoBPM));
+  
+  println("plotted vals: arduinoBPM "+ arduinoBPM);
+  
+  x1++;  // move on to the next x coordinate
+  
+  //draw graphs
+  bpmPlot.beginDraw();
+  bpmPlot.drawBackground();
+  bpmPlot.drawBox();
+  bpmPlot.drawXAxis();
+  bpmPlot.drawYAxis();
+  bpmPlot.drawTitle();
+  bpmPlot.drawLines();
+  bpmPlot.endDraw();
+  
+  // at the max so scroll to the side    x axis
+  if(x1 >= 50){
+    bpmPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
+  }
 }
