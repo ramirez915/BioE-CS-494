@@ -91,7 +91,7 @@ drawDataWindows();
 
 
 // bpm plot
-  bpmPlot = new GPlot(this,510,50);
+  bpmPlot = new GPlot(this,1000,50);
   bpmPlot.setTitleText("BPM MONITOR");
   bpmPlot.getXAxis().setAxisLabelText("x axis");
   bpmPlot.getYAxis().setAxisLabelText("y axis");
