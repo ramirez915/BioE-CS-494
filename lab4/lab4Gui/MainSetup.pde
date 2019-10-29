@@ -21,5 +21,5 @@ void Space_Invader(){
 }
 
 void MainMenu(){
-  
+  spaceInvaderReset();
 }

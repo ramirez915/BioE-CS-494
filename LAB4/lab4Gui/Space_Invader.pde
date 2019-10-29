@@ -14,6 +14,11 @@ void spaceInvaderSetup() {
     createEnemies();
 }
 
+void spaceInvaderReset(){
+  background(200,0,100);
+  deleteEnemies();
+}
+
 void spaceInvaderDraw() {
     background(0);
 
@@ -52,6 +57,15 @@ void createEnemies() {
             enemies.add(new Enemy(i*gridsize, j*gridsize));
         }
     }
+}
+
+void deleteEnemies(){
+  int enemyCount = 0;
+  for (int i = 0; i < enemies.size(); i++) {
+     enemies.remove(i);
+     enemyCount++;
+  }
+  println(enemyCount + " deleted");
 }
 
 class SpaceShip {

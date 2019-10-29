@@ -5,6 +5,14 @@ import processing.sound.*;
 
 Serial port;
 ControlP5 cp5;
+String dataArr[] = new String[5];      // array that will store the data
+String valueFromArduino;
+
+//--------------------------
+boolean C1 = false;
+boolean C2 = false;
+boolean C3 = false;
+//------------------------ capacitors
 
 //------------------------ SERIAL PORT STUFF TO HELP YOU FIND THE CORRECT SERIAL PORT
 String serialPort;
@@ -14,8 +22,12 @@ Radio[] button = new Radio[Serial.list().length*2];
 int numPorts = serialPorts.length;
 boolean refreshPorts = false;
 PFont font;
+//-------------------------------------------- serial port stuff
 
+//------------------------------------------------------- space invader globals
+boolean spaceInvaderOn = false;
 
+//---------------------------------
 
 
 void setup(){
@@ -31,7 +43,9 @@ void setup(){
 
 
 void draw(){
-  
+  if(spaceInvaderOn){
+    
+  }
   
   
   
@@ -57,12 +71,51 @@ void draw(){
 }
 
 
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
+    
+    try{
+      dataArr = split(valueFromArduino,"-");
+      println(valueFromArduino);
+      
+      parseData();
+      
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
+//---------------------------------------------- end of serialEvent
 
 
 
-
-
-
+void parseData(){
+  // preset all capacitors to false
+  C1 = false;
+  C2 = false;
+  C3 = false;
+  
+  // for each capacitor in the array
+  for(String capacitor: dataArr){
+    switch(capacitor){
+      case "C1":
+        C1 = true;
+        println("C1 pressed");
+        break;
+      case "C2":
+        C2 = true;
+        println("C2 pressed");
+        break;
+      case "C3":
+        C3 = true;
+        println("C3 pressed");
+        break;
+    }
+  }
+}
 
 
 
