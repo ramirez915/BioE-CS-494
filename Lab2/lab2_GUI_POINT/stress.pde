@@ -45,7 +45,7 @@ if(passedTime>=30000 && passedTime<60000) {
   text("Baseline: " + int(bpmbase),200,950);
 }
 
-//finish playing song
+
 
 if(passedTime>=60000) {
   
