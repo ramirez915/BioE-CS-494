@@ -6,7 +6,7 @@ ArrayList bullets = new ArrayList();
 int direction = 1;
 boolean incy = false;
 
-void setup() {
+void spaceInvaderSetup() {
     background(0);
     noStroke();
     fill(255);
@@ -15,7 +15,7 @@ void setup() {
     createEnemies();
 }
 
-void draw() {
+void spaceInvaderDraw() {
     background(0);
 
     player.draw();
