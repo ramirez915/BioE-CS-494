@@ -34,9 +34,18 @@ void setup(){
   fullScreen();
   frameRate(60);
   font = createFont("MS Gothic",60);
-  //listAvailablePorts();
+  listAvailablePorts();
   
   setupMainButtons();
+  cp5.hide();
+  
+  
+  
+  
+  printArray(Serial.list());   //prints all available serial ports
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  port = new Serial(this, portName, 115200);
+  port.bufferUntil('\n');
 }
 
 
@@ -44,7 +53,7 @@ void setup(){
 
 void draw(){
   if(spaceInvaderOn){
-    
+    spaceInvaderDraw();
   }
   
   
