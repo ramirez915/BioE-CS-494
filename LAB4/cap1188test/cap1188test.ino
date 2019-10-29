@@ -47,6 +47,7 @@ Adafruit_CAP1188 cap = Adafruit_CAP1188();
 // Or.. Software SPI: clock, miso, mosi, cs, reset
 //Adafruit_CAP1188 cap = Adafruit_CAP1188(CAP1188_CLK, CAP1188_MISO, CAP1188_MOSI, CAP1188_CS, CAP1188_RESET);
 
+
 void setup() {
   Serial.begin(115200);
   Serial.println("CAP1188 test!");
@@ -67,12 +68,14 @@ void loop() {
     // No touch detected
     return;
   }
-  
+//  
   for (uint8_t i=0; i<8; i++) {
     if (touched & (1 << i)) {
-      Serial.print("C"); Serial.print(i+1); Serial.print("\t");
+      Serial.print("C"); Serial.print(i+1); Serial.print("-");
     }
   }
-  Serial.println();
+
+  Serial.println("x");
   delay(50);
+ // delay(100);
 }
