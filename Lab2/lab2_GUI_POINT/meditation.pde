@@ -20,22 +20,20 @@ if(passedTime<30000){
 //  text(passedTime);
 }
 
-if(bpm>70 && passedTime>30){
-  text("Baseline: " + int(bpmbase),200,950);
-  count=0;
-}
+if(passedTime>30000){
+  text("Baseline: " + 70 ,200,900);
+  
+    if (bpm>1.3*bpmbase){
+      count++;
+    }
 
-else {
-  
-  count++;
-  
-  if(count==3) {
+    text("Count bpm stressed= "+count,200,850);
+
+ 
     
+    if(count==3){
     text("Calm down, breath slowly",200,850);
-    
-    
+    }
     //play buzzer
   }
-
-}
 }
