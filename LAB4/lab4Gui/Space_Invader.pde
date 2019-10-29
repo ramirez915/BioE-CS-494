@@ -10,7 +10,6 @@ void spaceInvaderSetup() {
     background(0);
     noStroke();
     fill(255);
-    size(500, 400);
     player = new Player();
     createEnemies();
 }

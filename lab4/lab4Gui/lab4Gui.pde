@@ -6,7 +6,7 @@ import processing.sound.*;
 Serial port;
 ControlP5 cp5;
 
-// SERIAL PORT STUFF TO HELP YOU FIND THE CORRECT SERIAL PORT
+//------------------------ SERIAL PORT STUFF TO HELP YOU FIND THE CORRECT SERIAL PORT
 String serialPort;
 String[] serialPorts = new String[Serial.list().length];
 boolean serialPortFound = false;
@@ -15,36 +15,45 @@ int numPorts = serialPorts.length;
 boolean refreshPorts = false;
 PFont font;
 
+
+
+
 void setup(){
-  font = createFont("MS Gothic",100);
-  
   fullScreen();
   frameRate(60);
-  listAvailablePorts();
+  font = createFont("MS Gothic",60);
+  //listAvailablePorts();
+  
+  setupMainButtons();
 }
 
 
 
 
 void draw(){
-  if(serialPortFound){
+  
+  
+  
+  
+  
+  //if(serialPortFound){
     
     
-  }
-  else { // SCAN BUTTONS TO FIND THE SERIAL PORT
+  //}
+  //else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
-    autoScanPorts();
+  //  autoScanPorts();
   
-    if(refreshPorts){
-      refreshPorts = false;
-      listAvailablePorts();
-    }
+  //  if(refreshPorts){
+  //    refreshPorts = false;
+  //    listAvailablePorts();
+  //  }
   
-    for(int i=0; i<numPorts+1; i++){
-      button[i].overRadio(mouseX,mouseY);
-      button[i].displayRadio();
-    }
-  }
+  //  for(int i=0; i<numPorts+1; i++){
+  //    button[i].overRadio(mouseX,mouseY);
+  //    button[i].displayRadio();
+  //  }
+  //}
 }
 
 
