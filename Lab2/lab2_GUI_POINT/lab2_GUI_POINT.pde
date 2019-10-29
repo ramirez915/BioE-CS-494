@@ -64,8 +64,8 @@ int x1 = 0;    // starting position of the graph
 int arduinoBPM = 0;
 
 void setup() {                     // do all the sett'n up in the setup
-size(2000,1300);                     // Stage size
-//fullScreen();
+//size(2000,1300);                     // Stage size
+fullScreen();
 
 frameRate(60);
 beatTimeX = new int[numPoints];    // these two arrays hold the Poincare Plot data
