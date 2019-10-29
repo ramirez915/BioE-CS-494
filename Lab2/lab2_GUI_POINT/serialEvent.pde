@@ -1,4 +1,3 @@
-
 void serialEvent(Serial port){
 try{
    String inData = port.readStringUntil('\n');
@@ -17,10 +16,22 @@ try{
      PPG[PPG.length-1] = int(map(newPPG,50,950,(height/2+15)+225,(height/2+15)-225));
      return;
    }
+   
+   // for bpm ranging from 50-120
+   if (inData.charAt(0) == 'B'){          // leading 'B' means time between beats in milliseconds
+     inData = inData.substring(1);        // cut off the leading 'Q'
+     //IBI = int(inData);                   // convert ascii string to integer IBI
 
+     arduinoBPM = int(inData);
+       
+     println(arduinoBPM);
+     pulse = true;                        // set the pulse flag
+     return;
 
-
-
+    }
+   
+   
+   
    if (inData.charAt(0) == 'Q'){          // leading 'Q' means time between beats in milliseconds
      inData = inData.substring(1);        // cut off the leading 'Q'
      IBI = int(inData);                   // convert ascii string to integer IBI
@@ -30,8 +41,10 @@ try{
     
      //if(stress_f==true || med_f==true) {
        
-     bpm=60/(IBI/1000);
-     println("bpm "+ bpm);
+     //bpm=60/(IBI/1000);
+     //println("bpm "+ bpm);
+     bpm=60/(IBI/1000);          // 50-120
+     println(bpm);
      for (int i = 0; i < bpm_arr.length-1; i++){
        bpm_arr[i] = bpm_arr[i+1];   // new data enters on the right at pulseY.length-1
      }
@@ -42,7 +55,7 @@ try{
      pulse = true;                        // set the pulse flag
      return;
 
-}
+    }
   }catch(Exception e) {
   // println(e.toString());
 }

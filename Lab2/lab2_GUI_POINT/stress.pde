@@ -7,16 +7,17 @@ void stress_draw(){
 text("Stress analyzer",width/2,50);
 
 //   GRAPH THE PULSE SENSOR DATA
-  stroke(250,0,0);                                       // use red for the pulse wave
-  beginShape();                                         // beginShape is a fast way to draw lines!
-  for (int i=1; i<bpm_arr.length-1; i++){                   // scroll through the PPG array
-    int x = width-160+i;
-    int y = bpm_arr[i];
-    vertex(x,y);                                        // set the vertex coordinates
-  }
-  endShape();                                           // connect the vertices
-  noStroke();
-
+  //stroke(250,0,0);                                       // use red for the pulse wave
+  //beginShape();                                         // beginShape is a fast way to draw lines!
+  //for (int i=1; i<bpm_arr.length-1; i++){                   // scroll through the PPG array
+  //  int x = width-160+i;
+  //  int y = bpm_arr[i];
+  //  vertex(x,y);                                        // set the vertex coordinates
+  //}
+  //endShape();                                           // connect the vertices
+  //noStroke();
+  
+  plotData();      // plot data from grafica
 }
 
 void stress_manage(){

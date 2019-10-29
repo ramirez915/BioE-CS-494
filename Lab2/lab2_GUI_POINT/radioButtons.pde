@@ -1,5 +1,3 @@
-
-
 class Radio {
   int _x,_y;
   int size, dotSize;
