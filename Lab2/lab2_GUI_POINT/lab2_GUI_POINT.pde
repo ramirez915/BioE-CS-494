@@ -296,3 +296,20 @@ void plotData(){
     bpmPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
   }
 }
+
+void resetPlots(){
+  println("restting plots...");
+  // removes all the points from the graphs
+  for(int i = 0; i < x1; i++){
+    bpmPlot.removePoint(0);
+  }
+  
+  // reset limits
+  bpmPlot.setXLim(0,50);    // x axis must stay the same
+  bpmPlot.setYLim(0,260);    // y axis
+  bpmPlot.updateLimits();
+  
+  x1 = 0;
+  
+  println("done");
+}
