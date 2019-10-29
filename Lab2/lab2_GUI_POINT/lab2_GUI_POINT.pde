@@ -104,6 +104,9 @@ drawDataWindows();
   bpmPlot.setXLim(0,50);
   bpmPlot.setYLim(0,120);    // y axis
   bpmPlot.activateZooming(2.0,CENTER,CENTER);
+  
+  bpmPlot.setBgColor(255);      //255 = white
+  bpmPlot.setLineColor(0);      // 0 = black
 
 song = new SoundFile(this,sketchPath("CarelessWhisper2.mp3"));
 
@@ -292,4 +295,21 @@ void plotData(){
   if(x1 >= 50){
     bpmPlot.moveHorizontalAxesLim(3.0);    // if want faster scroll increase this value
   }
+}
+
+void resetPlots(){
+  println("restting plots...");
+  // removes all the points from the graphs
+  for(int i = 0; i < x1; i++){
+    bpmPlot.removePoint(0);
+  }
+  
+  // reset limits
+  bpmPlot.setXLim(0,50);    // x axis must stay the same
+  bpmPlot.setYLim(0,260);    // y axis
+  bpmPlot.updateLimits();
+  
+  x1 = 0;
+  
+  println("done");
 }
