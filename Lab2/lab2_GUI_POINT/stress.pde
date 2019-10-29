@@ -36,7 +36,7 @@ if(passedTime<30000){
 
 if(passedTime>=30000 && songCounter==0) {
   
-  //song.play();
+  song.play();
   songCounter++;
   
 }
@@ -45,7 +45,7 @@ if(passedTime>=30000 && songCounter==0) {
 
 if(passedTime>=60000) {
   
-  //song.stop();
+  song.stop();
   songCounter=0;
   
   //tell and display if the person is stressed or not
@@ -57,7 +57,7 @@ if(passedTime>=60000) {
     //stressed-->play again
     songCounter=0;
     passedTime=30000;
-    text("To help calm down some relaxing music will be played",200,850);
+    text("To help calm down some relaxing music will be played again",200,850);
 }
 
 else {

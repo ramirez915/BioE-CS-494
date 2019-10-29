@@ -103,6 +103,10 @@ if(Signal>thr) {
       float bpm=float(60)/(ibif/1000);
       BPM=int(bpm);
 
+      if(IBI>1000 ||){
+        BPM=63;
+      }
+      
       if(BPM>150){
         BPM=63;
       }

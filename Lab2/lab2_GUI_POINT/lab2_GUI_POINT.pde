@@ -30,7 +30,7 @@ int[] PPG;                // array of live PPG datapoints
 int[] beatTimeX;          // array of X coordinates of Poincare Plot
 int[] beatTimeY;          // array of Y coordinates of Poincare Plot
 int numPoints = 100;      // size of coordinate arrays. ths sets number of displayed datapoints
-color eggshell = color(255, 253, 248);
+color eggshell = color(255, 255, 255);
 // initializing flags here
 boolean pulse = false;    // pulse is made true in serialEvent when arduino sends new IBI value
 boolean makeLine = false; // press 'L' to toggle a trace the last 20 dots on the Poincare Plot
@@ -63,6 +63,11 @@ GPlot bpmPlot;        // for grafica plot
 int x1 = 0;    // starting position of the graph
 int arduinoBPM = 0;
 
+
+
+
+
+
 void setup() {                     // do all the sett'n up in the setup
 //size(2000,1300);                     // Stage size
 fullScreen();
@@ -79,7 +84,7 @@ textFont(font);                    // general house-keeping in Processing
 textAlign(CENTER);                 // text and shapes will be referenced to their center point
 rectMode(CENTER);
 
-background(120,0,0);
+background(100,0,0);
 drawDataWindows();
 
 // GO FIND THE ARDUINO
@@ -91,15 +96,16 @@ drawDataWindows();
 
 
 // bpm plot
-  bpmPlot = new GPlot(this,1000,50);
+  bpmPlot = new GPlot(this,width/2-50+275,height/2+15-275);
   bpmPlot.setTitleText("BPM MONITOR");
   bpmPlot.getXAxis().setAxisLabelText("x axis");
   bpmPlot.getYAxis().setAxisLabelText("y axis");
-  bpmPlot.setDim(300,300);
+  bpmPlot.setDim(240,500);
   bpmPlot.setXLim(0,50);
   bpmPlot.setYLim(0,120);    // y axis
   bpmPlot.activateZooming(2.0,CENTER,CENTER);
 
+song = new SoundFile(this,sketchPath("CarelessWhisper2.mp3"));
 
 }  // END OF SETUP
 
@@ -108,7 +114,7 @@ void draw(){
   
 if(serialPortFound){
 
-   background(150);
+   background(100,0,0);
 //  DRAW THE BACKGROUND ELEMENTS AND TEXT
 
 
@@ -162,8 +168,8 @@ else{
 void drawDataWindows(){
   noStroke();
   fill(eggshell);
-  rect(width/2-50,height/2+15,550,550,7);     // draw Poincare Plot window  FIRST POSITION THAN SIZE
-  rect(width-85,(height/2)+15,150,550,7);     // draw the Pulse Sensor data window
+  rect(width/2-50,height/2+15,550,550);     // draw Poincare Plot window  FIRST POSITION THAN SIZE
+  rect(width-85,(height/2)+15,150,550);     // draw the Pulse Sensor data window
 
 }
 
@@ -198,15 +204,7 @@ void writeAxisLabels_bpm(){
   textSize(32);
   text("bpm plot",width/2-50-275+550+150,(height/2)+15-300);  // title
   fill(200);                                // draw the Plot coordinate values in grey
-  
-  text("0",width/2-50-275+550+30,height/2+15+75+225);                 // origin, scaled in mS
-  for (int i=30; i<=120; i+=30){         // print y axis values
-    text(i, width/2-50-275+550+30,map(i,0,120,height/2+15+225,height/2+15+275-550));
-  }
-  stroke(250,30,250);                       // draw gridlines in purple
-  for (int i=0; i<1500; i+=100){            // draw grid lines on axes
-    line(width/2-50-275+550+30,map(i,0,1500,height/2+15+275,height/2+15+275-550),width/2-50-275+550+30+10,map(i,0,1500,height/2+15+275,height/2+15+275-550)); //y axis
-  }
+ 
 }
 
 
