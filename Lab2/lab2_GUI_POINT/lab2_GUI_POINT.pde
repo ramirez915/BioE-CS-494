@@ -49,10 +49,10 @@ boolean stress_f=false;
 boolean med_f=false;
 int savedTime;
 int song_Time=30000;
-int songCounter=0;
+boolean play=false;
 boolean stressed=false;
 int thr_stressed=55; //set to 70
-int thr_med=40;
+int thr_med=60;
 int count=0;
 int bpmbase=0;
 int it=0;
@@ -97,11 +97,11 @@ drawDataWindows();
 
 // bpm plot
   bpmPlot = new GPlot(this,width/2-50+275,height/2+15-275);
-  bpmPlot.setTitleText("BPM MONITOR");
-  bpmPlot.getXAxis().setAxisLabelText("x axis");
-  bpmPlot.getYAxis().setAxisLabelText("y axis");
-  bpmPlot.setDim(240,500);
-  bpmPlot.setXLim(0,50);
+  //bpmPlot.setTitleText("BPM MONITOR");
+  bpmPlot.getXAxis().setAxisLabelText("time");
+  bpmPlot.getYAxis().setAxisLabelText("BPM");
+  bpmPlot.setDim(240,450);
+  bpmPlot.setXLim(0,40);
   bpmPlot.setYLim(0,120);    // y axis
   bpmPlot.activateZooming(2.0,CENTER,CENTER);
   

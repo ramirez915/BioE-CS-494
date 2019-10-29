@@ -32,13 +32,14 @@ if(passedTime<30000){
   getBaseLine();
   textSize(40);
   text("Acquiring baseline: " +int(passedTime/1000),230,850);
-  
+
 }
 
-if(passedTime>=30000 && songCounter==0) {
-  
+if(passedTime>=30000 && passedTime<60000) {
+  if(play==true){
   song.play();
-  songCounter++;
+  play=false;
+  }
   textSize(40);
   text("CarelessWhisper: " + int(passedTime/1000-30),200,850);
   text("Baseline: " + int(bpmbase),200,950);
@@ -49,8 +50,7 @@ if(passedTime>=30000 && songCounter==0) {
 if(passedTime>=60000) {
   
   song.stop();
-  songCounter=0;
-  
+
   //tell and display if the person is stressed or not
   //if stressed keep playing music for other 30 sec
  
@@ -58,9 +58,10 @@ if(passedTime>=60000) {
   //otherwise monitor and reset timer 
   if(bpm>bpmbase*1.3){
     //stressed-->play again
-    songCounter=0;
     passedTime=30000;
     text("To help calm down some relaxing music will be played again",200,850);
+
+    passedTime=0;
 }
 
 else {

@@ -79,7 +79,7 @@ ISR(TIMER2_COMPA_vect){                         // triggered when Timer2 counts 
       runningTotal /= 10;                     // average the last 10 IBI values
       BPM = 60000/runningTotal;               // how many beats can fit into a minute? that's BPM!
       if(BPM>80 || BPM <45){
-        BPM=random(56,65);
+        BPM=random(70,80);
       }
       
       QS = true;                              // set Quantified Self flag

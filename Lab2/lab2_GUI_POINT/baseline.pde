@@ -9,8 +9,7 @@ void getBaseLine(){
       
      bpmbase = bpmbase / it;
      it=0;
-     songCounter=0;
-     
+     play=true;
      //tell if stressed:
      if (bpmbase>thr_stressed){
          stressed=true;

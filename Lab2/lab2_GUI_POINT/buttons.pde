@@ -2,13 +2,13 @@
 void Stress() {
   stress_f=true;
   savedTime = millis();
-  
-  songCounter=0;
+  bpmbase=0;
 }
 
 void Meditation() {
   med_f=true;
   savedTime = millis();
+  bpmbase=0;
 }
 
 
