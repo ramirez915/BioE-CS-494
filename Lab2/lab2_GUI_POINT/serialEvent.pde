@@ -31,7 +31,7 @@ try{
      //if(stress_f==true || med_f==true) {
        
      bpm=60/(IBI/1000);
-     println(bpm);
+     println("bpm "+ bpm);
      for (int i = 0; i < bpm_arr.length-1; i++){
        bpm_arr[i] = bpm_arr[i+1];   // new data enters on the right at pulseY.length-1
      }

@@ -42,7 +42,7 @@ void point_care(){
 
 //   GRAPH THE PULSE SENSOR DATA
 
-if(stress_f==false && med_f==false){
+
  stroke(250,0,0);                                       // use red for the pulse wave
   beginShape();                                         // beginShape is a fast way to draw lines!
   for (int i=1; i<PPG.length-1; i++){                   // scroll through the PPG array
@@ -53,7 +53,5 @@ if(stress_f==false && med_f==false){
 
   endShape();                                           // connect the vertices
   noStroke();
-}
-
 
 }

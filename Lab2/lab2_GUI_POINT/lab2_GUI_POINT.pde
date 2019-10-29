@@ -179,25 +179,17 @@ void writeAxisLabels_bpm(){
   noStroke();
   fill(eggshell);                        // eggshell white
   textSize(32);
-  text("bpm plot",width-85,(height/2)+15-300);  // title
+  text("bpm plot",width/2-50-275+550+150,(height/2)+15-300);  // title
   fill(200);                                // draw the Plot coordinate values in grey
   
-  text("0mS",width/2-85-75,height/2+15+75);                 // origin, scaled in mS
+  text("0",width/2-50-275+550+30,height/2+15+75+225);                 // origin, scaled in mS
   for (int i=30; i<=120; i+=30){         // print y axis values
-    text(i, width-85-75-15,map(i,0,120,height/2+15+225,height/2+15+275-550));
-  }
-  for (int i=500; i<=1500; i+=500){         // print  x axis values
-    text(i, width/2-50-275+map(i,0,1500,0,550), height/2+15+275+15);
+    text(i, width/2-50-275+550+30,map(i,0,120,height/2+15+225,height/2+15+275-550));
   }
   stroke(250,30,250);                       // draw gridlines in purple
   for (int i=0; i<1500; i+=100){            // draw grid lines on axes
-    line(width/2-50-275,map(i,0,1500,height/2+15+275,height/2+15+275-550),width/2-50-275+10,map(i,0,1500,height/2+15+275,height/2+15+275-550)); //y axis
-    line(width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15,width/2-50-275+map(i,0,1500,0,549),height/2+15+275+15-10); // x axis
+    line(width/2-50-275+550+30,map(i,0,1500,height/2+15+275,height/2+15+275-550),width/2-50-275+550+30+10,map(i,0,1500,height/2+15+275,height/2+15+275-550)); //y axis
   }
-  noStroke();
-  fill(255,253,10);                                    // print axes legend in yellow, for fun
-  text("n", width/2-50-275+map(750,0,1500, 0, 550), height/2+15+275+15+30);    // n is the most recent IBI value
-  text("n-1",width/2-50-275-30,map(750,0,1500,height/2+15+275+15,height/2+15+275+15-550));               // n-1 is the one we got before n
 }
 
 

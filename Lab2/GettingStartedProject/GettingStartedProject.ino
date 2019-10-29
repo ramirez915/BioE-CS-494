@@ -1,39 +1,31 @@
+#include <StopWatch.h>
 
-/*  PulseSensor Starter Project and Signal Tester
- *  The Best Way to Get Started  With, or See the Raw Signal of, your PulseSensor.com™ & Arduino.
- *
- *  Here is a link to the tutorial
- *  https://pulsesensor.com/pages/code-and-guide
- *
- *  WATCH ME (Tutorial Video):
- *  https://www.youtube.com/watch?v=RbB8NSRa5X4
- *
- *
--------------------------------------------------------------
-1) This shows a live human Heartbeat Pulse.
-2) Live visualization in Arduino's Cool "Serial Plotter".
-3) Blink an LED on each Heartbeat.
-4) This is the direct Pulse Sensor's Signal.
-5) A great first-step in troubleshooting your circuit and connections.
-6) "Human-readable" code that is newbie friendly."
-
-*/
+#define PROCESSING_VISUALIZER 1
+#define SERIAL_PLOTTER  2
 
 
+StopWatch BPM_timer; //timer for bpm
 //  Variables
 int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
 int LED11 = 11;   //  The on-board Arduion LED
 
 
 int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
-int thr = 600;            // Determine which Signal to "count as a beat", and which to ingore.
+int thr = 635;            // Determine which Signal to "count as a beat", and which to ingore.
+volatile int BPM;
+volatile int IBI=600;
+
+static int outputType = PROCESSING_VISUALIZER;
+//static int outputType = SERIAL_PLOTTER;
+
 
 
 // The SetUp Function:
 void setup() {
-  pinMode(LED13,OUTPUT);         // pin that will blink to your heartbeat!
+  pinMode(LED11,OUTPUT);         // pin that will blink to your heartbeat!
    Serial.begin(115200);         // Set's up Serial Communication at certain speed.
 
+BPM_timer.start();
 }
 
 
@@ -43,80 +35,84 @@ void acquire_signal() {
   //check for signal acquisition
   //pins are D11=LO- and D09=LO+
 
-  float seg;
-  float R_R;
 //
 // 
 //  // subtract the last reading:
-//  total_bpm = total_bpm - readings_bpm[readIndex_bpm];
+//  total_BPM = total_BPM - readings_BPM[readIndex_BPM];
 //  // read from the sensor:
-//  readings_bpm[readIndex_bpm] = analogRead(A0);
+//  readings_BPM[readIndex_BPM] = analogRead(A0);
 //  /*Serial.print("analogueR: ");
 //  Serial.println(analogRead(A0));
 //  Serial.print("READS: ");
-//  Serial.println(readings[readIndex_bpm]);
+//  Serial.println(readings[readIndex_BPM]);
 //  */
 //  // add the reading to the total:
-//  total_bpm = total_bpm + readings_bpm[readIndex_bpm];
+//  total_BPM = total_BPM + readings_BPM[readIndex_BPM];
 //  // advance to the next position in the array:
-//  readIndex_bpm = readIndex_bpm + 1;
+//  readIndex_BPM = readIndex_BPM + 1;
 //
 //  // if we're at the end of the array...
-//  if (readIndex_bpm >= numReadings_bpm) {
+//  if (readIndex_BPM >= numReadings_BPM) {
 //    // ...wrap around to the beginning:
-//    readIndex_bpm = 0;
+//    readIndex_BPM = 0;
 //  }
 //
 //  // calculate the average:
-//  average_bpm = total_bpm / numReadings_bpm;
+//  average_BPM = total_BPM / numReadings_BPM;
 //  //Serial.print("AVG ");
 //   //Serial.println(average);
 //
-//seg=average_bpm;
+//Signal=average_BPM;
 
 
-//if(seg<thr) {
+//if(Signal<thr) {
 //
 //  upper=0;
 //}
-//Serial.print("Segnal:");
-//Serial.println(seg);
+//Serial.print("Signalnal:");
+//Serial.println(Signal);
 //Serial.print(" ");
 
-   // seg=analogRead(A0);
+   // Signal=analogRead(A0);
 //
- //Serial.println(seg);
+ //Serial.println(Signal);
     //check for threshold
    
-//    if(seg>thr && upper==0){
+//    if(Signal>thr && upper==0){
 
-seg=analogRead(PulseSensorPurplePin);
-Serial.println(seg); 
+Signal=analogRead(PulseSensorPurplePin);
+//Serial.println(Signal); 
 
-if(seg>thr) {
+if(Signal>thr) {
        digitalWrite(LED11,HIGH);
        
        //R-peak detected, save time instant
       //t must be current time
-      bpm_timer.stop();
-      long bpmTimer = bpm_timer.value();
-       R_R=bpmTimer;
-     // R_R= (bpmTimer/float(10));
-      //Serial.print("R_R:");
-     //Serial.println(R_R);
+      BPM_timer.stop();
+      long BPMTimer = BPM_timer.value();
+       IBI=BPMTimer;
+     // IBI= (BPMTimer/float(10));
+      //Serial.print("IBI:");
+     //Serial.println(IBI);
       //Serial.print(" ");
-      bpm_timer.reset();
-      bpm_timer.start();
-      //compute bpm as a frequency
-      bpm=float(60)/(R_R/1000);
+      BPM_timer.reset();
+      BPM_timer.start();
+      //compute BPM as a frequency
+      float ibif=float(IBI);
+      
+      float bpm=float(60)/(ibif/1000);
+      BPM=int(bpm);
+
+      if(BPM>150){
+        BPM=63;
+      }
       serialOutputWhenBeatHappens();
+  
     } 
 
     else{
-      digitalWrite(LED,LOW); 
+      digitalWrite(LED11,LOW); 
     }
-
-send
 
     delay(30);
 }
@@ -135,8 +131,10 @@ send
 
 // The Main Loop Function
 void loop() {
+  
+serialOutput();
 
-
+acquire_signal();
 
 delay(10);
 
