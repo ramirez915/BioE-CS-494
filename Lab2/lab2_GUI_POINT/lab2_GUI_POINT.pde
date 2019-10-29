@@ -90,8 +90,8 @@ drawDataWindows();
 
 
 
-// ecg and respPlots    regular plots to see signal from device
-  bpmPlot = new GPlot(this,510,50);        //graph positioned at 300,0
+// bpm plot
+  bpmPlot = new GPlot(this,510,50);
   bpmPlot.setTitleText("BPM MONITOR");
   bpmPlot.getXAxis().setAxisLabelText("x axis");
   bpmPlot.getYAxis().setAxisLabelText("y axis");
