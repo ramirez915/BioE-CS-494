@@ -104,6 +104,9 @@ drawDataWindows();
   bpmPlot.setXLim(0,50);
   bpmPlot.setYLim(0,120);    // y axis
   bpmPlot.activateZooming(2.0,CENTER,CENTER);
+  
+  bpmPlot.setBgColor(255);      //255 = white
+  bpmPlot.setLineColor(0);      // 0 = black
 
 song = new SoundFile(this,sketchPath("CarelessWhisper2.mp3"));
 
