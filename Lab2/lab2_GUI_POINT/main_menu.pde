@@ -16,26 +16,29 @@ void buttons_draw(){
   
   // adds buttons to the window
   cp5 = new ControlP5(this);
-  font = createFont("SignPainter-HouseScriptSemibold", 20);    // custom fonts for buttons and title
+  font = createFont("SignPainter-HouseScriptSemibold", 30);    // custom fonts for buttons and title
   //font = createFont("Arial", 20);    // custom fonts for buttons and title
 
   
   cp5.addButton("Stress")
-    .setPosition(10,50)
-    .setSize(120, 70)
+    .setPosition(20,50)
+    .setSize(160, 90)
     .setFont(font);
+   // .setColorBackground(100);
   
   cp5.addButton("Meditation")
-    .setPosition(10,150)
-    .setSize(120, 70)
+    .setPosition(20,150)
+    .setSize(160, 90)
     .setFont(font);
+    //.setColorBackground(100);
 }
 
 
 
 void main_menu_draw(){
   cp5.addButton("MainMenu")     //"alloff" is the name of button
-    .setPosition(10, 250)  //x and y coordinates of upper left corner of button
-    .setSize(120, 70)      //(width, height)
+    .setPosition(20, 250)  //x and y coordinates of upper left corner of button
+    .setSize(160, 90)      //(width, height)
     .setFont(font);
+    //.setColorBackground(100);
 }

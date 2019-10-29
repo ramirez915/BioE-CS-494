@@ -202,7 +202,7 @@ void writeAxisLabels_bpm(){
   noStroke();
   fill(eggshell);                        // eggshell white
   textSize(32);
-  text("bpm plot",width/2-50-275+550+150,(height/2)+15-300);  // title
+  text("BPM Plot",width/2-50-275+550+150,130);  // title
   fill(200);                                // draw the Plot coordinate values in grey
  
 }

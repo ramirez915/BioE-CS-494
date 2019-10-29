@@ -3,7 +3,7 @@ void stress_draw(){
 //update based on time
 
 //draw graph of bpm
-
+textSize(40);
 text("Stress analyzer",width/2,50);
 
 //   GRAPH THE PULSE SENSOR DATA
@@ -30,7 +30,8 @@ int passedTime = millis() - savedTime;
 
 if(passedTime<30000){
   getBaseLine();
-  text("acquiring baseline: "+passedTime,200,850);
+  textSize(40);
+  text("Acquiring baseline: " +int(passedTime/1000),230,850);
   
 }
 
@@ -38,7 +39,9 @@ if(passedTime>=30000 && songCounter==0) {
   
   song.play();
   songCounter++;
-  
+  textSize(40);
+  text("CarelessWhisper: " + int(passedTime/1000-30),200,850);
+  text("Baseline: " + int(bpmbase),200,950);
 }
 
 //finish playing song

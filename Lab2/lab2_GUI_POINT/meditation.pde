@@ -24,12 +24,13 @@ int passedTime = millis() - savedTime;
 
 if(passedTime<30000){
   getBaseLine();
-  text("acquiring baseline: "+passedTime,200,850);
+  textSize(40);
+  text("Acquiring baseline: "+passedTime,200,850);
 //  text(passedTime);
 }
 
-if(bpm<bpmbase*1.3){
-  
+if(bpm<bpmbase*1.3 && passedTime>30){
+  text("Baseline: " + int(bpmbase),200,950);
   count=0;
 }
 
