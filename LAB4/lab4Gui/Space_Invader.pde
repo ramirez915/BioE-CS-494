@@ -1,4 +1,4 @@
-int pixelsize = 4;
+int pixelsize = 10; //original was 4    the infinite shooting is normal from orignal code....
 int gridsize  = pixelsize * 7 + 5;
 Player player;
 ArrayList enemies = new ArrayList();
@@ -6,17 +6,48 @@ ArrayList bullets = new ArrayList();
 int direction = 1;
 boolean incy = false;
 
+// do points system
+int totalPoints = 0;
+ControlP5 siCp5;
+Textlabel pointsLbl;
+Textlabel points;
+PFont siFont;
+
 void spaceInvaderSetup() {
     background(0);
     noStroke();
     fill(255);
     player = new Player();
     createEnemies();
+    
+    siFont = createFont("MS Gothic",20);
+
+    //-------------------------------------------------------- space invader cp5
+    siCp5 = new ControlP5(this);
+    pointsLbl = siCp5.addLabel("pointsLbl")
+      .setText("Points")
+      .setPosition(width-300,0)      // top right corner
+      .setColorValue(color(0,255,0))
+      .setFont(siFont)
+      .show()
+      ;
+    
+    points = siCp5.addLabel("points")
+      .setText(Integer.toString(totalPoints))
+      .setPosition(width-100,0)      // top right corner
+      .setColorValue(color(0,255,0))
+      .setFont(siFont)
+      .show()
+      ;
+    //----------------------------------------------------------------
 }
 
 void spaceInvaderReset(){
   background(200,0,100);
   deleteEnemies();
+  totalPoints = 0;
+  
+  siCp5.hide();        // hide all the point stuff
 }
 
 void spaceInvaderDraw() {
@@ -42,6 +73,8 @@ void spaceInvaderDraw() {
         Enemy enemy = (Enemy) enemies.get(i);
         if (!enemy.alive()) {
             enemies.remove(i);
+            totalPoints += 20;
+            println("HIT points: "+ totalPoints);
         } 
         else {
             enemy.draw();
@@ -49,23 +82,29 @@ void spaceInvaderDraw() {
     }
 
     incy = false;
+    
+    //DRAW POINTS
+    points.setText(Integer.toString(totalPoints));      // updates points
 }
 
 void createEnemies() {
-    for (int i = 0; i < width/gridsize/2; i++) {
-        for (int j = 0; j <= 5; j++) {
-            enemies.add(new Enemy(i*gridsize, j*gridsize));
-        }
-    }
+  int c = 0;
+  for (int i = 0; i < width/gridsize/2; i++) {
+      for (int j = 0; j <= 5; j++) {
+          enemies.add(new Enemy(i*gridsize, j*gridsize));
+          c++;
+      }
+  }
+  println(c +" created "+ enemies.size());
 }
 
 void deleteEnemies(){
   int enemyCount = 0;
-  for (int i = 0; i < enemies.size(); i++) {
-     enemies.remove(i);
-     enemyCount++;
+  while(enemies.size() != 0){
+    enemies.remove(0);
+    enemyCount++;
   }
-  println(enemyCount + " deleted");
+  println(enemyCount + " deleted " + enemies.size());
 }
 
 class SpaceShip {
@@ -108,8 +147,8 @@ class Player extends SpaceShip {
     }
 
     void updateObj() {
-        if (keyPressed && keyCode == LEFT) x -= 5;
-        if (keyPressed && keyCode == RIGHT) x += 5;
+        if (keyPressed && keyCode == LEFT) x -= 10;
+        if (keyPressed && keyCode == RIGHT) x += 10;
         if (keyPressed && keyCode == CONTROL && canShoot) {
             bullets.add(new Bullet(x, y));
             canShoot = false;
