@@ -17,9 +17,10 @@ void setupMainButtons(){
 // button functions
 void Space_Invader(){
   spaceInvaderSetup();
-  // change boolean for the main draw() so it goes in and draw the game
+  spaceInvaderOn = true;
 }
 
 void MainMenu(){
   spaceInvaderReset();
+  spaceInvaderOn = false;
 }
