@@ -34,9 +34,9 @@ void setup(){
   fullScreen();
   frameRate(60);
   font = createFont("MS Gothic",60);
-  //listAvailablePorts();
+  listAvailablePorts();
   
-  setupMainButtons();
+  //setupMainButtons();
 }
 
 
@@ -50,24 +50,24 @@ void draw(){
   
   
   
-  //if(serialPortFound){
+  if(serialPortFound){
     
     
-  //}
-  //else { // SCAN BUTTONS TO FIND THE SERIAL PORT
+  }
+  else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
-  //  autoScanPorts();
+    autoScanPorts();
   
-  //  if(refreshPorts){
-  //    refreshPorts = false;
-  //    listAvailablePorts();
-  //  }
+    if(refreshPorts){
+      refreshPorts = false;
+      listAvailablePorts();
+    }
   
-  //  for(int i=0; i<numPorts+1; i++){
-  //    button[i].overRadio(mouseX,mouseY);
-  //    button[i].displayRadio();
-  //  }
-  //}
+    for(int i=0; i<numPorts+1; i++){
+      button[i].overRadio(mouseX,mouseY);
+      button[i].displayRadio();
+    }
+  }
 }
 
 
