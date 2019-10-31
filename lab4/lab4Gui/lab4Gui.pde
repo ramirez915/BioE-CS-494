@@ -9,7 +9,7 @@ String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
 int counter = 0;
 
-//--------------------------        // TOUNCHES IN AN AMOUNT OF TIME
+//----------------------------------------------                      // capacitors
 boolean C1 = false;
 int c1Counter = 0;        // keeping track of which is pressed
 StopWatch c1Watch = new StopWatch();
@@ -47,20 +47,20 @@ void setup(){
   size(2000,1200);
   frameRate(60);
   font = createFont("MS Gothic",60);
-  listAvailablePorts();
+  //listAvailablePorts();
   
 
-  //setupMainButtons();
+  setupMainButtons();
 
   //cp5.hide();
   
   
   
   
-  //printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //port = new Serial(this, portName, 115200);
-  //port.bufferUntil('\n');
+  printArray(Serial.list());   //prints all available serial ports
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  port = new Serial(this, portName, 115200);
+  port.bufferUntil('\n');
 
 }
 
@@ -76,45 +76,46 @@ void draw(){
   
   
   
-  if(serialPortFound){
+  //if(serialPortFound){
+  //  if(spaceInvaderOn){
+  //    parseData();
+  //    spaceInvaderDraw();
+  //  }
     
-    
-  }
-  else { // SCAN BUTTONS TO FIND THE SERIAL PORT
+  //}
+  //else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
-    autoScanPorts();
+  //  autoScanPorts();
   
-    if(refreshPorts){
-      refreshPorts = false;
-      listAvailablePorts();
-    }
+  //  if(refreshPorts){
+  //    refreshPorts = false;
+  //    listAvailablePorts();
+  //  }
   
-    for(int i=0; i<numPorts+1; i++){
-      button[i].overRadio(mouseX,mouseY);
-      button[i].displayRadio();
-    }
-  }
+  //  for(int i=0; i<numPorts+1; i++){
+  //    button[i].overRadio(mouseX,mouseY);
+  //    button[i].displayRadio();
+  //  }
+  //}
 }
 
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      dataArr = split(valueFromArduino,"-");
-//      println(valueFromArduino);
+    try{
+      dataArr = split(valueFromArduino,"-");
+      println(valueFromArduino);
       
-//      parseData();
-      
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
-////---------------------------------------------- end of serialEvent
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
+//---------------------------------------------- end of serialEvent
 
 
 
@@ -124,8 +125,8 @@ void parseData(){
   C2 = false;
   C3 = false;
   
-    if(counter != cmds.length){                // start of if        when ready to test with real values take out
-      switch(cmds[counter]){
+    //if(counter != cmds.length){                // start of if        when ready to test with real values take out
+      switch(dataArr[0]){        // cmds[counter]
         case "C1":
           C1 = true;
           println("C1 pressed");
@@ -142,9 +143,9 @@ void parseData(){
           println("do nothing");
           break;
       }
-      //println(counter);
+      println(counter);
       counter++;
-    }                                // end of if
+    //}                                // end of if
 }
 
 
