@@ -47,9 +47,11 @@ void setup(){
   size(2000,1200);
   frameRate(60);
   font = createFont("MS Gothic",60);
-  //listAvailablePorts();
+  listAvailablePorts();
   
-  setupMainButtons();
+
+  //setupMainButtons();
+
   //cp5.hide();
   
   
@@ -59,6 +61,7 @@ void setup(){
   //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   //port = new Serial(this, portName, 115200);
   //port.bufferUntil('\n');
+
 }
 
 
@@ -73,24 +76,24 @@ void draw(){
   
   
   
-  //if(serialPortFound){
+  if(serialPortFound){
     
     
-  //}
-  //else { // SCAN BUTTONS TO FIND THE SERIAL PORT
+  }
+  else { // SCAN BUTTONS TO FIND THE SERIAL PORT
 
-  //  autoScanPorts();
+    autoScanPorts();
   
-  //  if(refreshPorts){
-  //    refreshPorts = false;
-  //    listAvailablePorts();
-  //  }
+    if(refreshPorts){
+      refreshPorts = false;
+      listAvailablePorts();
+    }
   
-  //  for(int i=0; i<numPorts+1; i++){
-  //    button[i].overRadio(mouseX,mouseY);
-  //    button[i].displayRadio();
-  //  }
-  //}
+    for(int i=0; i<numPorts+1; i++){
+      button[i].overRadio(mouseX,mouseY);
+      button[i].displayRadio();
+    }
+  }
 }
 
 
