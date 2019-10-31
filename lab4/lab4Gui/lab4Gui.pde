@@ -36,9 +36,15 @@ boolean spaceInvaderOn = false;
 
 //---------------------------------
 
+//------------------------------------------------------------ testing
+String[] cmds = new String[] {"C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","C3","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C2","C2","C2","C2","C2","C2","C2","C2","C3"};
+
+//------------------------------------------
+
 
 void setup(){
-  fullScreen();
+  //fullScreen();
+  size(2000,1200);
   frameRate(60);
   font = createFont("MS Gothic",60);
   //listAvailablePorts();
@@ -60,6 +66,7 @@ void setup(){
 
 void draw(){
   if(spaceInvaderOn){
+    parseData();
     spaceInvaderDraw();
   }
   
@@ -114,25 +121,27 @@ void parseData(){
   C2 = false;
   C3 = false;
   
-  // for each capacitor in the array
-  for(String capacitor: dataArr){
-    switch(capacitor){
-      case "C1":
-        C1 = true;
-        println("C1 pressed");
-        break;
-      case "C2":
-        C2 = true;
-        println("C2 pressed");
-        break;
-      case "C3":
-        C3 = true;
-        println("C3 pressed");
-        break;
-    }
-    //println(counter);
-    //counter++;
-  }
+    if(counter != cmds.length){                // start of if        when ready to test with real values take out
+      switch(cmds[counter]){
+        case "C1":
+          C1 = true;
+          println("C1 pressed");
+          break;
+        case "C2":
+          C2 = true;
+          println("C2 pressed");
+          break;
+        case "C3":
+          C3 = true;
+          println("C3 pressed");
+          break;
+        case "x":          // do nothing
+          println("do nothing");
+          break;
+      }
+      //println(counter);
+      counter++;
+    }                                // end of if
 }
 
 

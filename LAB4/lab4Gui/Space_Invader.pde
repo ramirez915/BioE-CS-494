@@ -147,13 +147,26 @@ class Player extends SpaceShip {
     }
 
     void updateObj() {
-        if (keyPressed && keyCode == LEFT) x -= 10;
-        if (keyPressed && keyCode == RIGHT) x += 10;
-        if (keyPressed && keyCode == CONTROL && canShoot) {
-            bullets.add(new Bullet(x, y));
-            canShoot = false;
-            shootdelay = 0;
+        
+        // if the C1 flag is true then do the following command....
+        if(C1){
+          x -= 10;
         }
+        else if(C2){
+          x += 10;
+        }
+        else if(C3){
+          bullets.add(new Bullet(x, y));
+          canShoot = false;
+          shootdelay = 0;
+        }
+        //if (keyPressed && keyCode == LEFT) x -= 10;
+        //if (keyPressed && keyCode == RIGHT) x += 10;
+        //if (keyPressed && keyCode == CONTROL && canShoot) {
+        //    bullets.add(new Bullet(x, y));
+        //    canShoot = false;
+        //    shootdelay = 0;
+        //}
 
         shootdelay++;
         if (shootdelay >= 20) {
