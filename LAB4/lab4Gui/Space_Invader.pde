@@ -175,7 +175,7 @@ class Enemy extends SpaceShip {
     }
 
     void updateObj() {
-        if (frameCount%30 == 0) x += direction * gridsize;
+        if (frameCount%30 == 0) x += direction * (gridsize +100);
         if (incy == true) y += gridsize / 2;
     }
 
