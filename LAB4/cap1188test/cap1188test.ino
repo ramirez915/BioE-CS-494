@@ -79,3 +79,6 @@ void loop() {
   delay(50);
  // delay(100);
 }
+
+
+// calibrate to 2f
