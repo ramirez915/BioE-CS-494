@@ -129,22 +129,22 @@ void parseData(){
       switch(dataArr[0]){        // cmds[counter]
         case "C1":
           C1 = true;
-          println("C1 pressed");
+          println("C1 pressed... left");
           break;
         case "C2":
           C2 = true;
-          println("C2 pressed");
+          println("C2 pressed... right");
           break;
         case "C3":
           C3 = true;
-          println("C3 pressed");
+          println("C3 pressed... shooting");
           break;
         case "x":          // do nothing
           println("do nothing");
           break;
       }
-      println(counter);
-      counter++;
+      //println(counter);
+      //counter++;
     //}                                // end of if
 }
 
