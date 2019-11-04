@@ -20,13 +20,13 @@ void spaceInvaderSetup() {
     player = new Player();
     createEnemies();
     
-    siFont = createFont("MS Gothic",20);
+    siFont = createFont("MS Gothic",40);
 
     //-------------------------------------------------------- space invader cp5
     siCp5 = new ControlP5(this);
     pointsLbl = siCp5.addLabel("pointsLbl")
       .setText("Points")
-      .setPosition(width-300,0)      // top right corner
+      .setPosition(0,0)      // top left corner
       .setColorValue(color(0,255,0))
       .setFont(siFont)
       .show()
@@ -34,7 +34,7 @@ void spaceInvaderSetup() {
     
     points = siCp5.addLabel("points")
       .setText(Integer.toString(totalPoints))
-      .setPosition(width-100,0)      // top right corner
+      .setPosition(300,0)      // top right corner
       .setColorValue(color(0,255,0))
       .setFont(siFont)
       .show()
@@ -43,7 +43,7 @@ void spaceInvaderSetup() {
 }
 
 void spaceInvaderReset(){
-  background(200,0,100);
+  background(194,64,0);
   deleteEnemies();
   totalPoints = 0;
   

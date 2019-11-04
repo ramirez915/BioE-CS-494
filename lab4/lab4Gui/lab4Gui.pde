@@ -9,6 +9,13 @@ String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
 int counter = 0;
 
+//------------------------------------------------------------------- labels
+Textlabel gameSelectLbl;
+Button mm;
+Button bb;  // brick breaker button
+Button si;  // space invader button
+//--------------------------------------------------------
+
 //----------------------------------------------                      // capacitors
 boolean C1 = false;
 int c1Counter = 0;        // keeping track of which is pressed
@@ -48,6 +55,7 @@ boolean brickBreakerOn = false;
 
 
 void setup(){
+  background(192,62,0);
   //fullScreen();
   size(2000,1200);
   frameRate(60);

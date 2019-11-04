@@ -339,9 +339,11 @@ class Paddle{
   //Paddle constructor
   Paddle(){
     x = width/2;
-    y = 500;
+    //y = 500;
+    y = 1000;
     w = 100;
-    h = 10;
+    //h = 10;
+    h = 100;
     r=255;
     g=255;
     b=255;
@@ -529,5 +531,5 @@ class Missile{
 
 void brickBreakerReset(){
   resetGame();
-  background(0);
+  background(194,64,0);
 }
