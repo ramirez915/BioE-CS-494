@@ -36,10 +36,15 @@ boolean spaceInvaderOn = false;
 
 //---------------------------------
 
-//------------------------------------------------------------ testing
+//------------------------------------------------------------ testing for space invader
 String[] cmds = new String[] {"C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","C3","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C2","C2","C2","C2","C2","C2","C2","C2","C3"};
 
 //------------------------------------------
+
+//-------------------------------------------------------- brick breaker globals
+boolean brickBreakerOn = false;
+
+//-----------------------------------------
 
 
 void setup(){
@@ -58,9 +63,15 @@ void setup(){
   
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   port = new Serial(this, portName, 115200);
   port.bufferUntil('\n');
+  
+  dataArr[0] = "x";
+  dataArr[1] = "x";
+  dataArr[2] = "x";
+  dataArr[3] = "x";
+  dataArr[4] = "x";
 
 }
 
@@ -69,8 +80,19 @@ void setup(){
 
 void draw(){
   if(spaceInvaderOn){
-    parseData();
+    parseData();          // original
     spaceInvaderDraw();
+    C1 = false;
+    C2 = false;
+    C3 = false;
+  }
+  
+  else if(brickBreakerOn){
+    parseData();
+    brickBreakerDraw();
+    C1 = false;
+    C2 = false;
+    C3 = false;
   }
   
   
@@ -180,18 +202,18 @@ void listAvailablePorts(){
   textAlign(CENTER);
 }
 
- void autoScanPorts(){
-  if(Serial.list().length != numPorts){
-    if(Serial.list().length > numPorts){
-      println("New Ports Opened!");
-      int diff = Serial.list().length - numPorts;  // was serialPorts.length
-      serialPorts = expand(serialPorts,diff);
-      numPorts = Serial.list().length;
-    }else if(Serial.list().length < numPorts){
-      println("Some Ports Closed!");
-      numPorts = Serial.list().length;
-    }
-    refreshPorts = true;
-    return;
-  }
- }
+ //void autoScanPorts(){
+ // if(Serial.list().length != numPorts){
+ //   if(Serial.list().length > numPorts){
+ //     println("New Ports Opened!");
+ //     int diff = Serial.list().length - numPorts;  // was serialPorts.length
+ //     serialPorts = expand(serialPorts,diff);
+ //     numPorts = Serial.list().length;
+ //   }else if(Serial.list().length < numPorts){
+ //     println("Some Ports Closed!");
+ //     numPorts = Serial.list().length;
+ //   }
+ //   refreshPorts = true;
+ //   return;
+ // }
+ //}

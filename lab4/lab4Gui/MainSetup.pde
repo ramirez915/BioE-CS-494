@@ -7,8 +7,14 @@ void setupMainButtons(){
     .setFont(font)
   ;
   
+  cp5.addButton("Brick_Breaker")
+    .setPosition(100,250)
+    .setSize(400,85)
+    .setFont(font)
+  ;
+  
   cp5.addButton("MainMenu")          // stops current game and goes back to main menu
-  .setPosition(100,250)
+  .setPosition(100,450)
     .setSize(300, 85)
     .setFont(font)
   ;
@@ -20,7 +26,24 @@ void Space_Invader(){
   spaceInvaderOn = true;
 }
 
+void Brick_Breaker(){
+  brickBreakerSetup();
+  brickBreakerOn = true;
+}
+
 void MainMenu(){
-  spaceInvaderReset();
-  spaceInvaderOn = false;
+  // if space invader game was being played
+  if(spaceInvaderOn){
+    spaceInvaderReset();
+    spaceInvaderOn = false;
+  }
+  else if(brickBreakerOn){
+    brickBreakerReset();
+    brickBreakerOn = false;
+  }
+  C1 = false;
+  C2 = false;
+  C3 = false;
+  counter = 0;
+  dataArr[0] = "x";
 }

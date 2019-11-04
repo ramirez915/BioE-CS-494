@@ -105,6 +105,11 @@ void deleteEnemies(){
     enemyCount++;
   }
   println(enemyCount + " deleted " + enemies.size());
+  
+  // delete buttlets
+  while(bullets.size() != 0){
+    bullets.remove(0);
+  }
 }
 
 class SpaceShip {
@@ -150,10 +155,12 @@ class Player extends SpaceShip {
         
         // if the C1 flag is true then do the following command....
         if(C1){
-          x -= 10;
+          //x -= 10;
+          x -=20;
         }
         else if(C2){
-          x += 10;
+          //x += 10;
+          x += 20;
         }
         else if(C3){
           bullets.add(new Bullet(x, y));
@@ -169,9 +176,14 @@ class Player extends SpaceShip {
         //}
 
         shootdelay++;
-        if (shootdelay >= 20) {
+        if (shootdelay >= 200) {        // original 20
             canShoot = true;
         }
+        
+        C1 = false;
+        C2 = false;
+        C3 = false;
+        dataArr[0] = "x";            // used to prevent the same read!!!!
     }
 }
 
