@@ -9,39 +9,49 @@ SECTION 4
 health
 */
 
-void setDataArrZeros(){
-  for(int i = 0; i < 4; i++){
-    dataArr[i] = 0;
-  }
-}
+//void setDataArrZeros(){
+//  for(int i = 0; i < 4; i++){
+//    dataArr[i] = 0.0;
+//  }
+//}
 
 // parses out data for sec 1
 void parseDataRcvd(){
   // check for valid step
   // based on values from FSR and thr_step
   for(int i = 0; i < 4; i++){
-    if(dataArr[i] > thr_step){
-      // if just starting add one
-      if(stepCount == 0){
-        stepCount++;
-      }
-      // else add 2 steps
-      else{
-        stepCount += 2;
-      }
-      break;
-    }
+    //if(!foundStep){
+    //  if(dataArr[i] > thr_step){
+    //    // if just starting add one
+    //    if(stepCount == 0){
+    //      stepCount++;
+    //    }
+    //    // else add 2 steps
+    //    else{
+    //      stepCount += 2;
+    //    }
+    //    foundStep = true;
+    //    break;
+    //  }
+    //}
   }
+  foundStep = false;
   
   // now set values to blobs and dir to be used
   // map values to be placed as the radius for the blobs
+  
   for(int i = 0; i < 4; i++){
     println(i +" value " + dataArr[i]);
     float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
     //update blobs
     blobs[i].updateR(mappedR);
+    footSens[i] = mappedR;
   }
   // lastly get the direction
+  //mfVal = dataArr[0];
+  //lfVal = dataArr[1];
+  //mmVal = dataArr[2];
+  //heelVal = dataArr[3];
   dir = dataArr[4];
 }
 
@@ -51,23 +61,23 @@ void parseDataRcvd(){
 // plots the data on the two graphs
 void plotData(){
   // ADDING POINT TO PLOT
-  mfPlot.addPoint(new GPoint(x1,mfVal));
-  mfPlot.setPoint(x1, new GPoint(x1,mfVal));
-  mfPlot.getTitle().setText("MF Monitor     Signal: " + str(mfVal));
+  mfPlot.addPoint(new GPoint(x1,footSens[0]));
+  mfPlot.setPoint(x1, new GPoint(x1,footSens[0]));
+  mfPlot.getTitle().setText("MF Monitor     Signal: " + str(footSens[0]));
   
-  lfPlot.addPoint(new GPoint(x1,lfVal));
-  lfPlot.setPoint(x1, new GPoint(x1,lfVal));
-  lfPlot.getTitle().setText("LF Monitor     Signal: " + str(lfVal));
+  lfPlot.addPoint(new GPoint(x1,footSens[1]));
+  lfPlot.setPoint(x1, new GPoint(x1,footSens[1]));
+  lfPlot.getTitle().setText("LF Monitor     Signal: " + str(footSens[1]));
   
-  mmPlot.addPoint(new GPoint(x1,mmVal));
-  mmPlot.setPoint(x1, new GPoint(x1,mmVal));
-  mmPlot.getTitle().setText("MM Monitor     Signal: " + str(mmVal));
+  mmPlot.addPoint(new GPoint(x1,footSens[2]));
+  mmPlot.setPoint(x1, new GPoint(x1,footSens[2]));
+  mmPlot.getTitle().setText("MM Monitor     Signal: " + str(footSens[2]));
   
-  heelPlot.addPoint(new GPoint(x1,heelVal));
-  heelPlot.setPoint(x1, new GPoint(x1,heelVal));
-  heelPlot.getTitle().setText("HEEL Monitor     Signal: " + str(heelVal));
+  heelPlot.addPoint(new GPoint(x1,footSens[3]));
+  heelPlot.setPoint(x1, new GPoint(x1,footSens[3]));
+  heelPlot.getTitle().setText("HEEL Monitor     Signal: " + str(footSens[3]));
   
-  println("plotted vals: MF "+ mfVal + " LF " + lfVal + " MM "+ mmVal + "HEEL "+ heelVal);
+  println("plotted vals: MF "+ footSens[0] + " LF " + footSens[1] + " MM "+ footSens[2] + "HEEL "+ footSens[3]);
   
   x1++;  // move on to the next x coordinate
   
