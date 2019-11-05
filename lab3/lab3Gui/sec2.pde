@@ -57,8 +57,21 @@ void displaySec2Tbl(){
     .setSize(200, 70)
     .setFont(createFont("MS Gothic",35))
   ;
+  
+  mfn = sec1Cp5.addLabel("Mfp Value")
+    .setText("MFP Value:")
+    .setPosition(550,400)
+    .setColorValue(150)
+    .setFont(createFont("Cambria",50))
+    ;
     
-   
+  walkType = sec1Cp5.addLabel("Walking Pattern")
+    .setText("Walking Type:")
+    .setPosition(550,500)
+    .setColorValue(150)
+    .setFont(createFont("Cambria",50))
+    ;
+    
 }
 
 // resets the canvas after sec 2 is done
@@ -83,31 +96,50 @@ void updateSec2Tbl(int walkingType){
       break;
     // heel
     case 1:
-      image(footTypes[1],700,500,700,700);
+      image(footTypes[1],600,600,700,700);
+      heelWalk = sec1Cp5.addLabel("Walking on Heel")
+      .setText("Walking on Heel")
+      .setPosition(650,700)
+      .setColorValue(150)
+      .setFont(createFont("Cambria",50))
+    ;
       break;
     // tip toe
     case 2:
-      image(footTypes[2],width/2,height/2,width/6,width/6);
+      image(footTypes[2],600,600,700,700);
+      tipWalk = sec1Cp5.addLabel("Walking on Heel")
+      .setText("Walking on Heel")
+      .setPosition(650,700)
+      .setColorValue(150)
+      .setFont(createFont("Cambria",50))
+      ;
       break;
     //in toe
     case 3:
-      image(footTypes[3],width/2,height/2,width/6,width/6);
+      image(footTypes[3],600,600,700,700);
+      heelWalk = sec1Cp5.addLabel("Walking on Heel")
+      .setText("Walking on Heel")
+      .setPosition(650,700)
+      .setColorValue(150)
+      .setFont(createFont("Cambria",50))
+      ;
       break;
     // out toe
     case 4:
-      image(footTypes[4],width/2,height/2,width/6,width/6);
+      image(footTypes[4],600,600,700,700);
+      heelWalk = sec1Cp5.addLabel("Walking on Heel")
+      .setText("Walking on Heel")
+      .setPosition(650,700)
+      .setColorValue(150)
+      .setFont(createFont("Cambria",50))
+      ;
       break;
     // normal
     case 5:
-      image(footTypes[5],width/2,height/2,width/6,width/6);
+      image(footTypes[5],600,600,700,700);
       break;
+      
+      
     }
-    
-    mfn = sec2Cp5.addLabel("mfnlbl")
-        .setValue(str(mfnVal))
-        .setPosition(800,height/2 - 50)
-        .setColorValue(color(255))
-        .setFont(createFont("Cambria",50))
-        .show();
-        ;
+   
 }
