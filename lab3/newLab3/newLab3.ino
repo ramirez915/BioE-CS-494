@@ -8,40 +8,31 @@ int c = 0;
 int change=0;
 int sect=0;
 
+
+
+//-------------------------------- simpler lab3 that only gets FSR
 float force[4];
 float mappedForce[4];
 
-//acquire_signal
+//--------------acquire_signal
+int mf=A0;
+int lf=A1;
+int mm=A2;
+int heel=A3;
 
-//int mf=A0;
-//int lf=A1;
-//int mm=A2;
-//int heel=A3;
-//
-//
-//int mf_led=9;
-//int lf_led=6;
-//int mm_led=5;
-//int heel_led=3;
-
-
+int mf_led=9;
+int lf_led=6;
+int mm_led=5;
+int heel_led=3;
+//-----------------------
 bool heel_s=0;
 bool mm_s=0;
 bool mf_s=0;
 bool lf_s=0;
 
-//sect1 vars:
-int distance = 100;
-int step_count = 0;
-float cadence=0;
-StopWatch step_timer;
-
-float step_length=0;
-float stride_length=0;
-float walking_speed=0;
 //int thr_step=100;
 int thr_step=500;
-
+//-------------------------------------------------------
 
 //sect2 vars:
 
@@ -109,7 +100,7 @@ void sendData(){
 }
 //----------------------------------- end of sendData()
 
-void calculate_IMU_error() {                              done******
+void calculate_IMU_error() {                              //done******
   // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
   // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
   // Read accelerometer values 200 times
@@ -132,7 +123,7 @@ void calculate_IMU_error() {                              done******
 }
 //--------------------------------------- end of calculate_IMU_error()
 
-void read_IMU() {             done******
+void read_IMU() {             //done******
   // === Read acceleromter data === //
   Wire.beginTransmission(MPU);
   Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
@@ -146,59 +137,33 @@ void read_IMU() {             done******
 }
 //------------------------------------------ end of read_IMU()
 
-void acquire_signal(){
-  force[0]=analogRead(A0);
-  force[1]=analogRead(A1);
-  force[2]=analogRead(A2);
-  force[3]=analogRead(A3);
+//----------------------------------------------------------------- acquire signal
+void acquire_signal () {
+  
+  force[0]=analogRead(mf);
+  force[1]=analogRead(lf);
+  force[2]=analogRead(mm);
+  force[3]=analogRead(heel);
 
-  change=0;
+  //Serial.println(force[0]);
+//  Serial.println(force[1]);
+//  Serial.println(force[2]);
+//  Serial.println(force[3]);
+
   //mapping force_inputs with leds_outputs
   for(int i=0; i< 4; i++){
     mappedForce[i] = map(force[i],0,1023,0,255);
-    if(force[i]>thr_step) {
-      if(i==0){
-        mf_s=1;
-        change=1;
-        //Serial.println("mf");
-      }
-      else if(i==1){
-        lf_s=1;
-        change=1;
-        //Serial.println("lf");
-      }
-      else if(i==2){
-        mm_s=1;
-        change=1;
-        //Serial.println("mm");
-      }
-      else if(i==3){
-        heel_s=1;
-        change=1;
-        //Serial.println("heel");
-      }
-    }
   }
-
-//  Serial.println("white-1");
-//  Serial.println(mappedForce[0]);
-//  Serial.println("green");
-//  Serial.println(mappedForce[1]);
-//  Serial.println("white-2");
-//  Serial.println(mappedForce[2]);
-//  Serial.println("red");
-//  Serial.println(mappedForce[3]);
-
-  // light LEDs
+  
   analogWrite(9,mappedForce[0]);
   analogWrite(6,mappedForce[1]);
   analogWrite(5,mappedForce[2]);
   analogWrite(3,mappedForce[3]);
 
-  //read IMU data:
+//read IMU data:
   if(sect==3){
-    read_IMU();
-    smoothing(AccX,AccY,AccZ);
+      read_IMU();
+      smoothing(AccX,AccY,AccZ);
   }
   delay(20);
 }
@@ -315,41 +280,6 @@ void compute_reset() {
     //PLOT ON PROCESSING WHAT PHASE IS RECOGNIZED
     sendData();
 }
-
-
-
-void sect1 (){
-  step_timer.start();
-  int sec_60=0;
-  while(step_timer.elapsed() <= 70000) {
-    // Serial.println(step_timer.elapsed());
-    acquire_signal();
-    sendData();
-    if (mf_s == 1 || lf_s == 1 || mm_s == 1 || heel_s == 1){
-      if (step_count == 0){
-        step_count += 1; //to keep track of the total no. of Step Counts 
-      }
-      else{
-        step_count += 2;
-      }
-    }
-    if (step_timer.elapsed() > 60000 && sec_60==0){
-      cadence = step_count;  //to output the Cadence: Number of steps in a minute
-      sec_60=1;
-    }
-  }
-//wait for the distance to be inputed in processing
-  String distance="";
-  while(Serial.read()!='x') {
-    distance= distance + String(Serial.read());
-  }
-  
-  step_length = float(distance.toInt()) / step_count; //computing Step Length
-  stride_length = step_length * 2; //computing Stride Length
-  walking_speed = cadence * step_length; //Computing speed: distance covered in a given time (1 min)
-  step_timer.stop();
-}
-//------------------------------------------------ end of sect1()
 
 
 
@@ -533,60 +463,9 @@ sendData();
 }
 
 
-void sect4 (){
- 
-int speed_age;
-//insert age of subject
-String inputedAge = "";
-while(Serial.read() !='x') {
-  //wait for processing to send inserted age
-  inputedAge = inputedAge + String(Serial.read());
-}
-
-int age = inputedAge.toInt();
-//set speed_age
- 
-if(age>=20 && age<=29){
- 
-speed_age= 0.18; //in meters per minute
-}
- 
-if(age>=30 && age<=39){
-speed_age= 0.11;
-}
- 
-if(age>=40 && age <=49){
-speed_age= 0.19;
-}
- 
-if(age>=50 && age<=59){
-speed_age= 0.27;
-}
- 
- 
-//execute sect 1 to acquire the speed:
-sect1();
-if(walking_speed < speed_age) {
- 
-  health=0;
-//  diff_speed=speed_age-walking_speed;
-//  virt_age=(1+diff_speed/speed_age)*age;
-}
-else{
-  health=1;
- }
-  }
-
-
 void exitmode (){
   reset_values();
 }
-
-//void set_readings () {
-//    for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-//      readings[thisReading] = 0;
-//    }
-//}
 
 
 void setup() {
@@ -618,155 +497,32 @@ void setup() {
 
 }
 
-void loop() {
-  // waiting for section from Processing
-  char val = Serial.read();
-  
-  if(val == '1'){       // section 1
-    sect=1;
-    sect1();
-  }
-  else if(val == '2'){       // section 2
-    sect=2;
-    sect2();
-  }
-  else if(val == '3'){       // section 3
-    sect=3;
-    sect3();  
-  }
-  else if(val == '4'){       // section 3
-    sect=4;
-    sect4();  
-  }
-  if(val == '5'){       // exit   
-    exitmode();
-  }
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//-------------------------------- simpler lab3 that only gets FSR
-float force[4];
-float mappedForce[4];
-
-//--------------acquire_signal
-int mf=A0;
-int lf=A1;
-int mm=A2;
-int heel=A3;
-
-int mf_led=9;
-int lf_led=6;
-int mm_led=5;
-int heel_led=3;
-//-----------------------
-bool heel_s=0;
-bool mm_s=0;
-bool mf_s=0;
-bool lf_s=0;
-
-//int thr_step=100;
-int thr_step=500;
-
-void reset_values(){
-  for (int i=0; i< 4; i++){
-      force[i]=0;
-  }
-}
-
-void sendData(){
-  //mf
-  Serial.print(force[0]);
-  Serial.print("-");
-  //lf
-  Serial.print(force[1]);
-  Serial.print("-");
-  //mm
-  Serial.print(force[2]);
-  Serial.print("-");
-  //heel
-  Serial.print(force[3]);
-}
-
-void acquire_signal () {
-  
-  force[0]=analogRead(mf);
-  force[1]=analogRead(lf);
-  force[2]=analogRead(mm);
-  force[3]=analogRead(heel);
-
-  //Serial.println(force[0]);
-//  Serial.println(force[1]);
-//  Serial.println(force[2]);
-//  Serial.println(force[3]);
-
-  //mapping force_inputs with leds_outputs
-  for(int i=0; i< 4; i++){
-    mappedForce[i] = map(force[i],0,1023,0,255);
-  }
-  
-  analogWrite(9,mappedForce[0]);
-  analogWrite(6,mappedForce[1]);
-  analogWrite(5,mappedForce[2]);
-  analogWrite(3,mappedForce[3]);
-
-//read IMU data:
-  delay(20);
-}
-
-
-
-void setup() {
-  // initialize the serial communication:
-  Serial.begin(115200);
-  //LEDS:
-  pinMode(mf_led, OUTPUT); 
-  pinMode(lf_led, OUTPUT);
-  pinMode(mm_led, OUTPUT); 
-  pinMode(heel_led, OUTPUT);
-
-  //FRSs:
-  pinMode(A0, INPUT); 
-  pinMode(A1, INPUT);
-  pinMode(A2, INPUT); 
-  pinMode(A3,INPUT); 
-
-  //setting array to 0
-  reset_values();
-}
 
 void loop() {
+//  char val = Serial.read();
   
-   acquire_signal();
-   sendData();
+//  if(val == '1'){       // section 1
+    acquire_signal();
+    sendData();
+//    val = '1';
+//  }
+//  else if(val == '2'){       // section 2
+//    sect=2;
+//    sect2();
+//  }
+//  else if(val == '3'){       // section 3
+//    sect=3;
+//    sect3();  
+//  }
+//  else if(val == '4'){       // section 3
+//    acquire_signal();
+//    sendData();
+//  }
+//  if(val == '5'){       // exit   
+//    exitmode();
+//  }
+  
+//   acquire_signal();
+//   sendData();
  }
