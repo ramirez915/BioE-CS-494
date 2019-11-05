@@ -84,6 +84,9 @@ Textlabel currFrame;
 
 Textlabel qmarkLbl;
 Textlabel mfn;
+Textlabel mfnOut;
+Textlabel mfpVal;
+Textlabel mfnIn;
 Textlabel walkType;
 Textlabel heelWalk;
 Textlabel tipWalk;

@@ -60,16 +60,23 @@ void displaySec2Tbl(){
   
   mfn = sec1Cp5.addLabel("Mfp Value")
     .setText("MFP Value:")
-    .setPosition(550,400)
+    .setPosition(550,300)
     .setColorValue(150)
-    .setFont(createFont("Cambria",50))
+    .setFont(createFont("Cambria",60))
     ;
+    
+  //mfpVal = sec1Cp5.addLabel("Mfp Value")
+  //  .setText("28")
+  //  .setPosition(650,600)
+  //  .setColorValue(150)
+  //  .setFont(createFont("Cambria",60))
+  //  ;
     
   walkType = sec1Cp5.addLabel("Walking Pattern")
     .setText("Walking Type:")
-    .setPosition(550,500)
+    .setPosition(1000,300)
     .setColorValue(150)
-    .setFont(createFont("Cambria",50))
+    .setFont(createFont("Cambria",60))
     ;
     
 }
@@ -96,20 +103,20 @@ void updateSec2Tbl(int walkingType){
       break;
     // heel
     case 1:
-      image(footTypes[1],600,600,700,700);
+      image(footTypes[1],1100,400,900,900);
       heelWalk = sec1Cp5.addLabel("Walking on Heel")
       .setText("Walking on Heel")
-      .setPosition(650,700)
+      .setPosition(850,700)
       .setColorValue(150)
       .setFont(createFont("Cambria",50))
     ;
       break;
     // tip toe
     case 2:
-      image(footTypes[2],600,600,700,700);
+      image(footTypes[2],1100,400,900,900);
       tipWalk = sec1Cp5.addLabel("Walking on Heel")
       .setText("Walking on Heel")
-      .setPosition(650,700)
+      .setPosition(950,700)
       .setColorValue(150)
       .setFont(createFont("Cambria",50))
       ;
