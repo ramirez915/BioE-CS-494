@@ -9,7 +9,14 @@ String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
 int counter = 0;
 
-//--------------------------        // TOUNCHES IN AN AMOUNT OF TIME
+//------------------------------------------------------------------- labels
+Textlabel gameSelectLbl;
+Button mm;
+Button bb;  // brick breaker button
+Button si;  // space invader button
+//--------------------------------------------------------
+
+//----------------------------------------------                      // capacitors
 boolean C1 = false;
 int c1Counter = 0;        // keeping track of which is pressed
 StopWatch c1Watch = new StopWatch();
@@ -36,23 +43,44 @@ boolean spaceInvaderOn = false;
 
 //---------------------------------
 
+//------------------------------------------------------------ testing for space invader
+String[] cmds = new String[] {"C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","C3","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C2","C2","C2","C2","C2","C2","C2","C2","C3"};
+
+//------------------------------------------
+
+//-------------------------------------------------------- brick breaker globals
+boolean brickBreakerOn = false;
+
+//-----------------------------------------
+
 
 void setup(){
-  fullScreen();
+  background(192,62,0);
+  //fullScreen();
+  size(2000,1200);
   frameRate(60);
   font = createFont("MS Gothic",60);
   //listAvailablePorts();
   
+
   setupMainButtons();
+
   //cp5.hide();
   
   
   
   
-  //printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //port = new Serial(this, portName, 115200);
-  //port.bufferUntil('\n');
+  printArray(Serial.list());   //prints all available serial ports
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  port = new Serial(this, portName, 115200);
+  port.bufferUntil('\n');
+  
+  dataArr[0] = "x";
+  dataArr[1] = "x";
+  dataArr[2] = "x";
+  dataArr[3] = "x";
+  dataArr[4] = "x";
+
 }
 
 
@@ -60,14 +88,29 @@ void setup(){
 
 void draw(){
   if(spaceInvaderOn){
+    parseData();          // original
     spaceInvaderDraw();
+    C1 = false;
+    C2 = false;
+    C3 = false;
+  }
+  
+  else if(brickBreakerOn){
+    parseData();
+    brickBreakerDraw();
+    C1 = false;
+    C2 = false;
+    C3 = false;
   }
   
   
   
   
   //if(serialPortFound){
-    
+  //  if(spaceInvaderOn){
+  //    parseData();
+  //    spaceInvaderDraw();
+  //  }
     
   //}
   //else { // SCAN BUTTONS TO FIND THE SERIAL PORT
@@ -87,24 +130,22 @@ void draw(){
 }
 
 
-//// checks what is being printed by the micro controller
-//void serialEvent (Serial myPort) {
-//  // check for incoming numbers on the serial monitor
-//  if (myPort.available() >= 0) {
-//    valueFromArduino = myPort.readStringUntil('\n');
+// checks what is being printed by the micro controller
+void serialEvent (Serial myPort) {
+  // check for incoming numbers on the serial monitor
+  if (myPort.available() >= 0) {
+    valueFromArduino = myPort.readStringUntil('\n');
     
-//    try{
-//      dataArr = split(valueFromArduino,"-");
-//      println(valueFromArduino);
+    try{
+      dataArr = split(valueFromArduino,"-");
+      println(valueFromArduino);
       
-//      parseData();
-      
-//    }catch(RuntimeException e){
-//      e.printStackTrace();
-//    }
-//  }
-//}
-////---------------------------------------------- end of serialEvent
+    }catch(RuntimeException e){
+      e.printStackTrace();
+    }
+  }
+}
+//---------------------------------------------- end of serialEvent
 
 
 
@@ -114,25 +155,27 @@ void parseData(){
   C2 = false;
   C3 = false;
   
-  // for each capacitor in the array
-  for(String capacitor: dataArr){
-    switch(capacitor){
-      case "C1":
-        C1 = true;
-        println("C1 pressed");
-        break;
-      case "C2":
-        C2 = true;
-        println("C2 pressed");
-        break;
-      case "C3":
-        C3 = true;
-        println("C3 pressed");
-        break;
-    }
-    //println(counter);
-    //counter++;
-  }
+    //if(counter != cmds.length){                // start of if        when ready to test with real values take out
+      switch(dataArr[0]){        // cmds[counter]
+        case "C1":
+          C1 = true;
+          println("C1 pressed... left");
+          break;
+        case "C2":
+          C2 = true;
+          println("C2 pressed... right");
+          break;
+        case "C3":
+          C3 = true;
+          println("C3 pressed... shooting");
+          break;
+        case "x":          // do nothing
+          println("do nothing");
+          break;
+      }
+      //println(counter);
+      //counter++;
+    //}                                // end of if
 }
 
 
@@ -167,18 +210,18 @@ void listAvailablePorts(){
   textAlign(CENTER);
 }
 
- void autoScanPorts(){
-  if(Serial.list().length != numPorts){
-    if(Serial.list().length > numPorts){
-      println("New Ports Opened!");
-      int diff = Serial.list().length - numPorts;  // was serialPorts.length
-      serialPorts = expand(serialPorts,diff);
-      numPorts = Serial.list().length;
-    }else if(Serial.list().length < numPorts){
-      println("Some Ports Closed!");
-      numPorts = Serial.list().length;
-    }
-    refreshPorts = true;
-    return;
-  }
- }
+ //void autoScanPorts(){
+ // if(Serial.list().length != numPorts){
+ //   if(Serial.list().length > numPorts){
+ //     println("New Ports Opened!");
+ //     int diff = Serial.list().length - numPorts;  // was serialPorts.length
+ //     serialPorts = expand(serialPorts,diff);
+ //     numPorts = Serial.list().length;
+ //   }else if(Serial.list().length < numPorts){
+ //     println("Some Ports Closed!");
+ //     numPorts = Serial.list().length;
+ //   }
+ //   refreshPorts = true;
+ //   return;
+ // }
+ //}

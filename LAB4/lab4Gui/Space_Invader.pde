@@ -20,13 +20,13 @@ void spaceInvaderSetup() {
     player = new Player();
     createEnemies();
     
-    siFont = createFont("MS Gothic",20);
+    siFont = createFont("MS Gothic",40);
 
     //-------------------------------------------------------- space invader cp5
     siCp5 = new ControlP5(this);
     pointsLbl = siCp5.addLabel("pointsLbl")
       .setText("Points")
-      .setPosition(width-300,0)      // top right corner
+      .setPosition(0,0)      // top left corner
       .setColorValue(color(0,255,0))
       .setFont(siFont)
       .show()
@@ -34,7 +34,7 @@ void spaceInvaderSetup() {
     
     points = siCp5.addLabel("points")
       .setText(Integer.toString(totalPoints))
-      .setPosition(width-100,0)      // top right corner
+      .setPosition(300,0)      // top right corner
       .setColorValue(color(0,255,0))
       .setFont(siFont)
       .show()
@@ -43,7 +43,7 @@ void spaceInvaderSetup() {
 }
 
 void spaceInvaderReset(){
-  background(200,0,100);
+  background(194,64,0);
   deleteEnemies();
   totalPoints = 0;
   
@@ -105,6 +105,11 @@ void deleteEnemies(){
     enemyCount++;
   }
   println(enemyCount + " deleted " + enemies.size());
+  
+  // delete buttlets
+  while(bullets.size() != 0){
+    bullets.remove(0);
+  }
 }
 
 class SpaceShip {
@@ -147,18 +152,38 @@ class Player extends SpaceShip {
     }
 
     void updateObj() {
-        if (keyPressed && keyCode == LEFT) x -= 10;
-        if (keyPressed && keyCode == RIGHT) x += 10;
-        if (keyPressed && keyCode == CONTROL && canShoot) {
-            bullets.add(new Bullet(x, y));
-            canShoot = false;
-            shootdelay = 0;
+        
+        // if the C1 flag is true then do the following command....
+        if(C1){
+          //x -= 10;
+          x -=20;
         }
+        else if(C2){
+          //x += 10;
+          x += 20;
+        }
+        else if(C3){
+          bullets.add(new Bullet(x, y));
+          canShoot = false;
+          shootdelay = 0;
+        }
+        //if (keyPressed && keyCode == LEFT) x -= 10;
+        //if (keyPressed && keyCode == RIGHT) x += 10;
+        //if (keyPressed && keyCode == CONTROL && canShoot) {
+        //    bullets.add(new Bullet(x, y));
+        //    canShoot = false;
+        //    shootdelay = 0;
+        //}
 
         shootdelay++;
-        if (shootdelay >= 20) {
+        if (shootdelay >= 200) {        // original 20
             canShoot = true;
         }
+        
+        C1 = false;
+        C2 = false;
+        C3 = false;
+        dataArr[0] = "x";            // used to prevent the same read!!!!
     }
 }
 
