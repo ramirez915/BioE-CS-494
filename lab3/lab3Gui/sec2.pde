@@ -58,19 +58,19 @@ void displaySec2Tbl(){
     .setFont(createFont("MS Gothic",35))
   ;
   
-  mfn = sec1Cp5.addLabel("Mfp Value")
+  mfn = sec1Cp5.addLabel("Mfp Label")
     .setText("MFP Value:")
     .setPosition(550,300)
     .setColorValue(150)
     .setFont(createFont("Cambria",60))
     ;
     
-  //mfpVal = sec1Cp5.addLabel("Mfp Value")
-  //  .setText("28")
-  //  .setPosition(650,600)
-  //  .setColorValue(150)
-  //  .setFont(createFont("Cambria",60))
-  //  ;
+  mfpVal = sec1Cp5.addLabel("MFPVal")
+    .setText("28.15")
+    .setPosition(650,400)
+    .setColorValue(150)
+    .setFont(createFont("Cambria",60))
+    ;
     
   walkType = sec1Cp5.addLabel("Walking Pattern")
     .setText("Walking Type:")
