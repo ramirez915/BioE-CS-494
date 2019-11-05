@@ -165,8 +165,8 @@ int x1 = 0;    // starting position of the graph
 //-------------------------------------------------------------------
 
 void setup() {
-  fullScreen();
-  //size(2000, 1200);    //window size, (width, height)  1200
+  //fullScreen();
+  size(2000, 1200);    //window size, (width, height)  1200
 
 
   colorMode(HSB);                                // this needs to be ON so that the heat map works as intended        // not sure how I got the color of the background
@@ -219,8 +219,8 @@ void setup() {
   drawFoot();
 
   printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
   //************************************** to see the indecies of the COM ports
   //************************************ then verify where the arduino is connected in the arduino IDE
   //************************************ and change the index to the port where the arduino is connected
@@ -230,7 +230,7 @@ void setup() {
   //*** String portName = Serial.list()[2];
 
   // starts serialEvent function when a newline character is read
-  //myPort.bufferUntil('\n');
+  myPort.bufferUntil('\n');
 
   // adds buttons to the window
   cp5 = new ControlP5(this);

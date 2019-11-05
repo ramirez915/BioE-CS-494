@@ -106,7 +106,7 @@ void updateSec2Tbl(int walkingType){
       image(footTypes[1],1100,400,900,900);
       heelWalk = sec1Cp5.addLabel("Walking on Heel")
       .setText("Walking on Heel")
-      .setPosition(850,700)
+      .setPosition(1000,700)
       .setColorValue(150)
       .setFont(createFont("Cambria",50))
     ;
