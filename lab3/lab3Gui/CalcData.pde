@@ -53,6 +53,7 @@ void parseDataRcvd(){
   //mmVal = dataArr[2];
   //heelVal = dataArr[3];
   dir = dataArr[4];
+  println("new dir: " + dir);
 }
 
 

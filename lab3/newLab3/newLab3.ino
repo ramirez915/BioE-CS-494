@@ -503,8 +503,8 @@ void loop() {
 //  char val = Serial.read();
   
 //  if(val == '1'){       // section 1
-    acquire_signal();
-    sendData();
+//    acquire_signal();
+//    sendData();
 //    val = '1';
 //  }
 //  else if(val == '2'){       // section 2
@@ -523,6 +523,10 @@ void loop() {
 //    exitmode();
 //  }
   
-//   acquire_signal();
-//   sendData();
+   acquire_signal();
+   sendData();
+   char val = Serial.read();
+   if(val == '3'){
+    sect = 3;
+   }
  }

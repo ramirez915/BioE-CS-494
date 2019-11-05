@@ -393,15 +393,16 @@ void draw() {  //same as loop in arduino
       firstRun = false;
       oldSec = 2;
     } else {
+      drawHeatMap();        // draw heat map on sec 2
       updateSec2Tbl(1);
       //------------------------------------------------ testing image change
-      println("wait for update");
-      timeFrames[testCount] = int(random(1, 6));
-      testCount++;
-      if (testCount == 5) {
-        testCount = 0;
-      }
-      delay(1000);
+      //println("wait for update");
+      //timeFrames[testCount] = int(random(1, 6));
+      //testCount++;
+      //if (testCount == 5) {
+      //  testCount = 0;
+      //}
+      //delay(1000);
       //--------------------------------------------------------------
     }
   }
@@ -416,8 +417,9 @@ void draw() {  //same as loop in arduino
     } else {
       updateSec3(dir);
       //------------------------------------------ testing moving image (actual dir value will be updated in the serialEvent
-      dir = testDir[int(random(0, 5))];
-      delay(1000);
+      //dir = testDir[int(random(0, 5))];
+      //updateSec3(dir);
+      //delay(2000);
       //----------------------------------------------------
     }
   }
