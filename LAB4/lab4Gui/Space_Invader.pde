@@ -156,7 +156,9 @@ class Player extends SpaceShip {
         // if the C1 flag is true then do the following command....
         if(C1){
           //x -= 10;
-          x -=20;
+          if(x != 0){
+            x -=20;
+          }
         }
         else if(C2){
           //x += 10;
