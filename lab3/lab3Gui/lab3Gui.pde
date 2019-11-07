@@ -92,9 +92,10 @@ Textlabel heelWalk;
 Textlabel tipWalk;
 Textlabel inWalk;
 Textlabel outWalk;
+Textlabel normalWalk;
 
 
-float mfnVal;
+float MFPVal = 0.0;
 
 int timeFrames[] = new int[5];  // contains all the time frames
 float MFNs[] = new float[5];
@@ -122,6 +123,14 @@ int testCount = 0;        // for testing the live update of the time frames
 int[] x = new int[5];
 int[] y = new int[5];
 
+
+
+// test values
+float[] sec2Test1 = new float[]{18.3,17.2,18.5,19.1,20.4,18.3,17.2,18.5,19.1,20.4};
+float[] sec2Test2 = new float[]{21.3,22.7,23.4,24.8,24.8,21.3,22.7,23.4,24.8,24.8};
+float[] sec2Test3 = new float[]{25.3,27.2,28.9,30.1,30.8,25.3,27.2,28.9,30.1,30.8};
+float[] sec2Test4 = new float[]{31.2,33.6,34.7,35.8,37.2,31.2,33.6,34.7,35.8,37.2};
+float[] sec2Test5 = new float[]{38.3,38.7,39.1,39.7,39.9,38.3,38.7,39.1,39.7,39.9};
 //---------------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------------------------------- section 3
@@ -166,7 +175,7 @@ int x1 = 0;    // starting position of the graph
 
 void setup() {
   //fullScreen();
-  size(2000, 1200);    //window size, (width, height)  1200
+  size(2100, 1200);    //window size, (width, height)  1200
 
 
   colorMode(HSB);                                // this needs to be ON so that the heat map works as intended        // not sure how I got the color of the background
@@ -219,7 +228,7 @@ void setup() {
   drawFoot();
 
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
   //************************************** to see the indecies of the COM ports
   //************************************ then verify where the arduino is connected in the arduino IDE
@@ -391,10 +400,11 @@ void draw() {  //same as loop in arduino
     if (firstRun) {
       displaySec2Tbl();
       firstRun = false;
+      watch.start();
       oldSec = 2;
     } else {
       drawHeatMap();        // draw heat map on sec 2
-      updateSec2Tbl(1);
+      updateSec2Tbl(2);
       //------------------------------------------------ testing image change
       //println("wait for update");
       //timeFrames[testCount] = int(random(1, 6));
@@ -539,7 +549,7 @@ void serialEvent (Serial myPort) {
     try {
       //setDataArrZeros();
       dataArr = float(split(valueFromArduino, "-"));
-      println(valueFromArduino);
+      //println(valueFromArduino);
       //should have 6 values from arduino           sec-mf-lf-mm-heel-dir
       if (dataArr.length == 5) {
         // set values from arduino to corresponding variables

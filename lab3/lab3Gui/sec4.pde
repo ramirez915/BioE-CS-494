@@ -3,7 +3,7 @@
 void sec4setup(){
   sec4Cp5 = new ControlP5(this);
   notHealthLbl = sec4Cp5.addTextlabel("NotHealth")
-    .setText("You aren't as healthy as your\naverage age based on your walking speed")
+    .setText("So you are not as healthy as\n other people in your age group")
     .setPosition(700,450)
     .setColorValue(color(255))
     .setFont(createFont("MS Gothic",50));
@@ -28,16 +28,16 @@ void sec4setup(){
     .hide();
     
   speedAgeLbl = sec4Cp5.addTextlabel("speedAgeLbl")
-    .setText("Your speed age is")
-    .setPosition(700,1000)
+    .setText("Your speed age should be")
+    .setPosition(600,1000)
     .setColorValue(color(0))
-    .setFont(createFont("MS Gothic",30));
+    .setFont(createFont("MS Gothic",50));
     
   speedAgeVal = sec4Cp5.addTextlabel("speedAgeVal")
     .setValue(Float.toString(0.0))
-    .setPosition(1000,1000)
+    .setPosition(1300,1000)
     .setColorValue(color(0))
-    .setFont(createFont("MS Gothic",30));
+    .setFont(createFont("MS Gothic",50));
     
     
   healthLbl.hide();
@@ -66,7 +66,7 @@ void calcSpeedAge(){
   }
   
   //update what is displayed on screen
-  speedAgeVal.setValue(Float.toString(speedAge));
+  speedAgeVal.setValue(Float.toString(speedAge) + " meters per minute");
 }
 
 

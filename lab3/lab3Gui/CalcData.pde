@@ -41,19 +41,20 @@ void parseDataRcvd(){
   // map values to be placed as the radius for the blobs
   
   for(int i = 0; i < 4; i++){
-    println(i +" value " + dataArr[i]);
+    //println(i +" value " + dataArr[i]);
     float mappedR = map(dataArr[i],0,1023,0,100);    // max radius 60-100...
     //update blobs
     blobs[i].updateR(mappedR);
     footSens[i] = mappedR;
   }
   // lastly get the direction
-  //mfVal = dataArr[0];
-  //lfVal = dataArr[1];
-  //mmVal = dataArr[2];
-  //heelVal = dataArr[3];
+  mfVal = dataArr[0];
+  lfVal = dataArr[1];
+  mmVal = dataArr[2];
+  heelVal = dataArr[3];
+  //println("mf "+ mfVal + " lf "+ lfVal + " mm "+ mmVal + " heel "+ heelVal);
   dir = dataArr[4];
-  println("new dir: " + dir);
+  //println("new dir: " + dir);
 }
 
 

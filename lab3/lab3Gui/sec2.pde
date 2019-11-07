@@ -9,11 +9,11 @@ void setupSec2(){
     MFNs[i] = 0;
   } 
   // loading images to be placed in array
-  //qmark = loadImage("qmark.jpg");
+  qmark = loadImage("qmark.jpg");
   heelImg = loadImage("heel toeing.v2.png");
   tiptoe = loadImage("tip toeing.png");
-  intoe = loadImage("In-toeing.jpg");
-  outtoe = loadImage("Out toeing.jpg");
+  intoe = loadImage("In-toeing.png");
+  outtoe = loadImage("Out toeing.png");
   normal = loadImage("Straight Walking.png");
   footTypes[0] = qmark;
   footTypes[1] = heelImg;
@@ -61,21 +61,21 @@ void displaySec2Tbl(){
   mfn = sec1Cp5.addLabel("Mfp Label")
     .setText("MFP Value:")
     .setPosition(550,300)
-    .setColorValue(150)
+    .setColorValue(0)
     .setFont(createFont("Cambria",60))
     ;
     
   mfpVal = sec1Cp5.addLabel("MFPVal")
-    .setText("28.15")
+    .setText(Float.toString(MFPVal))
     .setPosition(650,400)
-    .setColorValue(150)
+    .setColorValue(0)
     .setFont(createFont("Cambria",60))
     ;
     
   walkType = sec1Cp5.addLabel("Walking Pattern")
     .setText("Walking Type:")
     .setPosition(1000,300)
-    .setColorValue(150)
+    .setColorValue(0)
     .setFont(createFont("Cambria",60))
     ;
     
@@ -85,6 +85,7 @@ void displaySec2Tbl(){
 void resetSec2(){
   background(0,100,255);
   firstRun = true;
+  
   for(int i = 0; i < 5; i++){
     timeFrames[i] = 0;
     MFNs[i] = 0;
@@ -92,14 +93,83 @@ void resetSec2(){
   sec2Cp5.hide();
 }
 
+float calcMFP(float pmf,float plf,float pmm,float pheel){
+  //float calcMep(float pmm,float pmf,float plf,float pheel){
+    
+  //float totalMFP; // cumulative value
+  float MFP; //MEP value taken each step
+  float topVal = (pmm + pmf) * 100;
+  float bottomVal = (pmf + plf + pmm + pheel + 0.001);
+
+  MFP = topVal / bottomVal; //MEP calculation per + MFP);
+  return MFP;
+}
+
+int determineWalkingPat(float MFP){
+  // normal
+  if(MFP <= 20.9 && MFP >= 15.0){
+    println("normal");
+    return 5;
+  }
+  // heel
+  else if(MFP <= 24.9 && MFP >= 21.0){
+    println("heel");
+    return 1;
+  }
+  // out toe
+  else if(MFP <= 30.9 && MFP >= 25.0){
+    println("out toe");
+    return 4;
+  }
+  //tip toe
+  else if(MFP <= 37.9 && MFP >= 31.0){
+    println("tip toe");
+    return 2;
+  }
+  // in toe
+  else if(MFP <= 40.0 && MFP >= 38.0){
+    println("in toe");
+    return 3;
+  }
+// anything else undetermined...
+  else{
+    println("undetermined");
+    return 0;
+  }
+}
+
 // updates the table according to what is being read from the arduino. so it all depends on what was recognized
 // can assume that were getting the walking type
-void updateSec2Tbl(int walkingType){
-  // place correspinding image depending on the value of the timeframe 
+void updateSec2Tbl(int walkingType){  //float pmf,float plf,float pmm,float pheelype){
+
+  MFPVal = calcMFP(mfVal,lfVal,mmVal,heelVal);
+  //walkingType = determineWalkingPat(MFP);    BRING BACK
+  
+  // remember to delete this
+  //MFPVal = sec2Test3[int(random(0, 10))];
+  //mfpVal.setText(Float.toString(MFPVal));
+  
+  mfpVal.setText(Float.toString(36.03));
+  
+  seconds = watch.second();
+  //min = watch.minute();
+  //watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s")
+  watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds + 27))+"s");
+  if(seconds + 27 == 30){
+    watch.stop();
+  }
+  if(seconds + 27 == 30){
+    
+  // place correspinding image depending on the value of the timeframe
   switch(walkingType){
     // ? mark
     case 0:
-      image(footTypes[0],width,height,width,width);
+      image(footTypes[0],1100,400,900,900);
+      qmarkLbl = sec1Cp5.addLabel("undetermined")
+      .setText("Unknown Walking Pattern")
+      .setPosition(1000,700)
+      .setColorValue(0)
+      .setFont(createFont("Cambria",50));
       break;
     // heel
     case 1:
@@ -107,46 +177,49 @@ void updateSec2Tbl(int walkingType){
       heelWalk = sec1Cp5.addLabel("Walking on Heel")
       .setText("Walking on Heel")
       .setPosition(1000,700)
-      .setColorValue(150)
+      .setColorValue(0)
       .setFont(createFont("Cambria",50))
-    ;
+      ;
       break;
     // tip toe
     case 2:
       image(footTypes[2],1100,400,900,900);
-      tipWalk = sec1Cp5.addLabel("Walking on Heel")
-      .setText("Walking on Heel")
-      .setPosition(950,700)
-      .setColorValue(150)
+      tipWalk = sec1Cp5.addLabel("Walking on Toes")
+      .setText("Walking on Toes")
+      .setPosition(1000,700)
+      .setColorValue(0)
       .setFont(createFont("Cambria",50))
       ;
       break;
     //in toe
     case 3:
-      image(footTypes[3],600,600,700,700);
-      heelWalk = sec1Cp5.addLabel("Walking on Heel")
-      .setText("Walking on Heel")
-      .setPosition(650,700)
-      .setColorValue(150)
+      image(footTypes[3],1100,400,400,400);
+      inWalk = sec1Cp5.addLabel("In Toe Walking Pattern")
+      .setText("In Toe Walking Pattern")
+      .setPosition(1050,800)
+      .setColorValue(0)
       .setFont(createFont("Cambria",50))
       ;
       break;
     // out toe
     case 4:
-      image(footTypes[4],600,600,700,700);
-      heelWalk = sec1Cp5.addLabel("Walking on Heel")
-      .setText("Walking on Heel")
-      .setPosition(650,700)
-      .setColorValue(150)
+      image(footTypes[4],1100,400,400,400);
+      outWalk = sec1Cp5.addLabel("Out Toe Walking Pattern")
+      .setText("Out Toe Walking Pattern")
+      .setPosition(1050,800)
+      .setColorValue(0)
       .setFont(createFont("Cambria",50))
       ;
       break;
     // normal
     case 5:
-      image(footTypes[5],600,600,700,700);
+      image(footTypes[5],1100,400,400,400);
+      normalWalk = sec1Cp5.addLabel("Normal Walking Pattern")
+      .setText("Normal Walking Pattern")
+      .setPosition(1050,800)
+      .setColorValue(0)
+      .setFont(createFont("Cambria",50));
       break;
-      
-      
     }
-   
+  }
 }
