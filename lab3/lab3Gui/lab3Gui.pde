@@ -36,7 +36,7 @@ float stepLen = 0.0;
 float strideLen = 0.0;
 float cadence = 0.0;
 float walkingSpd = 0.0;
-int stepCount = 82;
+int stepCount = 0;
 int thr_step = 600;                    // is this to detect a valid step??
 
 // used to detect a minute
@@ -49,7 +49,7 @@ String userInputStr = "";            // distance will be converted to an int whe
 boolean calculate = true;            // used to calcluate ONCE
 boolean foundStep = false;
 
-  Textlabel sec1Inst;
+Textlabel sec1Inst;
 // labels
 Textlabel stepLenLbl;
 Textlabel strideLenLbl;
@@ -185,6 +185,7 @@ void setup() {
   blobs[2] = new Blob(160, 550);      //mm
   blobs[3] = new Blob(230, 1000);     //heel
 
+  //------------------------------------------------------------------------ test values
   // place values from sensors here*******************
   valueArr[0] = 10;
   valueArr[1] = 5;
@@ -196,6 +197,7 @@ void setup() {
   newVals[1] = 20;
   newVals[2] = 0;
   newVals[3] = 0;
+  //------------------------------------------------------------------------------------------ end of test values
 
   //sec 1
   setupSec1();
@@ -206,12 +208,13 @@ void setup() {
   // setup sec 3
   sec3Cp5 = new ControlP5(this);
 
-  // test sec 3
+  //--------------------------------- test sec 3
   testDir[0] = 0.0;
   testDir[1] = 1.0;
   testDir[2] = -1.0;
   testDir[3] = 0.5;
   testDir[4] = -0.5;
+  //----------------------------------
 
   //setup keypad
   setupKeypad();
@@ -239,7 +242,7 @@ void setup() {
   //*** String portName = Serial.list()[2];
 
   // starts serialEvent function when a newline character is read
-  myPort.bufferUntil('\n');
+  //myPort.bufferUntil('\n');
 
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -353,7 +356,7 @@ void draw() {  //same as loop in arduino
     }
 
     // for testing... change min == 2 to seconds == 2 or something low
-    if (min == 1 && twoMin == false) {        //-------------------------------------------------------------- if we're at 2 minutes... min== 2
+    if (seconds == 3 && twoMin == false) {        //-------------------------------------------------------------- if we're at 2 minutes... min== 2
       twoMin = true;
 
       resetPlots();    // reset plots and hide them in order to have space for the number pad
@@ -457,12 +460,20 @@ void draw() {  //same as loop in arduino
         speedAgeLbl.show();
         speedAgeVal.show();          // show speedAge
       }
+      
+      // to get cadence
+      // Cadence: Number of steps in a minute
+      if (min != currMin) {          // when a new minute has passed
+        println("hit a minute");
+        currMin = min;
+        cadence = stepCount;
+      }
 
       if (!twoMin) {
         drawHeatMap();              // draw heat map and get data to calculate sec 4 stuff
         seconds = watch.second();
         min = watch.minute();
-        watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
+        watchVal.setValue(Integer.toString((min+1)) + " min " + Integer.toString((seconds))+"s");
         watchVal.show();
         // *********************************************************************************************collect data for sec 4
         println("collecting data for sec4");
@@ -477,9 +488,9 @@ void draw() {  //same as loop in arduino
 
         // calc once
         if (calculate) {
-          stepLen = float(userInputStr) / stepCount;
+          stepLen = 160 / stepCount;        // set distance to 160 meters in 2 minutes
           strideLen = stepLen * 2;
-          walkingSpd = cadence * stepLen;
+          walkingSpd = 160 / cadence * 2;
           calculate = false;
         }
 
@@ -489,6 +500,12 @@ void draw() {  //same as loop in arduino
         } else {
           health=1;
         }
+        walkingSpdLbl.setValue("Your actual\nwalking speed is");
+        walkingSpdVal.setValue(Float.toString((walkingSpd)));
+        walkingSpdLbl.show();
+        walkingSpdVal.show();
+        
+        //walkingSpdVal.setPosition(1600,1000)
         if (health == 1) {
           healthLbl.show();
         } else if (health == 0) {

@@ -93,15 +93,12 @@ void resetSec2(){
   sec2Cp5.hide();
 }
 
-float calcMFP(float pmf,float plf,float pmm,float pheel){
-  //float calcMep(float pmm,float pmf,float plf,float pheel){
-    
-  //float totalMFP; // cumulative value
+float calcMFP(float pmf,float plf,float pmm,float pheel){    
   float MFP; //MEP value taken each step
   float topVal = (pmm + pmf) * 100;
   float bottomVal = (pmf + plf + pmm + pheel + 0.001);
 
-  MFP = topVal / bottomVal; //MEP calculation per + MFP);
+  MFP = topVal / bottomVal;
   return MFP;
 }
 
@@ -143,23 +140,14 @@ int determineWalkingPat(float MFP){
 void updateSec2Tbl(int walkingType){  //float pmf,float plf,float pmm,float pheelype){
 
   MFPVal = calcMFP(mfVal,lfVal,mmVal,heelVal);
-  //walkingType = determineWalkingPat(MFP);    BRING BACK
-  
-  // remember to delete this
-  //MFPVal = sec2Test3[int(random(0, 10))];
-  //mfpVal.setText(Float.toString(MFPVal));
-  
-  mfpVal.setText(Float.toString(36.03));
+  walkingType = determineWalkingPat(MFPVal);
+  mfpVal.setText(Float.toString(MFPVal));
   
   seconds = watch.second();
-  //min = watch.minute();
-  //watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s")
-  watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds + 27))+"s");
-  if(seconds + 27 == 30){
+  min = watch.minute();
+  watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s")
+  if(seconds == 30){
     watch.stop();
-  }
-  if(seconds + 27 == 30){
-    
   // place correspinding image depending on the value of the timeframe
   switch(walkingType){
     // ? mark

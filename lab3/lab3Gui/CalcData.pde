@@ -20,20 +20,20 @@ void parseDataRcvd(){
   // check for valid step
   // based on values from FSR and thr_step
   for(int i = 0; i < 4; i++){
-    //if(!foundStep){
-    //  if(dataArr[i] > thr_step){
-    //    // if just starting add one
-    //    if(stepCount == 0){
-    //      stepCount++;
-    //    }
-    //    // else add 2 steps
-    //    else{
-    //      stepCount += 2;
-    //    }
-    //    foundStep = true;
-    //    break;
-    //  }
-    //}
+    if(!foundStep){
+      if(dataArr[i] > thr_step){
+        // if just starting add one
+        if(stepCount == 0){
+          stepCount++;
+        }
+        // else add 2 steps
+        else{
+          stepCount += 2;
+        }
+        foundStep = true;
+        break;
+      }
+    }
   }
   foundStep = false;
   
