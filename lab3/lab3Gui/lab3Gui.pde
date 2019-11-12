@@ -166,8 +166,8 @@ int x1 = 0;    // starting position of the graph
 //-------------------------------------------------------------------
 
 void setup() {
-  //fullScreen();
-  size(2100, 1200);    //window size, (width, height)  1200
+  fullScreen();
+ // size(2100, 1200);    //window size, (width, height)  1200
 
 
   colorMode(HSB);                                // this needs to be ON so that the heat map works as intended        // not sure how I got the color of the background
@@ -214,19 +214,19 @@ void setup() {
 
   drawFoot();
 
-  printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
-  //************************************** to see the indecies of the COM ports
-  //************************************ then verify where the arduino is connected in the arduino IDE
-  //************************************ and change the index to the port where the arduino is connected
-  //*** ex: arduino IDE says the arduino is connected to port COM 13
-  //*** when I run this code the printed ports are [0] "COM3", [1] "COM4", [2] "COM13"
-  //*** so I change line 29 to say
-  //*** String portName = Serial.list()[2];
+  //printArray(Serial.list());   //prints all available serial ports
+  //String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  //myPort = new Serial(this, portName, 115200);                                //************************************** check whats being printed below when runnning this 
+  ////************************************** to see the indecies of the COM ports
+  ////************************************ then verify where the arduino is connected in the arduino IDE
+  ////************************************ and change the index to the port where the arduino is connected
+  ////*** ex: arduino IDE says the arduino is connected to port COM 13
+  ////*** when I run this code the printed ports are [0] "COM3", [1] "COM4", [2] "COM13"
+  ////*** so I change line 29 to say
+  ////*** String portName = Serial.list()[2];
 
-  // starts serialEvent function when a newline character is read
-  myPort.bufferUntil('\n');
+  //// starts serialEvent function when a newline character is read
+  //myPort.bufferUntil('\n');
 
   // adds buttons to the window
   cp5 = new ControlP5(this);
@@ -524,26 +524,26 @@ void Main_Menu() {
 }
 
 // checks what is being printed by the micro controller
-void serialEvent (Serial myPort) {
-  // check for incoming numbers on the serial monitor
-  if (myPort.available() >= 0) {
-    valueFromArduino = myPort.readStringUntil('\n');
+//void serialEvent (Serial myPort) {
+//  // check for incoming numbers on the serial monitor
+//  if (myPort.available() >= 0) {
+//    valueFromArduino = myPort.readStringUntil('\n');
 
-    try {
-      //setDataArrZeros();
-      dataArr = float(split(valueFromArduino, "-"));
-      //println(valueFromArduino);
-      //should have 6 values from arduino           mf-lf-mm-heel-dir
-      if (dataArr.length == 5) {
-        // set values from arduino to corresponding variables
-        parseDataRcvd();
-      }
-    }
-    catch(RuntimeException e) {
-      e.printStackTrace();
-    }
-  }
-}
+//    try {
+//      //setDataArrZeros();
+//      dataArr = float(split(valueFromArduino, "-"));
+//      //println(valueFromArduino);
+//      //should have 6 values from arduino           mf-lf-mm-heel-dir
+//      if (dataArr.length == 5) {
+//        // set values from arduino to corresponding variables
+//        parseDataRcvd();
+//      }
+//    }
+//    catch(RuntimeException e) {
+//      e.printStackTrace();
+//    }
+//  }
+//}
 //---------------------------------------------- end of serialEvent
 
 

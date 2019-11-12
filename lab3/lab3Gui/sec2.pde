@@ -145,7 +145,7 @@ void updateSec2Tbl(int walkingType){  //float pmf,float plf,float pmm,float phee
   
   seconds = watch.second();
   min = watch.minute();
-  watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s")
+  watchVal.setValue(Integer.toString((min)) + " min " + Integer.toString((seconds))+"s");
   if(seconds == 30){
     watch.stop();
   // place correspinding image depending on the value of the timeframe
