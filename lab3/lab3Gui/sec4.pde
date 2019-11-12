@@ -51,25 +51,25 @@ void calcSpeedAge(){
   int age = int(userInputStr);
   // +- 1
   if(age>=20 && age<=29){
-      speedAge = 5.46; //in meters per minute
+      speedAge = 83.58; //in meters per minute
   }
      
   else if(age>=30 && age<=39){
-    speedAge = 9.31;
+    speedAge = 87.48;
   }
    
   else if(age>=40 && age <=49){
-    speedAge = 5.35;
+    speedAge = 87.72;
   }
    
   else if(age>=50 && age<=59){
-    speedAge = 3.65;
+    speedAge = 83.58;
   }
   else if(age >= 60 && age <= 69){
-    speedAge = 3.98;
+    speedAge = 81.54;
   }
   else if(age >= 70){
-    speedAge = 4.07;
+    speedAge = 79.8;
   }
   
   //update what is displayed on screen
