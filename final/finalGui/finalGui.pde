@@ -24,6 +24,8 @@ StopWatch c2Watch = new StopWatch();
 boolean C3 = false;
 int c3Counter = 0;
 StopWatch c3Watch = new StopWatch();
+String tempStr = "";                    // the temp string before it gets appended to the actual string
+String inputStr = "";
 //------------------------------------------------- capacitors
 
 //------------------------ SERIAL PORT STUFF TO HELP YOU FIND THE CORRECT SERIAL PORT
@@ -36,30 +38,19 @@ boolean refreshPorts = false;
 PFont font;
 //-------------------------------------------- serial port stuff
 
-//------------------------------------------------------- space invader globals
-boolean spaceInvaderOn = false;
-
-//---------------------------------
-
-//------------------------------------------------------------ testing for space invader
-String[] cmds = new String[] {"C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","C2","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","C3","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C1","C2","C2","C2","C2","C2","C2","C2","C2","C3"};
-
+//----------------------------------------------------------------------------------- keys
+String[] key1 = new String[] {"a","b","c","A","B","C","1"};                // key 1 (abc)
+String[] key2 = new String[] {"d","e","f","D","E","F","2"};                // key 2 (def)
+String[] key3 = new String[] {"g","h","i","G","H","I","3"};                // key 3 (ghi)
 //------------------------------------------
-
-//-------------------------------------------------------- brick breaker globals
-boolean brickBreakerOn = false;
-
-//-----------------------------------------
 
 
 void setup(){
   background(192,62,0);
-  //fullScreen();
-  size(2000,1200);
+  fullScreen();
+  //size(2000,1200);
   frameRate(60);
-  font = createFont("MS Gothic",60);
-  //listAvailablePorts();
-  
+  font = createFont("MS Gothic",60);  
 
   setupMainButtons();
 
@@ -129,24 +120,42 @@ void parseData(){
   C3 = false;
   
     //if(counter != cmds.length){                // start of if        when ready to test with real values take out
-      switch(dataArr[0]){        // cmds[counter]
-        case "C1":
+    switch(dataArr[0]){        // cmds[counter]
+      case "C1":
+      // the the watch is not on yet turn on
+        if(!c1Watch.running){
+          c1Watch.start();
           C1 = true;
-          println("C1 pressed... abc");
-          break;
-        case "C2":
-          C2 = true;
-          println("C2 pressed... def");
-          break;
-        case "C3":
-          C3 = true;
-          println("C3 pressed... ghi");
-          break;
-        case "x":          // do nothing
-          println("do nothing");
-          break;
-      }
-      //println(counter);
-      //counter++;
-    //}                                // end of if
+          println("c1 pressed for 1st time")
+        }
+        else{
+          // if on and after 2 minutes of inactivity... turn off
+          if(c1Watch.second() == 2){
+            
+          }
+        }
+        break;
+      case "C2":
+        C2 = true;
+        println("C2 pressed... def");
+        break;
+      case "C3":
+        C3 = true;
+        println("C3 pressed... ghi");
+        break;
+      case "x":          // do nothing
+        println("do nothing");
+        break;
+    }
+    //println(counter);
+    //counter++;
+  //}                                // end of if
+}
+
+// assuming that the taps get read correctly
+void printLetter(){
+  if(C1){
+    tempStr = key1[c1Counter];
+    c1Counter++;
+  }
 }
