@@ -17,6 +17,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_CAP1188.h>
+#define CAP1188_SENSITIVITY 0x1F            // added
 
 // Reset Pin is used for I2C or SPI
 #define CAP1188_RESET  9
@@ -52,6 +53,14 @@ void setup() {
   Serial.begin(115200);
   Serial.println("CAP1188 test!");
 
+  //cap.writeRegister(CAP1188_SENSITIVITY, 0x4F);  // 8x  sensitivity
+  //cap.writeRegister(CAP1188_SENSITIVITY, 0x5F);  // 4x  sensitivity
+  //cap.writeRegister(CAP1188_SENSITIVITY, 0x6F);  // 2x  sensitivity THIS SEEMS TO WORK THE BEST FOR 3.5" plate sensors
+  //cap.writeRegister(CAP1188_SENSITIVITY, 0x7F);  // 1x  sensitivity
+
+  //added
+  
+
   // Initialize the sensor, if using i2c you can pass in the i2c address
   // if (!cap.begin(0x28)) {
   if (!cap.begin()) {
@@ -59,6 +68,7 @@ void setup() {
     while (1);
   }
   Serial.println("CAP1188 found!");
+//  cap.writeRegister(CAP1188_SENSITIVITY, 0x1F);  // 16x sensitivity   // added
 }
 
 void loop() {
