@@ -58,12 +58,7 @@ void setup(){
   frameRate(60);
   font = createFont("MS Gothic",60);  
 
-  setupMainButtons();
-
-  //cp5.hide();
-  
-  
-  
+  setupMainButtons();   
   
   printArray(Serial.list());   //prints all available serial ports
   //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
@@ -84,8 +79,6 @@ void setup(){
   capArr[5] = c6;
 
 }
-
-
 
 
 void draw(){
@@ -117,15 +110,7 @@ void serialEvent (Serial myPort) {
 //---------------------------------------------- end of serialEvent
 
 
-
 void parseData(){
-  // preset all capacitors to false
-  //C1 = false;
-  //C2 = false;
-  //C3 = false;
-  
-  
-  
   currCap = dataArr[0];        // get the current cap that was tapped
   
   switch(dataArr[0]){        // cmds[counter]
@@ -133,54 +118,46 @@ void parseData(){
     // the the watch is not on yet turn on
     // turn watch on at the end bc will need to maximize time we can have before setting letter
       if(!c1.watch.running){
-        c1.watch.start();
         c1.capState = true;
         // checks for different tap
-        //if(currCap != prevCap && prevCap != ""){
         if(currCap.equals(prevCap) == false && prevCap.equals("") == false) {
           getCap(prevCap).setLetter();
           println("another cap: " + prevCap + "****** was pressed before c1\n");
         }
+        
         c1.incCounter();
-        //c1.counter++;
+        c1.watch.start();
         println("c1 pressed for 1st time");
       }
       else{
-        // if on and after 2 seconds of inactivity... turn off
-        if(c1.watch.second() >= 2){
-          c1.setLetter();
-        }
-        else if(c1.watch.second() < 2){
-          c1.incCounter();
-          //c1.counter++;
-        }
+        // else we are within the time thr so we can go to the next letter
+        c1.watch.stop();
+        c1.watch.reset();
+        c1.incCounter();
+        c1.watch.start();
       }
       prevCap = "C1";
       break;
     case "C2":
       // the the watch is not on yet turn on
       if(!c2.watch.running){
-        c2.watch.start();
         c2.capState = true;
         // checks for different tap
-        //if(currCap != prevCap && prevCap != ""){
         if(currCap.equals(prevCap) == false && prevCap.equals("") == false){
           getCap(prevCap).setLetter();
           println("another cap: " + prevCap + "****** was pressed before c2\n");
         }
+        
         c2.incCounter();
-        //c2.counter++;
+        c2.watch.start();
         println("c2 pressed for 1st time");
       }
       else{
-        // if on and after 2 seconds of inactivity... turn off
-        if(c2.watch.second() >= 2){
-          c2.setLetter();
-        }
-        else if(c2.watch.second() < 2){
-          c2.incCounter();
-          //c2.counter++;
-        }
+        // else we are within the time thr so we can go to the next letter
+        c2.watch.stop();
+        c2.watch.reset();
+        c2.incCounter();
+        c2.watch.start();
       }
       prevCap = "C2";
       println("C2 pressed... def");
@@ -207,6 +184,7 @@ Cap getCap(String wantedCap){
 
 
 // check the watches to know if its time to set a letter or not
+// if on and after 2 seconds of inactivity... turn off and set letter
 void checkWatches(){
   for(Cap c: capArr){
     // if the watch is active...

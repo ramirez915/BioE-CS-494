@@ -22,7 +22,7 @@ void setupMainButtons(){
     
   userInput = cp5.addLabel("user chars")
     .setPosition(width/2,height/2)
-    .setValue(userStr)
+    .setValue(inputStr)
     .setColorValue(color(0,0,155))
     .setFont(createFont("Cambria",50))
     ;
