@@ -3,19 +3,19 @@ void setupMainButtons(){
   
   mainLbl = cp5.addLabel("mainLbl")
     .setText("T9")
-    .setPosition(width/2-250,0)
+    .setPosition(900,50)
     .setColorValue(color(0,0,155))
     .setFont(createFont("Cambria",100))
     ;
   
   mm = cp5.addButton("MainMenu")          // stops current game and goes back to main menu
-    .setPosition(1500,1100)
+    .setPosition(100,200)
     .setSize(400, 85)
     .setFont(font)
     ;
   
   t9 = cp5.addButton("t9")
-    .setPosition(1500,1300)
+    .setPosition(100,320)
     .setSize(400,85)
     .setFont(font)
     ;
