@@ -126,7 +126,7 @@ void parseData(){
         c1.capState = true;
         // checks for different tap
         //if(currCap != prevCap && prevCap != ""){
-        if(currCap.equals(prevCap) == false && prevCap.equals("") == false)
+        if(currCap.equals(prevCap) == false && prevCap.equals("") == false) {
           getCap(prevCap).setLetter();
           println("another cap: " + prevCap + "****** was pressed before c1\n");
         }

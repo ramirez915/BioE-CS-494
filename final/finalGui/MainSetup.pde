@@ -29,9 +29,6 @@ void setupMainButtons(){
 }
 
 void MainMenu(){
-  C1 = false;
-  C2 = false;
-  C3 = false;
   counter = 0;
   dataArr[0] = "x";
   
