@@ -13,7 +13,7 @@ int counter = 0;
 Textlabel mainLbl;
 Button mm;
 Button t9;
-Textlabel = userInput;
+Textlabel userInput;
 //--------------------------------------------------------
 
 //----------------------------------------------------------------------------------- keys
@@ -92,11 +92,8 @@ void draw(){
   if(t9On){
     checkWatches();
     parseData();          // original
-    C1 = false;
-    C2 = false;
-    C3 = false;
     
-    userInput.setValue(userStr);
+    userInput.setValue(inputStr);
     userInput.show();
   }
 }
@@ -153,7 +150,7 @@ void parseData(){
         if(c1.watch.second() >= 2){
           c1.setLetter();
         }
-        else if(c1.watch.seconds < 2){
+        else if(c1.watch.second() < 2){
           c1.incCounter();
           //c1.counter++;
         }
@@ -180,7 +177,7 @@ void parseData(){
         if(c2.watch.second() >= 2){
           c2.setLetter();
         }
-        else if(c2.watch.seconds < 2){
+        else if(c2.watch.second() < 2){
           c2.incCounter();
           //c2.counter++;
         }
@@ -189,7 +186,7 @@ void parseData(){
       println("C2 pressed... def");
       break;
     case "C3":
-      C3 = true;
+      c3.capState = true;
       println("C3 pressed... ghi");
       break;
     case "x":          // do nothing
@@ -202,9 +199,10 @@ Cap getCap(String wantedCap){
   switch(wantedCap){
     case "C1":
       return c1;
-    case "C2";
+    case "C2":
       return c2;
   }
+  return null;
 }
 
 
