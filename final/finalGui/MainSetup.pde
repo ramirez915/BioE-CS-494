@@ -9,29 +9,35 @@ void setupMainButtons(){
     ;
   
   mm = cp5.addButton("MainMenu")          // stops current game and goes back to main menu
-  //.setPosition(100,450)
     .setPosition(1500,1100)
     .setSize(400, 85)
     .setFont(font)
-  ;
+    ;
+  
+  t9 = cp5.addButton("t9")
+    .setPosition(1500,1300)
+    .setSize(400,85)
+    .setFont(font)
+    ;
+    
+  userInput = cp5.addLabel("user chars")
+    .setPosition(width/2,height/2)
+    .setValue(userStr)
+    .setColorValue(color(0,0,155))
+    .setFont(createFont("Cambria",50))
+    ;
 }
 
 void MainMenu(){
-  // if space invader game was being played
-  if(spaceInvaderOn){
-    spaceInvaderReset();
-    spaceInvaderOn = false;
-  }
-  else if(brickBreakerOn){
-    brickBreakerReset();
-    brickBreakerOn = false;
-  }
   C1 = false;
   C2 = false;
   C3 = false;
   counter = 0;
   dataArr[0] = "x";
-  gameSelectLbl.show();
-  bb.show();
-  si.show();
+  
+  t9On = false;
+}
+
+void t9(){
+  t9On = true;
 }
