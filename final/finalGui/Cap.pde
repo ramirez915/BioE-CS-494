@@ -19,4 +19,12 @@ class Cap{
     this.watch.stop();
     this.watch.reset();
   }
+  
+  void incCounter(){
+    // if we're at the upper bound we loop back
+    if(this.counter == this.letters.length){
+      this.counter = 0;
+    }
+    this.counter++;
+  }
 }
