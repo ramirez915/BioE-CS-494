@@ -27,6 +27,11 @@ boolean t9On = false;
 //----------------------------------------------                      // capacitors
 Cap c1 = new Cap(key1);
 Cap c2 = new Cap(key2);
+Cap c3 = new Cap(key3);
+// update these on the bottom
+Cap c4 = new Cap(key2);
+Cap c5 = new Cap(key1);
+Cap c6 = new Cap(key2);
 
 String tempStr = "";                    // the temp string before it gets appended to the actual string
 String inputStr = "";
@@ -70,6 +75,13 @@ void setup(){
   dataArr[2] = "x";
   dataArr[3] = "x";
   dataArr[4] = "x";
+  
+  capArr[0] = c1;
+  capArr[1] = c2;
+  capArr[2] = c3;
+  capArr[3] = c4;
+  capArr[4] = c5;
+  capArr[5] = c6;
 
 }
 
@@ -78,6 +90,7 @@ void setup(){
 
 void draw(){
   if(t9On){
+    checkWatches();
     parseData();          // original
     C1 = false;
     C2 = false;
@@ -121,6 +134,7 @@ void parseData(){
   switch(dataArr[0]){        // cmds[counter]
     case "C1":
     // the the watch is not on yet turn on
+    // turn watch on at the end bc will need to maximize time we can have before setting letter
       if(!c1.watch.running){
         c1.watch.start();
         c1.capState = true;
@@ -130,7 +144,8 @@ void parseData(){
           getCap(prevCap).setLetter();
           println("another cap: " + prevCap + "****** was pressed before c1\n");
         }
-        c1.counter++;
+        c1.incCounter();
+        //c1.counter++;
         println("c1 pressed for 1st time");
       }
       else{
@@ -139,7 +154,8 @@ void parseData(){
           c1.setLetter();
         }
         else if(c1.watch.seconds < 2){
-          c1.counter++;
+          c1.incCounter();
+          //c1.counter++;
         }
       }
       prevCap = "C1";
@@ -151,11 +167,12 @@ void parseData(){
         c2.capState = true;
         // checks for different tap
         //if(currCap != prevCap && prevCap != ""){
-        if(currCap.equals(prevCap) == false && prevCap.equals("") == false)
+        if(currCap.equals(prevCap) == false && prevCap.equals("") == false){
           getCap(prevCap).setLetter();
           println("another cap: " + prevCap + "****** was pressed before c2\n");
         }
-        c2.counter++;
+        c2.incCounter();
+        //c2.counter++;
         println("c2 pressed for 1st time");
       }
       else{
@@ -164,7 +181,8 @@ void parseData(){
           c2.setLetter();
         }
         else if(c2.watch.seconds < 2){
-          c2.counter++;
+          c2.incCounter();
+          //c2.counter++;
         }
       }
       prevCap = "C2";
@@ -186,5 +204,19 @@ Cap getCap(String wantedCap){
       return c1;
     case "C2";
       return c2;
+  }
+}
+
+
+// check the watches to know if its time to set a letter or not
+void checkWatches(){
+  for(Cap c: capArr){
+    // if the watch is active...
+    if(c.watch.running){
+      // hit the time thr so set letter
+      if(c.watch.second() >= 2){
+        c2.setLetter();          // this stops and resets the watch
+      }
+    }
   }
 }
