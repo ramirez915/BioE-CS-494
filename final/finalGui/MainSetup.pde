@@ -37,4 +37,5 @@ void MainMenu(){
 
 void t9(){
   t9On = true;
+  println("t9 pressed");
 }

@@ -68,7 +68,7 @@ void setup() {
     while (1);
   }
   Serial.println("CAP1188 found!");
-//  cap.writeRegister(CAP1188_SENSITIVITY, 0x1F);  // 16x sensitivity   // added
+  cap.writeRegister(CAP1188_SENSITIVITY, 0x2F);  // 16x sensitivity   // added
 }
 
 void loop() {

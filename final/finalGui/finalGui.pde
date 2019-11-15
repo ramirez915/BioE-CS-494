@@ -56,14 +56,14 @@ void setup(){
   //fullScreen();
   size(2000,1200);
   frameRate(60);
-  font = createFont("MS Gothic",60);  
+  font = createFont("MS Gothic",60);
 
-  setupMainButtons();   
+  setupMainButtons();
   
   printArray(Serial.list());   //prints all available serial ports
-  //String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
-  //port = new Serial(this, portName, 115200);
-  //port.bufferUntil('\n');
+  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  port = new Serial(this, portName, 115200);
+  port.bufferUntil('\n');
   
   dataArr[0] = "x";
   dataArr[1] = "x";
@@ -163,7 +163,27 @@ void parseData(){
       println("C2 pressed... def");
       break;
     case "C3":
-      c3.capState = true;
+      // the the watch is not on yet turn on
+      if(!c3.watch.running){
+        c3.capState = true;
+        // checks for different tap
+        if(currCap.equals(prevCap) == false && prevCap.equals("") == false){
+          getCap(prevCap).setLetter();
+          println("another cap: " + prevCap + "****** was pressed before c3\n");
+        }
+        
+        c3.incCounter();
+        c3.watch.start();
+        println("c3 pressed for 1st time");
+      }
+      else{
+        // else we are within the time thr so we can go to the next letter
+        c3.watch.stop();
+        c3.watch.reset();
+        c3.incCounter();
+        c3.watch.start();
+      }
+      prevCap = "C3";
       println("C3 pressed... ghi");
       break;
     case "x":          // do nothing
@@ -189,8 +209,10 @@ void checkWatches(){
   for(Cap c: capArr){
     // if the watch is active...
     if(c.watch.running){
+      println("watch time: "+c.watch.second() + "s");
       // hit the time thr so set letter
       if(c.watch.second() >= 2){
+        delay(3000);
         c2.setLetter();          // this stops and resets the watch
       }
     }

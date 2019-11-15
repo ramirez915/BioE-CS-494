@@ -18,6 +18,8 @@ class Cap{
     this.counter = 0;
     this.watch.stop();
     this.watch.reset();
+    
+    println("setting " + this.letters[this.counter - 1]);
   }
   
   void incCounter(){
