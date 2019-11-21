@@ -10,16 +10,26 @@ class Cap{
     this.counter = 0;
     this.watch = new StopWatch();
     this.letters = letters;
+    
+    println("letters for cap ");
+    for(String s: this.letters){
+      println(s);
+    }
   }
   
   // setts the letter for the cap based off of how many times its been tapped
   void setLetter(){
-    inputStr = inputStr + this.letters[this.counter - 1];
+    int pos = this.counter - 1;
+    if(pos == -1){
+      pos = 0;        // sometimes we ge this error not sure why
+    }
+    println("this.counter: " + (this.counter));
+    inputStr = inputStr + this.letters[pos];
     this.counter = 0;
     this.watch.stop();
     this.watch.reset();
     
-    println("setting " + this.letters[this.counter - 1]);
+    println("setting " + this.letters[pos]);
   }
   
   void incCounter(){

@@ -18,9 +18,12 @@ Textlabel userInput;
 
 //----------------------------------------------------------------------------------- keys
 // 1 second between taps to determine a char selection                                          // no uppercase nor numbers for now
-String[] key1 = new String[] {"a","b","c"};                // key 1 (abc)
-String[] key2 = new String[] {"d","e","f"};                // key 2 (def)
-String[] key3 = new String[] {"g","h","i"};                // key 3 (ghi)
+String[] key1 = new String[] {"a","b","c","d","e"};                // key 1 thumb
+String[] key2 = new String[] {"f","g","h","i","j","k"};            // key 2 pointing finger
+String[] key3 = new String[] {"l","m","n","o","p"};
+String[] key4 = new String[] {"q","r","s","t","u"};
+String[] key5 = new String[] {"v","w","x","y","z"};
+String[] key6 = new String[] {" ", "\n"};
 boolean t9On = false;
 //------------------------------------------
 
@@ -29,9 +32,9 @@ Cap c1 = new Cap(key1);
 Cap c2 = new Cap(key2);
 Cap c3 = new Cap(key3);
 // update these on the bottom
-Cap c4 = new Cap(key2);
-Cap c5 = new Cap(key1);
-Cap c6 = new Cap(key2);
+Cap c4 = new Cap(key4);
+Cap c5 = new Cap(key5);
+Cap c6 = new Cap(key6);
 
 String tempStr = "";                    // the temp string before it gets appended to the actual string
 String inputStr = "";
@@ -61,7 +64,7 @@ void setup(){
   setupMainButtons();
   
   printArray(Serial.list());   //prints all available serial ports
-  String portName = Serial.list()[2];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
+  String portName = Serial.list()[0];    // gets port number of arduino      *************************************************** change this to the index where the arduino is connected
   port = new Serial(this, portName, 115200);
   port.bufferUntil('\n');
   
@@ -84,7 +87,8 @@ void setup(){
 void draw(){
   if(t9On){
     checkWatches();
-    parseData();          // original
+    //parseData();          // original
+    parseData2(dataArr[0]);
     
     userInput.setValue(inputStr);
     userInput.show();
@@ -100,7 +104,8 @@ void serialEvent (Serial myPort) {
     
     try{
       dataArr = split(valueFromArduino,"-");
-      println(valueFromArduino);
+      println(valueFromArduino + "counter " + counter);
+      counter++;
       
     }catch(RuntimeException e){
       e.printStackTrace();
@@ -112,6 +117,7 @@ void serialEvent (Serial myPort) {
 
 void parseData(){
   currCap = dataArr[0];        // get the current cap that was tapped
+  //println("dataArr[0] " + dataArr[0]);
   
   switch(dataArr[0]){        // cmds[counter]
     case "C1":
@@ -135,6 +141,7 @@ void parseData(){
         c1.watch.reset();
         c1.incCounter();
         c1.watch.start();
+        println("watch c1 started");
       }
       prevCap = "C1";
       break;
@@ -187,9 +194,11 @@ void parseData(){
       println("C3 pressed... ghi");
       break;
     case "x":          // do nothing
-      println("do nothing");
+      //println("do nothing");
       break;
-  }
+  }    // end of switch
+  dataArr[0] = "x";
+  
 }
 
 Cap getCap(String wantedCap){
@@ -198,8 +207,45 @@ Cap getCap(String wantedCap){
       return c1;
     case "C2":
       return c2;
+    case "C3":
+      return c3;
+    case "C4":
+      return c4;
+    case "C5":
+      return c5;
+    case "C6":
+      return c6;
   }
   return null;
+}
+
+void parseData2(String capAsStr){
+  Cap capObj = getCap(capAsStr);
+  if(capObj != null){
+    currCap = capAsStr;
+    if(!capObj.watch.running){
+        capObj.capState = true;
+        // checks for different tap
+        if(currCap.equals(prevCap) == false && prevCap.equals("") == false) {
+          getCap(prevCap).setLetter();
+          println("another cap: " + prevCap + "****** was pressed before "+ currCap +"\n");
+        }
+        
+        capObj.incCounter();
+        capObj.watch.start();
+        println("c1 pressed for 1st time");
+      }
+      else{
+        // else we are within the time thr so we can go to the next letter
+        capObj.watch.stop();
+        capObj.watch.reset();
+        capObj.incCounter();
+        capObj.watch.start();
+        println("watch " + currCap + "started");
+      }
+      prevCap = currCap;
+  }
+  dataArr[0] = "x";
 }
 
 
@@ -210,10 +256,10 @@ void checkWatches(){
     // if the watch is active...
     if(c.watch.running){
       println("watch time: "+c.watch.second() + "s");
+      println("counter: " + c.counter);
       // hit the time thr so set letter
       if(c.watch.second() >= 2){
-        delay(3000);
-        c2.setLetter();          // this stops and resets the watch
+        c.setLetter();          // this stops and resets the watch
       }
     }
   }
