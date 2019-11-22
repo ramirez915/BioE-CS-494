@@ -48,6 +48,7 @@ Adafruit_CAP1188 cap = Adafruit_CAP1188();
 // Or.. Software SPI: clock, miso, mosi, cs, reset
 //Adafruit_CAP1188 cap = Adafruit_CAP1188(CAP1188_CLK, CAP1188_MISO, CAP1188_MOSI, CAP1188_CS, CAP1188_RESET);
 
+int counter = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -68,7 +69,7 @@ void setup() {
     while (1);
   }
   Serial.println("CAP1188 found!");
-  cap.writeRegister(CAP1188_SENSITIVITY, 0x3F);  // 4 seemed to work but gave a factor of 3 with thin wire
+  cap.writeRegister(CAP1188_SENSITIVITY, 0x6F);  // 5 seemed to work with current wires     // last tested with 6
 }
 
 void loop() {
@@ -76,19 +77,34 @@ void loop() {
 
   if (touched == 0) {
     // No touch detected
+    counter = 0;              //added for the 2 tap detection
     return;
   }
-//  
+
+  //----------------------------------------------------------------- original working code
+//  for (uint8_t i=0; i<8; i++) {
+//    if (touched & (1 << i)) {
+//      Serial.print("C"); Serial.print(i+1); Serial.print("-");
+//    }
+//  }
+//------------------------------------------------------------------------------
+
   for (uint8_t i=0; i<8; i++) {
-    if (touched & (1 << i)) {
-      Serial.print("C"); Serial.print(i+1); Serial.print("-");
+    if (touched & (1 << i)){
+      counter++;
+      if(counter == 1){
+        Serial.print("C"); Serial.print(i+1); Serial.print("-");
+      }
     }
   }
 
   Serial.println("x");
-  delay(50);
- // delay(100);
+//  delay(50);    // original
+  delay(600);     // 600 seemed good
 }
 
 
-// calibrate to 2f
+/*
+ *  MIGHT NEED TO ADD A COUNTER TO THIS CODE TO ONLY SEND 1 VALUE AT A TIME
+ *  ON THE PROCESSING SIDE BECAUSE THE ONLY ISSUE SEEMS TO BE FOR THE FIRST TAP...?
+ */ 

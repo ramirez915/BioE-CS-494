@@ -26,6 +26,14 @@ void setupMainButtons(){
     .setColorValue(color(0,0,155))
     .setFont(createFont("Cambria",50))
     ;
+    
+  watchLbl = cp5.addLabel("watch label")
+    .setPosition(width/2 - 200,height/2 - 200)
+    .setText("Watch")
+    .setColorValue(color(0,0,155))
+    .setFont(createFont("Cambria",50))
+    .hide()
+    ;
 }
 
 void MainMenu(){

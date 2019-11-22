@@ -23,13 +23,14 @@ class Cap{
     if(pos == -1){
       pos = 0;        // sometimes we ge this error not sure why
     }
-    println("this.counter: " + (this.counter));
+    //println("this.counter: " + (this.counter));
     inputStr = inputStr + this.letters[pos];
     this.counter = 0;
     this.watch.stop();
     this.watch.reset();
     
     println("setting " + this.letters[pos]);
+    watchLbl.setValue("watch");
   }
   
   void incCounter(){
