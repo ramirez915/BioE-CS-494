@@ -222,6 +222,8 @@ void checkWatches(){
       //println("watch time: "+c.watch.second() + "s");
       //println("cap counter: "+c.counter);
       
+      // display current letter here*******************************************************************
+      
       // hit the time thr so set letter
       if(c.watch.second() >= 2){
         c.setLetter();          // this stops and resets the watch
