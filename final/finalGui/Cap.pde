@@ -35,7 +35,7 @@ class Cap{
     
     
     inputStr = inputStr + this.letters[pos];
-    //this.vocals[pos].play();                            // play the vocal
+    this.vocals[pos].play();                            // play the vocal
     //delay(500);
     this.counter = 0;
     this.watch.stop();
