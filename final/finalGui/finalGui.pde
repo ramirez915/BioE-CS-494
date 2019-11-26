@@ -1,7 +1,7 @@
 import processing.serial.*;  // Serial library makes it possible to talk to Arduino
 import controlP5.*; // import ControlP5 library
 import grafica.*;    // for graphing
-import processing.sound.*;
+import processing.sound.*;    // for vocal letters
 
 Serial port;
 ControlP5 cp5;
@@ -24,17 +24,62 @@ String[] key2 = new String[] {"f","g","h","i","j","k"};            // key 2 poin
 String[] key3 = new String[] {"l","m","n","o","p"};
 String[] key4 = new String[] {"q","r","s","t","u"};
 String[] key5 = new String[] {"v","w","x","y","z"};
-String[] key6 = new String[] {" ", "\n"};
+String[] key6 = new String[] {" ", "del"};
 boolean t9On = false;
 //------------------------------------------
+SoundFile vocalA = new SoundFile(this,sketchPath("A.wav"));
+SoundFile vocalB = new SoundFile(this,sketchPath("B.wav"));
+SoundFile vocalC = new SoundFile(this,sketchPath("C.wav"));
+SoundFile vocalD = new SoundFile(this,sketchPath("D.wav"));
+SoundFile vocalE = new SoundFile(this,sketchPath("E.wav"));
+SoundFile vocalF = new SoundFile(this,sketchPath("F.wav"));
+SoundFile vocalG = new SoundFile(this,sketchPath("G.wav"));
+SoundFile vocalH = new SoundFile(this,sketchPath("H.wav"));
+SoundFile vocalI = new SoundFile(this,sketchPath("I.wav"));
+SoundFile vocalJ = new SoundFile(this,sketchPath("J.wav"));
+SoundFile vocalK = new SoundFile(this,sketchPath("K.wav"));
+SoundFile vocalL = new SoundFile(this,sketchPath("L.wav"));
+SoundFile vocalM = new SoundFile(this,sketchPath("M.wav"));
+SoundFile vocalN = new SoundFile(this,sketchPath("N.wav"));
+SoundFile vocalO = new SoundFile(this,sketchPath("O.wav"));
+SoundFile vocalP = new SoundFile(this,sketchPath("P.wav"));
+SoundFile vocalQ = new SoundFile(this,sketchPath("Q.wav"));
+SoundFile vocalR = new SoundFile(this,sketchPath("R.wav"));
+SoundFile vocalS = new SoundFile(this,sketchPath("S.wav"));
+SoundFile vocalT = new SoundFile(this,sketchPath("T.wav"));
+SoundFile vocalU = new SoundFile(this,sketchPath("U.wav"));
+SoundFile vocalV = new SoundFile(this,sketchPath("V.wav"));
+SoundFile vocalW = new SoundFile(this,sketchPath("W.wav"));
+SoundFile vocalX = new SoundFile(this,sketchPath("X.wav"));
+SoundFile vocalY = new SoundFile(this,sketchPath("Y.wav"));
+SoundFile vocalZ = new SoundFile(this,sketchPath("Z.wav"));
+SoundFile vocalSpace = new SoundFile(this,sketchPath("Space.wav"));
+SoundFile vocalDelete = new SoundFile(this,sketchPath("Delete.wav"));
+ 
+SoundFile[] vocalKey1 = new SoundFile[] {vocalA,vocalB,vocalC,vocalD,vocalE};
+SoundFile[] vocalKey2 = new SoundFile[] {vocalF,vocalG,vocalH,vocalI,vocalJ,vocalK};
+SoundFile[] vocalKey3 = new SoundFile[] {vocalL,vocalM,vocalN,vocalO,vocalP};
+SoundFile[] vocalKey4 = new SoundFile[] {vocalQ,vocalR,vocalS,vocalT,vocalU};
+SoundFile[] vocalKey5 = new SoundFile[] {vocalV,vocalW,vocalX,vocalY,vocalZ};
+SoundFile[] vocalKey6 = new SoundFile[] {vocalSpace,vocalDelete};
+
+
+
 
 //----------------------------------------------                      // capacitors
-Cap c1 = new Cap(key1);
-Cap c2 = new Cap(key2);
-Cap c3 = new Cap(key3);
-Cap c4 = new Cap(key4);
-Cap c5 = new Cap(key5);
-Cap c6 = new Cap(key6);
+//Cap c1 = new Cap(key1,vocalKey1);
+//Cap c2 = new Cap(key2,vocalKey2);
+//Cap c3 = new Cap(key3,vocalKey3);
+//Cap c4 = new Cap(key4,vocalKey4);
+//Cap c5 = new Cap(key5,vocalKey5);
+//Cap c6 = new Cap(key6,vocalKey6);
+
+Cap c1 = new Cap(key6,vocalKey6);
+Cap c2 = new Cap(key1,vocalKey1);
+Cap c3 = new Cap(key2,vocalKey2);
+Cap c4 = new Cap(key3,vocalKey3);
+Cap c5 = new Cap(key4,vocalKey4);
+Cap c6 = new Cap(key5,vocalKey5);
 
 String tempStr = "";                    // the temp string before it gets appended to the actual string
 String inputStr = "";
@@ -53,6 +98,8 @@ int numPorts = serialPorts.length;
 boolean refreshPorts = false;
 PFont font;
 //-------------------------------------------- serial port stuff
+
+//----------------------------------------------------- vocals are on their own tab
 
 void setup(){
   background(192,62,0);
@@ -80,7 +127,6 @@ void setup(){
   capArr[3] = c4;
   capArr[4] = c5;
   capArr[5] = c6;
-
 }
 
 
@@ -104,7 +150,6 @@ void serialEvent (Serial myPort) {
     
     try{
       dataArr = split(valueFromArduino,"-");
-      println(valueFromArduino + "counter " + counter);
       counter++;
       
     }catch(RuntimeException e){
@@ -117,16 +162,22 @@ void serialEvent (Serial myPort) {
 Cap getCap(String wantedCap){
   switch(wantedCap){
     case "C1":
+      c1.capState = true;
       return c1;
     case "C2":
+      c2.capState = true;
       return c2;
     case "C3":
+      c3.capState = true;
       return c3;
     case "C4":
+      c4.capState = true;
       return c4;
     case "C5":
+      c5.capState = true;
       return c5;
     case "C6":
+      c6.capState = true;
       return c6;
   }
   return null;
@@ -134,7 +185,7 @@ Cap getCap(String wantedCap){
 
 void parseData2(String capAsStr){
   Cap capObj = getCap(capAsStr);
-  if(capObj != null){
+  if(capObj != null && capObj.capState == true){
     currCap = capAsStr;
     if(!capObj.watch.running){
         capObj.capState = true;
@@ -155,7 +206,6 @@ void parseData2(String capAsStr){
         capObj.incCounter();
         capObj.watch.start();
         println("> 1 inc");
-        //println("watch " + currCap + "started");
       }
       prevCap = currCap;
   }
@@ -169,10 +219,9 @@ void checkWatches(){
   for(Cap c: capArr){
     // if the watch is active...
     if(c.watch.running){
-      println("watch time: "+c.watch.second() + "s");
-      println("counter: " + c.counter);
-      //watchLbl.setValue("watch time: "+Integer.toString((c.watch.second())) + "s");
-      //watchLbl.show();
+      //println("watch time: "+c.watch.second() + "s");
+      //println("cap counter: "+c.counter);
+      
       // hit the time thr so set letter
       if(c.watch.second() >= 2){
         c.setLetter();          // this stops and resets the watch

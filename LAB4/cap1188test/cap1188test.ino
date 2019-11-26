@@ -92,15 +92,17 @@ void loop() {
   for (uint8_t i=0; i<8; i++) {
     if (touched & (1 << i)){
       counter++;
-      if(counter == 1){
+      if(counter == 2){
         Serial.print("C"); Serial.print(i+1); Serial.print("-");
+        counter = 0;
       }
     }
   }
 
   Serial.println("x");
 //  delay(50);    // original
-  delay(600);     // 600 seemed good
+//  delay(600);     // 600 seemed good
+  delay(500);  //100 seems good with counter
 }
 
 

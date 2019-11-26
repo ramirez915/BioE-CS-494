@@ -21,7 +21,7 @@ void setupMainButtons(){
     ;
     
   userInput = cp5.addLabel("user chars")
-    .setPosition(width/2,height/2)
+    .setPosition(width/2,height/2 -300)
     .setValue(inputStr)
     .setColorValue(color(0,0,155))
     .setFont(createFont("Cambria",50))
