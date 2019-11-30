@@ -8,11 +8,13 @@ ControlP5 cp5;
 String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
 int counter = 0;
+PImage A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
+PImage hand;
 
 //------------------------------------------------------------------- labels
 Textlabel mainLbl;
 Button mm;
-Button t9;
+Button type;
 Textlabel userInput;
 Textlabel watchLbl;
 //--------------------------------------------------------
@@ -102,7 +104,7 @@ PFont font;
 //----------------------------------------------------- vocals are on their own tab
 
 void setup(){
-  background(192,62,0);
+  background(255,255,255);
   //fullScreen();
   size(2000,1200);
   frameRate(60);
@@ -127,11 +129,75 @@ void setup(){
   capArr[3] = c4;
   capArr[4] = c5;
   capArr[5] = c6;
+  
+  hand = loadImage ("hand.png");
+  A = loadImage ("A.png");
+  B = loadImage ("B.png");
+  C = loadImage ("C.png");
+  D = loadImage ("D.png");
+  E = loadImage ("E.png");
+  F = loadImage ("F.png");
+  G = loadImage ("G.png");
+  H = loadImage ("H.png");
+  I = loadImage ("I.png");
+  J = loadImage ("J.png");
+  K = loadImage ("K.png");
+  L = loadImage ("L.png");
+  M = loadImage ("M.png");
+  N = loadImage ("N.png");
+  O = loadImage ("O.png");
+  P = loadImage ("P.png");
+  Q = loadImage ("Q.png");
+  R = loadImage ("R.png");
+  S = loadImage ("S.png");
+  T = loadImage ("T.png");
+  U = loadImage ("U.png");
+  V = loadImage ("V.png");
+  W = loadImage ("W.png");
+  X = loadImage ("X.png");
+  Y = loadImage ("Y.png");
+  Z = loadImage ("Z.png");
+  //S = loadImage ("Space.png");
+ // S = loadImage ("Del.png");
 }
 
 
 void draw(){
   if(t9On){
+    //hand
+    image(hand, 700, 25, 1500, 1100);
+    //finger one
+    image(A, 1070, 480, 60, 60);
+    image(B, 1100, 520, 60, 60);
+    image(C, 1120, 570, 60, 60);
+    image(D, 1150, 610, 60, 60);
+    image(E, 1170, 660, 60, 60);
+    //finger two
+    image(F, 1274, 200, 60, 60);
+    image(G, 1276, 260, 60, 60);
+    image(H, 1280, 320, 60, 60);
+    image(I, 1283, 380, 60, 60);
+    image(J, 1286, 440, 60, 60);
+    image(K, 1290, 500, 60, 60);
+    //finger three
+    image(L, 1440, 150, 60, 60);
+    image(M, 1440, 210, 60, 60);
+    image(N, 1432, 270, 60, 60);
+    image(O, 1430, 330, 60, 60);
+    image(P, 1430, 390, 60, 60);
+    //finger four
+    image(Q, 1540, 200, 60, 60);
+    image(R, 1535, 260, 60, 60);
+    image(S, 1535, 320, 60, 60);
+    image(T, 1530, 380, 60, 60);
+    image(U, 1530, 440, 60, 60);
+    //finger five
+    image(V, 1720, 350, 60, 60);
+    image(W, 1700, 400, 60, 60);
+    image(X, 1675, 450, 60, 60);
+    image(Y, 1650, 500, 60, 60);
+    image(Z, 1630, 550, 60, 60);
+    
     checkWatches();
     parseData2(dataArr[0]);
     
