@@ -27,16 +27,14 @@ class Cap{
     }
     println("pos is: " + pos);
     
-    // delete functionality
-    //if(this.letters[pos].equals("del") == true){
-    //  char[] strToChar = inputStr.toCharArray();
-      
-    //}
+    // ********************************************************************* delete functionality
+    if(this.letters[pos].equals("del") == true){
+      deletePrevLetter();
+    }
     
     
     inputStr = inputStr + this.letters[pos];
     this.vocals[pos].play();                            // play the vocal
-    //delay(500);
     this.counter = 0;
     this.watch.stop();
     this.watch.reset();
@@ -53,4 +51,17 @@ class Cap{
     }
     this.counter++;
   }
-}
+  
+  void deletePrevLetter(){
+    // if inputStr is NOT empty then break up into char array to get everything but the last letter
+    String strAfterDel = "";
+    if(inputStr.length() != 0){
+      char[] strToChar = inputStr.toCharArray();
+      for(int i = 0; i < inputStr.length() - 1; i++){
+        strAfterDel = strAfterDel + strToChar[i];
+      }
+      inputStr = strAfterDel;
+    }
+  }
+  
+}    // end of Cap class
