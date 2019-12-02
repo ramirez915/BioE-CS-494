@@ -51,7 +51,8 @@ Adafruit_CAP1188 cap = Adafruit_CAP1188();
 int counter = 0;
 
 void setup() {
-  Serial.begin(115200);
+//  Serial.begin(115200);
+  Serial.begin(230400);
   Serial.println("CAP1188 test!");
 
   //cap.writeRegister(CAP1188_SENSITIVITY, 0x4F);  // 8x  sensitivity
@@ -102,7 +103,8 @@ void loop() {
   Serial.println("x");
 //  delay(50);    // original
 //  delay(600);     // 600 seemed good
-  delay(500);  //100 seems good with counter
+//  delay(500);  //100 seems good with counter
+  delay(100);  //100 seems good with counter
 }
 
 

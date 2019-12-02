@@ -29,19 +29,21 @@ class Cap{
     
     // ********************************************************************* delete functionality
     if(this.letters[pos].equals("del") == true){
+      println("delete");
       deletePrevLetter();
     }
     
-    
-    inputStr = inputStr + this.letters[pos];
-    this.vocals[pos].play();                            // play the vocal
-    this.counter = 0;
-    this.watch.stop();
-    this.watch.reset();
-    this.capState = false;
-    prevCap = "";
-    
-    println("setting " + this.letters[pos]);
+    else{
+      inputStr = inputStr + this.letters[pos];
+    }
+      this.vocals[pos].play();                            // play the vocal
+      this.counter = 0;
+      this.watch.stop();
+      this.watch.reset();
+      this.capState = false;
+      prevCap = "";
+      
+      println("setting " + this.letters[pos]);
   }
   
   void incCounter(){
@@ -59,8 +61,13 @@ class Cap{
       char[] strToChar = inputStr.toCharArray();
       for(int i = 0; i < inputStr.length() - 1; i++){
         strAfterDel = strAfterDel + strToChar[i];
+        
       }
       inputStr = strAfterDel;
+      println("new string "+ inputStr);
+      userInput.hide();
+      userInput.setText(inputStr);
+      userInput.show();
     }
   }
   

@@ -135,7 +135,7 @@ void draw(){
     checkWatches();
     parseData2(dataArr[0]);
     
-    userInput.setValue(inputStr);
+    userInput.setText(inputStr);
     userInput.show();
   }
 }
