@@ -65,7 +65,7 @@ class Cap{
       }
       inputStr = strAfterDel;
       println("new string "+ inputStr);
-      background(255,255,255);
+      background(192,62,0);
       userInput.setText(inputStr);
       userInput.show();
     }

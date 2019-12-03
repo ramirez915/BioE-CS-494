@@ -8,7 +8,7 @@ ControlP5 cp5;
 String dataArr[] = new String[5];      // array that will store the data
 String valueFromArduino;
 int counter = 0;
-PImage A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
+PImage A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, space, del;
 PImage hand;
 
 //------------------------------------------------------------------- labels
@@ -157,8 +157,8 @@ void setup(){
   X = loadImage ("X.png");
   Y = loadImage ("Y.png");
   Z = loadImage ("Z.png");
-  //S = loadImage ("Space.png");
- // S = loadImage ("Del.png");
+  space = loadImage ("space.png");
+  del = loadImage ("delete.png");
 }
 
 
@@ -197,6 +197,10 @@ void draw(){
     image(X, 1675, 450, 60, 60);
     image(Y, 1650, 500, 60, 60);
     image(Z, 1630, 550, 60, 60);
+    
+    //space and delete
+    image(space,1440,850,100,50);
+    image(del,1380,900,200,100);
     
     checkWatches();
     parseData2(dataArr[0]);
